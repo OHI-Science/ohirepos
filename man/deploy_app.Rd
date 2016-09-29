@@ -4,15 +4,22 @@
 \alias{deploy_app}
 \title{Deploy Shiny application}
 \usage{
-deploy_app(gh_repo, gh_owner = "OHI-Science")
+deploy_app(gh_repo, gh_owner = "OHI-Science", gh_branch_data = "draft",
+  gh_branch_app = "app",
+  app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
+  debug = F)
 }
 \arguments{
 \item{gh_repo}{Github repository.}
 
 \item{gh_owner}{Github owner. Defaults to "OHI-Science"}
+
+\item{gh_branch_data}{Github branch containing data. Defaults to "draft" and must already exist in the repo.}
+
+\item{gh_branch_app}{Github branch containing data. Defaults to "app" and does not have to already exist in the repo.}
 }
 \value{
-Returns URL of app if successfully deployed, otherwise errors out.
+Returns URL of Shiny app if successfully deployed, otherwise errors out.
 }
 \description{
 Deploy Shiny application
