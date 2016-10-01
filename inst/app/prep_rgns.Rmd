@@ -1,0 +1,100 @@
+---
+title: "ms_simplify rgn_offshore_gcs.shp"
+author: "Ben Best"
+date: "February 9, 2016"
+output: html_document
+---
+
+```{r install packages, eval=F}
+## install.packages("devtools")
+library(devtools)
+install_github("ropensci/geojsonio")
+install_github("ateucher/rmapshaper")
+```
+
+
+```{r simplify, eval=F}
+library(rgdal)
+library(geojsonio)
+library(rmapshaper)
+library(sp)
+library(dplyr)
+
+# bbest downloaded from sftp://neptune.nceas.ucsb.edu/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data/rgn_offshore_gcs.shp
+shp = '~/Documents/OHI/spatial/rgn_offshore_gcs.shp'
+
+# read in polygon
+system.time({
+  ply = readOGR(normalizePath(dirname(shp)), basename(tools::file_path_sans_ext(shp)), verbose=F)
+})
+#   user  system elapsed 
+# 64.413   1.415  66.135 
+
+sub = ply[ply@data$rgn_name %in% c('Costa Rica','Nicaragua','Panama','Colombia','Venezuela','Cayman Islands','Cuba','Belize','Mexico','Jamaica','Honduras','Haiti','El Salvador','Guatemala'),]
+
+system.time({
+  plot(sub, col='gray')
+})
+#  user  system elapsed 
+# 5.468   0.273   5.759
+  
+# plot original
+#plot(ply)
+
+# simplify using default parameters
+system.time({
+  #sub_simp0 = ms_simplify(sub)
+  ply_simp0 = ms_simplify(ply)
+})
+#   user  system elapsed 
+# 60.595   0.834  61.640 
+#     user   system  elapsed 
+# 1788.496   66.114 1858.994
+# took 30 min to do global
+
+system.time({
+  #plot(sub_simp0)
+  plot(ply_simp0, col='gray')
+})
+#  user  system elapsed 
+# 0.144   0.006   0.144
+#  user  system elapsed 
+# 6.226   0.419   6.596
+  
+# geojson_write(sub, file='tmp/sub.geojson')
+# geojson_write(sub_simp0, file='tmp/sub_simp0.geojson')
+system.time({
+  geojson_write(ply_simp0, file='data/rgn_offshore_gcs_mapshaper-simplify.geojson')
+})
+
+# simplify again
+setwd('~/github/ohi-shiny2')
+ply_simp0 = readOGR('data/rgn_offshore_gcs_mapshaper-simplify.geojson', 'OGRGeoJSON', verbose=F)
+plot(ply_simp0, col='gray')
+system.time({
+  ply_simp1 = ms_simplify(ply_simp0)
+  plot(ply_simp1, col='gray')
+  geojson_write(ply_simp1, file='data/rgn_offshore_gcs_mapshaper-simplify_x2.geojson')
+})
+
+# remove non-eez shapes
+setwd('~/github/ohi-shiny2')
+ply_simp1 = readOGR('data/rgn_offshore_gcs_mapshaper-simplify_x2.geojson', 'OGRGeoJSON', verbose=F)
+ply_simp2 = ply_simp1[ply_simp1$rgn_type=='eez' & ply_simp1$rgn_name!='Antarctica',]
+plot(ply_simp2, col='gray')
+system.time({
+  geojson_write(ply_simp2, file='data/rgn_offshore_gcs_mapshaper-simplify_x2_eez-only.geojson')
+})
+
+
+# test geojson
+sp = rgdal::readOGR(dsn='tmp/sub_simp0.geojson', layer = "OGRGeoJSON")
+plot(sp, col='gray')
+```
+
+```{r plot}
+library(rgdal)
+ply_simp0 = readOGR('data/rgn_offshore_gcs_mapshaper-simplify.geojson', 'OGRGeoJSON', verbose=F)
+plot(ply_simp0, col='gray')
+```
+
