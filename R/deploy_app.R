@@ -24,7 +24,9 @@ deploy_app <- function(
 
   library(tidyverse)
 
-  # library(devtools); load_all(); debug=T; gh_repo='bhi'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # library(devtools); load_all(); debug=T;
+  # gh_repo='bhi'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # gh_repo='ohi-global'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
 
   # Copied from https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116
 
@@ -115,8 +117,8 @@ deploy_app <- function(
   # TODO: use ohirepos_commit to stamp which version of ohirepos was used to last modify the shiny app
 
   # brew app.yml configuration and introduction files, and delete brew templates
-  brew(system.file('app/app.brew.yml', package='ohirepos'), file.path(dir_app, 'app.yml'))
-  brew(system.file('intro.brew.md'   , package='ohirepos'), file.path(dir_app, 'intro.md'))
+  brew(system.file('app/app.brew.yml' , package='ohirepos'), file.path(dir_app, 'app.yml'))
+  brew(system.file('app/intro.brew.md', package='ohirepos'), file.path(dir_app, 'intro.md'))
   unlink(sprintf('%s/%s', dir_app, c('app.brew.yml','intro.brew.md')))
 
   # TODO: Travis?
