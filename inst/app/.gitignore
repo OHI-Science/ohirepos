@@ -8,3 +8,6 @@ app.yml
 intro.md
 draft
 data.Rdata
+global_app.yml
+global_draft
+global_intro.md

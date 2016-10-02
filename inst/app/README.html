@@ -123,21 +123,37 @@ $(document).ready(function () {
 <h1>OHI Shiny app</h1>
 <p>These files provide the template for creating a Shiny app that visualizes a data branch of an Ocean Health Index (OHI) repository.</p>
 <p>Normally these files are translated from template files into a live Shiny app using the <code>ohirepos::deploy_app()</code> function, like so:</p>
-<pre class="r"><code># ohi-global
+<pre class="r"><code>library(ohirepos)
+
+# ohi-global
 deploy_app('ohi-global', 'eez2015', 'Global')
 
 # baltic
 deploy_app('ohi-global', 'baltic2015', 'Baltic')</code></pre>
-<p>To quickly run your own Shiny app from an existing OHI repository containing a data branch, you simply need to create working configuration (<code>app.yml</code>) and introduction (<code>intro.md</code>) files from the templates. This is done in the <code>ohirepos::deploy_app()</code> function with <a href="https://www.rdocumentation.org/packages/brew/versions/1.0-6/topics/brew"><code>brew::brew()</code></a> after setting variables like so:</p>
-<pre class="r"><code>brew(system.file('app/app.brew.yml' , package='ohirepos'), file.path(dir_app, 'app.yml'))
-brew(system.file('app/intro.brew.md', package='ohirepos'), file.path(dir_app, 'intro.md'))</code></pre>
-<p>When the Shiny app first launches (eg with <a href="https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp"><code>shiny::runApp()</code></a>), the github repository specified in <code>app.yml</code> will get downloaded from Github with <code>git clone</code> and all data read in and presented in the app.</p>
+<p>When the Shiny app first launches (eg with <a href="https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp"><code>shiny::runApp()</code></a>), the github repository specified in <code>app.yml</code> will get downloaded from Github with <code>git clone</code> and all the data files processed into a <code>[scenario].Rdata</code> file before launching the app.</p>
+<div id="debugging" class="section level2">
+<h2>Debugging</h2>
+<p>In practice, for developing this Shiny app, I launch RStudio with <code>app.Rproj</code> to set the working directory here, and create the <code>app.yml</code> and <code>intro.md</code> for whichever repo, then launch the app.</p>
+<pre class="r"><code># set vars
+gh_repo='bhi'; default_scenario='baltic2015'; app_title='Baltic'
+gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'
+app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+projection='Mercator'; map_shrink_pct=10; debug=F
+
+# brew templates into files
+brew::brew('app.brew.yml' , 'app.yml')
+brew::brew('intro.brew.md', 'intro.md')
+
+# run app
+shiny::runApp()</code></pre>
+<p>Notice that the existing <code>.gitignore</code> includes <code>app.yml</code>,<code>intro.md</code>, <code>baltic2015.Rdata</code> files and <code>draft</code> folder, so these will not be uploaded to the generic app template on Github. For working with various apps, I move them to a prefix (eg <code>bhi_</code>*) and add to <code>.gitignore</code>.</p>
+</div>
 <div id="credit" class="section level2">
 <h2>Credit</h2>
 <p>The majority of this Shiny application was coded by <a href="http://benbestphd.com">Ben Best</a> with significant inputs from Julie Lowndes. Special thanks to Herman Sontrop who developed the <a href="https://github.com/FrissAnalytics/ohi-aster">ohi-aster</a> htmlwidget and these <a href="http://shiny.rstudio.com/tutorial/">Shiny JavaScript tutorials</a>.</p>
 </div>
-<div id="sidenote-on-geojson-simplification" class="section level2">
-<h2>Sidenote on GeoJSON Simplification</h2>
+<div id="geojson-simplification" class="section level2">
+<h2>GeoJSON Simplification</h2>
 <p>The initial loading time and overall performance of the Shiny app in a web browser is very dependent on the size of the GeoJSON file used to render the regions spatially. The path of this geojson file is specified as the <code>geojson</code> variable in the <code>config.R</code> of the data branch’s scenario subfolder (eg for Baltic draft branch, baltic2015 scenario: <a href="https://github.com/OHI-Science/bhi/blob/673f8b67f1eb0e42e7e59117880cb07032aaf750/baltic2015/conf/config.R#L26">config.R</a> -&gt; <a href="https://github.com/OHI-Science/bhi/blob/draft/baltic2015/spatial/regions_gcs.geojson">spatial/regions_gcs.geojson</a>:</p>
 <pre class="r"><code>geojson = 'spatial/regions_gcs.geojson'</code></pre>
 <p>Here’s how the high resolution global EEZ shapefile was greatly simplified with the excellent <a href="https://github.com/ateucher/rmapshaper#usage"><code>rmapshaper::ms_simplify</code></a> to <a href="https://github.com/OHI-Science/ohi-global/blob/b2abb0b63822c94c447bc04afa3c901511c48a6c/eez2015/spatial/rgn_offshore_gcs_mapshaper-simplify_x2_eez-only.geojson">ohi-global/rgn_offshore_gcs_mapshaper-simplify_x2_eez-only.geojson</a>…</p>

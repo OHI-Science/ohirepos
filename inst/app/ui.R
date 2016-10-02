@@ -13,7 +13,13 @@ dashboardPage(
       
       conditionalPanel(
         "input.sidebarmenu === 'explore'",
-    
+
+        selectInput(
+          'sel_scenario', 
+          label    = '0. Choose scenario:', 
+          choices  = sort(y$scenarios), 
+          selected = y$scenarios[1]),
+            
         selectInput(
           'sel_type', 
           label='1. Choose type:', 

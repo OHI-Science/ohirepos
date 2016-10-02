@@ -7,7 +7,9 @@
 #' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
 #' @param gh_branch_app Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.
 #' @param app_url URL of the application
-#' @param debug
+#' @param projection defaults to Mercator, or could be specified as Mollweide, which is appropriate for global results.
+#' @param map_shrink_pct percentage of shrinkage to apply to study area for default map view.
+#' @param debug produces a Message box with various debug outputs to evaluate reactivity of the app.
 #'
 #' @return Returns URL of Shiny app if successfully deployed, otherwise errors out.
 #' @examples
@@ -20,13 +22,14 @@ deploy_app <- function(
   gh_repo, default_scenario, app_title, gh_owner='OHI-Science',
   gh_branch_data='draft', gh_branch_app='app',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
+  projection='Mercator', map_shrink_pct=10,
   debug=F){
 
   library(tidyverse)
 
-  # library(devtools); load_all(); debug=T;
-  # gh_repo='bhi'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
-  # gh_repo='ohi-global'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # library(devtools); load_all(); debug=T; projection='Mercator'; map_shrink_pct=10
+  # gh_repo='bhi'; projection='Mercator'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # gh_repo='ohi-global'; projection='Mercator'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
 
   # Copied from https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116
 
@@ -49,7 +52,7 @@ deploy_app <- function(
   dir_data     = file.path(tmpdir, gh_repo, gh_branch_data)
   dir_app      = file.path(tmpdir, gh_repo, gh_branch_app)
   dir_data_2   = file.path(tmpdir, gh_repo, gh_branch_app, gh_branch_data)
-  gh_slug      = file.path('%s/%s', gh_owner, gh_repo)
+  gh_slug      = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url       = sprintf('https://github.com/%s.git', gh_slug)
 
   # extra bash commands

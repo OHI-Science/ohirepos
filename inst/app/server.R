@@ -1,8 +1,19 @@
 shinyServer(function(input, output) {
 
+  # read_csv('draft/eez2012/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==0) %>% .$score
+  # read_csv('draft/eez2015/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==0) %>% .$score
+  # 
+  # read_csv('draft/eez2012/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==163) %>% .$score
+  # read_csv('draft/eez2015/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==163) %>% .$score
+  
   ## get_selected() ----
   get_selected = reactive({
+    req(input$sel_scenario)
     req(input$sel_type)
+    
+    if (input$sel_scenario != scenario){
+      load_scenario(input$sel_scenario)
+    }  
 
     switch(input$sel_type,
 
@@ -321,8 +332,12 @@ shinyServer(function(input, output) {
   # aster plot
   output$aster = renderAster({
 
-    req(input$sel_type, input$sel_output_goal, input$sel_output_goal_dimension)
+    req(input$sel_scenario, input$sel_type, input$sel_output_goal, input$sel_output_goal_dimension)
 
+    # if (input$sel_scenario != scenario){
+    #   load_scenario(input$sel_scenario)
+    # }
+    
     # if default input Index score, show aster
     if (input$sel_type=='output' & input$sel_output_goal=='Index' & input$sel_output_goal_dimension=='score'){
       aster(
@@ -416,11 +431,13 @@ shinyServer(function(input, output) {
     selection())
 
   # message ----
-  output$ui_msg <- renderUI({ 
-    fluidRow(
-      box(
-        title='Messages (debug=T)', color='yellow', collapsible = T, width = 12, collapsed=F,
-        HTML(v$msg)))
+  output$ui_msg <- renderUI({
+    if (y$debug){
+      fluidRow(
+        box(
+          title='Messages', color='yellow', collapsible = T, width = 12, collapsed=F,
+          'debug=T in app.yml\n',
+          HTML(v$msg))) }
     })
-  
+
 })
