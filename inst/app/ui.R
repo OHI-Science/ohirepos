@@ -17,8 +17,8 @@ dashboardPage(
         selectInput(
           'sel_scenario', 
           label    = '0. Choose scenario:', 
-          choices  = sort(y$scenarios), 
-          selected = y$scenarios[1]),
+          choices  = sort(y$scenario_dirs), 
+          selected = y$scenario_dirs[1]),
             
         selectInput(
           'sel_type', 

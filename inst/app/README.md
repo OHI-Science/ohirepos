@@ -8,36 +8,58 @@ Normally these files are translated from template files into a live Shiny app us
 library(ohirepos)
 
 # ohi-global
-deploy_app('ohi-global', 'eez2015', 'Global')
+deploy_app('ohi-global', 'Global', 'eez2015')
 
 # baltic
-deploy_app('ohi-global', 'baltic2015', 'Baltic')
+deploy_app('ohi-global', 'Baltic', c('eez2015','eez2012','eez2013','eez2014','eez2016'))
 ```
 
-When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp)), the github repository specified in `app.yml` will get downloaded for the specified `default_branch` from Github with `git clone` and all the scenarios (specified by `default_scenario` & `other_scenarios`) will be processed into a `[scenario].Rdata` file(s) before launching the app.
+When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp)), the github repository specified in `app.yml` will get downloaded for the specified `default_branch` from Github with `git clone` and all the scenarios (specified by `scenario_dirs`) will be processed into a `[scenario].Rdata` file(s) before launching the app.
 
 ## Debugging
 
 In practice, for developing this Shiny app, I launch RStudio with `app.Rproj` to set the working directory here, and create the `app.yml` and `intro.md` for whichever repo before launching the app:
 
 ```r
-# static vars: ohi-global
-gh_repo='ohi-global'; default_scenario='eez2015'; app_title='Global'
-gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'
-projection='Mercator'; map_shrink_pct=10; debug=F
+# vars for ohi-global
+gh_repo    = 'ohi-global'
+app_title  = 'Global'
+scenario_dirs  = c('eez2015','eez2012','eez2013','eez2014','eez2016')
+projection = 'Mollweide'
 
-# static vars: bhi
-gh_repo='bhi'; default_scenario='baltic2015'; app_title='Baltic'
-gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'
-projection='Mollweide'; map_shrink_pct=10; debug=F
+# vars for bhi
+gh_repo    = 'bhi'
+app_title  = 'Baltic'
+scenario_dirs  = 'baltic2015'
+projection = 'Mercator'
+
+# common vars
+gh_owner       = 'OHI-Science'
+gh_branch_data = 'draft'
+gh_branch_app  = 'app'
+map_shrink_pct = 10
+debug          = F
 
 # derived vars
-gh_url  = sprintf('https://github.com/%s/%s.git', gh_owner, gh_repo)
-app_url = sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+app_url         = sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
 ohirepos_commit = devtools:::local_sha('ohirepos')
 
-# brew templates into files
-brew::brew('app.brew.yml' , 'app.yml')
+readr::write_file(
+    yaml::as.yaml(list(
+    app_title       = app_title,
+    gh_owner        = gh_owner,
+    gh_repo         = gh_repo,
+    gh_branch_data  = gh_branch_data,
+    app_url         = app_url,
+    scenario_dirs       = scenario_dirs,
+    projection      = projection,
+    map_shrink_pct  = map_shrink_pct,
+    debug           = F,
+    ohirepos_commit = ohirepos_commit,
+    last_updated    = Sys.Date())),
+    'app.yml')
+
+# brew intro.md
 brew::brew('intro.brew.md', 'intro.md')
 
 # run app

@@ -1,13 +1,13 @@
 #' Deploy Shiny application
 #'
 #' @param gh_repo Github repository.
-#' @param default_scenario The subfolder of the data branch which will be the default scenario of data displayed.
+#' @param scenario_dirs A character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.
 #' @param app_title The title for the app, which is typically the study area or place name.
 #' @param gh_owner Github owner. Defaults to "OHI-Science".
 #' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
 #' @param gh_branch_app Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.
 #' @param app_url URL of the application
-#' @param projection defaults to Mercator, or could be specified as Mollweide, which is appropriate for global results.
+#' @param projection defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results.
 #' @param map_shrink_pct percentage of shrinkage to apply to study area for default map view.
 #' @param debug produces a Message box with various debug outputs to evaluate reactivity of the app.
 #'
@@ -19,19 +19,19 @@
 #' @import tidyverse devtools brew
 #' @export
 deploy_app <- function(
-  gh_repo, default_scenario, app_title, gh_owner='OHI-Science',
-  gh_branch_data='draft', gh_branch_app='app',
+  gh_repo, app_title, scenario_dirs,
+  gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
-  projection='Mercator', map_shrink_pct=10,
-  debug=F){
+  projection='Mercator', map_shrink_pct=10, debug=F){
 
   library(tidyverse)
+  library(yaml)
 
   # library(devtools); load_all(); debug=T; projection='Mercator'; map_shrink_pct=10
-  # gh_repo='bhi'; projection='Mercator'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
-  # gh_repo='ohi-global'; projection='Mercator'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # gh_repo='bhi'; scenario_dirs = 'baltic2015'; projection='Mercator'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # gh_repo='ohi-global'; scenario_dirs = c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
 
-  # Copied from https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116
+  # derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
 
   # old ----
   #key <<- key # assign key to the global namespace so available for other functions
@@ -105,31 +105,36 @@ deploy_app <- function(
       'based on devtools:::local_sha("ohirepos") of %s and not of normal Github commit length 40,',
       'which is necessary to associate the ohirepos commit with the Shiny app deployed.', collapse='\n'), ohirepos_commit))
   }
-  # TODO: OLD -> NEW variable assignment
-  # git_owner  = gh_owner       # 'jules32', #g[['GithubUsername']],   ## generalize-- DESCRIPTION not found...
-  # git_repo   = gh_repo        # 'gye', # g[['GithubRepo']],
-  # git_branch = gh_branch_data # 'draft', # g[['GithubRef']],
-  # git_commit = gh_commit      # 'initial commit')) #g[['GithubSHA1']]))
 
-  # ohicore_app=list(
-  #   git_owner  = gh_owner,       # 'jules32', #g[['GithubUsername']],   ## generalize-- DESCRIPTION not found...
-  #   git_repo   = gh_repo,        # 'gye', # g[['GithubRepo']],
-  #   git_branch = gh_branch_data, # 'draft', # g[['GithubRef']],
-  #   git_commit = gh_commit,      # 'initial commit')) #g[['GithubSHA1']]))
-  #   ohirepos_commit = ohirepos_commit)
-  # TODO: use ohirepos_commit to stamp which version of ohirepos was used to last modify the shiny app
+  # write app.yml configuration
+  write_file(
+    as.yaml(list(
+    gh_repo         = gh_repo,
+    app_title       = app_title,
+    scenario_dirs   = scenario_dirs,
+    gh_owner        = gh_owner,
+    gh_branch_data  = gh_branch_data,
+    gh_branch_app   = gh_branch_app,
+    app_url         = app_url,
+    projection      = projection,
+    map_shrink_pct  = map_shrink_pct,
+    debug           = F,
+    ohirepos_commit = ohirepos_commit,
+    last_updated    = Sys.Date())),
+    file.path(dir_app, 'app.yml'))
 
-  # brew app.yml configuration and introduction files, and delete brew templates
-  brew(system.file('app/app.brew.yml' , package='ohirepos'), file.path(dir_app, 'app.yml'))
+  # brew intro.md
   brew(system.file('app/intro.brew.md', package='ohirepos'), file.path(dir_app, 'intro.md'))
-  unlink(sprintf('%s/%s', dir_app, c('app.brew.yml','intro.brew.md')))
 
-  # TODO: Travis?
-  #brew::brew(system.file('app/travis.brew.yml', package='ohirepos'), file.path(dir_app, 'travis.yml'))
+  # cleanup unused files
+  unlink(sprintf('%s/%s', dir_app, c('intro.brew.md')))
 
   # add Rstudio project and gitignore files
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_app, gh_repo))
   writeLines(c('.Rproj.user', '.Rhistory', '.RData', gh_branch_data), file.path(dir_app, '.gitignore'))
+
+  # TODO: Travis?
+  #brew::brew(system.file('app/travis.brew.yml', package='ohirepos'), file.path(dir_app, 'travis.yml'))
 
   # TODO finish up from 2016-09-29.... ----
 
