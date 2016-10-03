@@ -18,7 +18,7 @@ When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocu
 
 ## Debugging
 
-In practice, for developing this Shiny app, I launch RStudio with `app.Rproj` to set the working directory here, and create the `app.yml` and `intro.md` for whichever repo before launching the app:
+In practice, for developing this Shiny app, I launch RStudio with `app.Rproj` to set the working directory here, and create the `app.yml` and `[repo]_intro.md` for whichever repo before launching the app:
 
 ```r
 # vars for ohi-global
@@ -60,7 +60,7 @@ readr::write_file(
     'app.yml')
 
 # brew intro.md
-brew::brew('intro.brew.md', 'intro.md')
+brew::brew('intro.brew.md', sprintf('%s_intro.md', gh_repo))
 
 # run app
 shiny::runApp()

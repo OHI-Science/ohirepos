@@ -1,4 +1,4 @@
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
   # read_csv('draft/eez2012/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==0) %>% .$score
   # read_csv('draft/eez2015/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==0) %>% .$score
@@ -6,11 +6,25 @@ shinyServer(function(input, output) {
   # read_csv('draft/eez2012/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==163) %>% .$score
   # read_csv('draft/eez2015/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==163) %>% .$score
   
+  # write remote git commit hash every 5 seconds to compare with remote
+  log_gitsha <- observe({
+    # Invalidate this observer every 2 seconds (2000 milliseconds)
+    invalidateLater(2000, session)
+
+    # write remote git commit sha
+    gh_write_remote(y$gh_slug, y$gh_branch_data, remote_sha_txt)
+  })
+  
+  # monitor file for changes every 1 seconds (1000 milliseconds)
+  fileReaderData <- reactiveFileReader(
+    1000, session, remote_sha_txt, readLines)
+  
   ## get_selected() ----
   get_selected = reactive({
+    
     req(input$sel_scenario)
     req(input$sel_type)
-    
+
     if (input$sel_scenario != scenario){
       load_scenario(input$sel_scenario)
     }  
@@ -378,6 +392,15 @@ shinyServer(function(input, output) {
     }
     format(txt)
   })
+  
+  output$ui_commit = renderText({
+    sha_txt = sprintf('%s/%s', y$gh_slug, str_sub(local_sha, end=7))
+    sha_url = sprintf('https://github.com/%s/commit/%s', y$gh_slug, local_sha)
+    HTML(str_c(
+      div(
+        class='shiny-input-container', style='font-size:12px',
+        'data:', a(sha_txt, href=sha_url))))
+  })
 
   output$hoverText <- renderText({
     if (v$hi_id == 0){
@@ -388,6 +411,44 @@ shinyServer(function(input, output) {
         subset(rgns@data, rgn_id==v$hi_id, rgn_name, drop=T),
         format(round(subset(rgns@data, rgn_id==v$hi_id, area_km2, drop=T)), big.mark =','))
     }
+    
+    # get remote_sha from file
+    remote_sha <- fileReaderData()
+    
+    # check if github remote differs from local
+    if (devtools:::different_sha(remote_sha, local_sha)){
+      
+      # show progress bar while updating
+      withProgress(
+        message = sprintf('Updating data "%s" with newer commit(s) at github.com/%s', dir_data, y$gh_slug), 
+        value = 0, {
+          
+          # increment
+          n = length(y$scenario_dirs) + 2
+          
+          # git pull
+          incProgress(1/n, detail = 'git pull')
+          system(sprintf('cd %s; git pull', dir_scenario))
+          local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
+          
+          # redo [scenario].Rdata files
+          for (i in 1:length(y$scenario_dirs)){
+            scenario = sort(y$scenario_dirs)[i]
+            rdata = sprintf('%s_%s.Rdata', y$gh_repo, scenario)
+            
+            incProgress((i+1)/n, detail = sprintf("creating scenario %s", rdata))
+            unlink(rdata)
+            create_scenario_rdata(scenario, rdata)
+          }
+          
+          # load default scenario
+          incProgress(n, detail = sprintf("loading selected scenario %s", input$sel_scenario))
+          load_scenario(input$sel_scenario)
+        })
+      
+      return(remote_sha)
+    }
+    
   })
 
 

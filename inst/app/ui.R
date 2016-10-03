@@ -11,6 +11,8 @@ dashboardPage(
       
       menuItem("Explore Data", tabName='explore',icon=icon("globe",lib='font-awesome'), selected=T),
       
+      htmlOutput('ui_commit'),
+
       conditionalPanel(
         "input.sidebarmenu === 'explore'",
 
@@ -54,7 +56,7 @@ dashboardPage(
       
       tabItem(
         tabName='intro',
-        includeMarkdown("intro.md")),
+        includeMarkdown(sprintf('%s_intro.md', y$gh_repo))),
       
       tabItem(
         tabName='explore',

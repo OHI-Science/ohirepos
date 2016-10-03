@@ -63,14 +63,15 @@ init = function(){
   if (length(y_missing) > 0) stop(paste0('Missing variables in app.yml: ', paste(y_missing, collapse=', ')))
   y$gh_slug <<- sprintf('%s/%s', y$gh_owner, y$gh_repo)
   y$gh_url  <<- sprintf('https://github.com/%s.git', y$gh_slug)
+  dir_data  <<- sprintf('%s_%s', y$gh_repo, y$gh_branch_data)
 }
 init()
 
 load_scenario = function(scenario){
   # load new scenario data
-  scenario <<- scenario
-  dir_scenario <<- file.path(y$gh_branch_data, scenario)
-  rdata <<- sprintf('%s.Rdata', scenario)
+  scenario     <<- scenario
+  dir_scenario <<- file.path(dir_data, scenario)
+  rdata        <<- sprintf('%s_%s.Rdata', y$gh_repo, scenario)
   load(rdata, envir=.GlobalEnv)
   init()
 }
@@ -82,21 +83,19 @@ load_scenario = function(scenario){
 
 create_scenario_rdata = function(scenario, rdata){
   
-  # TODO: could have github dir, check for latest updates, and enable selection by commit
-
   # check for data branch folder
-  if (!file.exists(y$gh_branch_data)){
+  dir_data  = sprintf('%s_%s', y$gh_repo, y$gh_branch_data)
+  if (!file.exists(dir_data)){
 
     # git clone data branch
     system(sprintf(
-      'git clone --quiet --branch %s %s %s', y$gh_branch_data, y$gh_url, y$gh_branch_data))
+      'git clone --quiet --branch %s %s %s', y$gh_branch_data, y$gh_url, dir_data))
 
   }
 
   # check dir_scenario subfolder exists
-  dir_scenario = file.path(y$gh_branch_data, scenario) # './data/ohi-global/eez2015'
-  if (!dir.exists(dir_scenario)) stop(sprintf('Although app.yml gh_branch_data folder "%s" exists, \nit does not contain subfolder "%s" as specified by the scenario in app.yml. \nRecommend deleting local gh_branch_data folder and rerun Shiny app to clone original, or update app.yml to have correct scenario.', y$gh_branch_data, y$scenario_dirs[1]))
-  # TODO: check git config of branch folder (eg draft) matches app.yml: gh_owner, gh_repo
+  dir_scenario = file.path(dir_data, scenario)
+  if (!dir.exists(dir_scenario)) stop(sprintf('Although app.yml folder "%s" exists, \nit does not contain subfolder "%s" as specified by the scenario in app.yml. \nRecommend deleting local data folder and rerun Shiny app to clone original, or update app.yml to have correct scenario.', dir_data, y$scenario_dirs[1]))
 
   # get selectable layers ----
 
@@ -104,7 +103,9 @@ create_scenario_rdata = function(scenario, rdata){
   if (!file.exists(file.path(dir_scenario, 'conf/config.R'))) stop(sprintf('Missing file conf/config.R in branch/scenario "%s"', dir_scenario))
   config = new.env()
   source(file.path(dir_scenario, 'conf/config.R'), config)
-  dims = data_frame(dimension = names(config$dimension_descriptions), description = config$dimension_descriptions)
+  dims = data_frame(
+    dimension   = names(config$dimension_descriptions), 
+    description = config$dimension_descriptions)
     
   # read goals and layers
   files = list(
@@ -389,13 +390,39 @@ create_scenario_rdata = function(scenario, rdata){
     ",sep="\n")
 
   # save to rdata
-  #save.image(rdata)
   save(list = ls(all.names=T), file=rdata, envir=environment())
 }
 
+gh_write_remote = function(gh_slug, gh_branch, txt=sprintf('%s_remote_sha.txt', gh_branch)){
+  remote     = devtools:::github_remote(gh_slug, ref=gh_branch)
+  remote_sha = devtools:::remote_sha(remote)
+  write(remote_sha, txt)
+  return(remote_sha)
+}
+
+remote_sha_txt = sprintf('%s_remote_sha.txt', dir_data)
+remote_sha = gh_write_remote(y$gh_slug, y$gh_branch_data, remote_sha_txt)
+local_sha  = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
+
+# check if github remote differs from local
+if (devtools:::different_sha(remote_sha, local_sha)){
+  
+  # git pull
+  system(sprintf('cd %s; git pull', dir_scenario))
+  
+  # update local git commit sha
+  local_sha = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
+  
+  # wipe [scenario].Rdata files
+  for (scenario in y$scenario_dirs){
+    unlink(sprintf('%s_%s.Rdata', y$gh_repo, scenario))
+  }
+}
+
 for (scenario in y$scenario_dirs){
-  rdata = sprintf('%s.Rdata', scenario)
+  rdata = sprintf('%s_%s.Rdata', y$gh_repo, scenario)
   if (!file.exists(rdata)){
+    # create [scenario].Rdata files
     create_scenario_rdata(scenario, rdata)
   }
 }

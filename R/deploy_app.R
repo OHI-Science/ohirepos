@@ -109,22 +109,22 @@ deploy_app <- function(
   # write app.yml configuration
   write_file(
     as.yaml(list(
-    gh_repo         = gh_repo,
-    app_title       = app_title,
-    scenario_dirs   = scenario_dirs,
-    gh_owner        = gh_owner,
-    gh_branch_data  = gh_branch_data,
-    gh_branch_app   = gh_branch_app,
-    app_url         = app_url,
-    projection      = projection,
-    map_shrink_pct  = map_shrink_pct,
-    debug           = F,
-    ohirepos_commit = ohirepos_commit,
-    last_updated    = Sys.Date())),
+      gh_repo         = gh_repo,
+      app_title       = app_title,
+      scenario_dirs   = scenario_dirs,
+      gh_owner        = gh_owner,
+      gh_branch_data  = gh_branch_data,
+      gh_branch_app   = gh_branch_app,
+      app_url         = app_url,
+      projection      = projection,
+      map_shrink_pct  = map_shrink_pct,
+      debug           = F,
+      ohirepos_commit = ohirepos_commit,
+      last_updated    = Sys.Date())),
     file.path(dir_app, 'app.yml'))
 
   # brew intro.md
-  brew(system.file('app/intro.brew.md', package='ohirepos'), file.path(dir_app, 'intro.md'))
+  brew(system.file('app/intro.brew.md', package='ohirepos'), sprintf('%s/%s_intro.md', dir_app, gh_repo))
 
   # cleanup unused files
   unlink(sprintf('%s/%s', dir_app, c('intro.brew.md')))
