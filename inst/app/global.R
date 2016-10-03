@@ -1,9 +1,17 @@
+# packages ----
+
+# refresh fitz.nceas.ucsb.edu after `sudo R` to gain write permissions on R library path:
+#   remove.packages(c('leaflet','ohicore','htmlwidgets','aster','sunburstR'))
+#   update.packages(ask=F)
+#   sudo apt-get install -y libv8-dev # for V8
+#   # then run up to and including `install_packages(pkgs_df)` below
+
 if (!'devtools'  %in% installed.packages()[,1]) install.packages('devtools')
 if (!'tidyverse' %in% installed.packages()[,1]) install.packages('tidyverse')
+# TODO: check that all packages below are actually needed, including specific tidyverse packages
 library(devtools , quietly=T)
 library(tidyverse, quietly=T)
 
-# TODO: check that all packages below are actually needed, including specific tidyverse packages
 pkgs_df = tibble::tribble(
   ~package   ,     ~location,                                                    ~install_args, ~version_min,
   'dplyr',            'CRAN',                                                               '',           '',
@@ -19,8 +27,9 @@ pkgs_df = tibble::tribble(
   'jsonlite',         'CRAN',                                                               '',           '',
   'visNetwork',       'CRAN',                                                               '',           '',
   'yaml',             'CRAN',                                                               '',           '',
-  'geojsonio',        'CRAN',                                                               '',           '',
+  'V8',               'CRAN',                                                               '',           '',
   'leaflet',        'Github',                                     list(repo='rstudio/leaflet'),           '',
+  'geojsonio',      'Github',                                  list(repo='ropensci/geojsonio'),           '',
   'ohicore',        'Github',                     list(repo='ohi-science/ohicore' , ref='dev'),           '',
   'htmlwidgets',    'Github',        list(repo='ramnathv/htmlwidgets', ref=github_pull('237')),           '',
   'aster',          'Github', list(repo='FrissAnalytics/ohi-aster' , subdir='asterHTMLwidget'),           '',

@@ -7,14 +7,16 @@
 deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
   gh_branch_data = "draft", gh_branch_app = "app",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
-  projection = "Mercator", map_shrink_pct = 10, debug = F)
+  app_server = "jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/",
+  projection = "Mercator", map_shrink_pct = 10, run_app = F,
+  open_url = T, debug = F)
 }
 \arguments{
-\item{gh_repo}{Github repository.}
+\item{gh_repo}{Github repository}
 
-\item{app_title}{The title for the app, which is typically the study area or place name.}
+\item{app_title}{title for the app, which is typically the study area or place name}
 
-\item{scenario_dirs}{A character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.}
+\item{scenario_dirs}{character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.}
 
 \item{gh_owner}{Github owner. Defaults to "OHI-Science".}
 
@@ -24,14 +26,21 @@ deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
 
 \item{app_url}{URL of the application}
 
-\item{projection}{defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results.}
+\item{app_server}{the secure copy (scp) server location given by username@server:/dir/}
 
-\item{map_shrink_pct}{percentage of shrinkage to apply to study area for default map view.}
+\item{projection}{defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results}
 
-\item{debug}{produces a Message box with various debug outputs to evaluate reactivity of the app.}
+\item{map_shrink_pct}{percentage of shrinkage to apply to study area for default map view}
+
+\item{run_app}{run the Shiny app locally}
+
+\item{open_url}{open the web browser to the app_url}
+
+\item{debug}{produces a Message box with various debug outputs to evaluate reactivity of the app}
 }
 \value{
-Returns URL of Shiny app if successfully deployed, otherwise errors out.
+Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
+and SSH keys for secure copying to server.
 }
 \description{
 Deploy Shiny application

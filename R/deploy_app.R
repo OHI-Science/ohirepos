@@ -1,17 +1,21 @@
 #' Deploy Shiny application
 #'
-#' @param gh_repo Github repository.
-#' @param scenario_dirs A character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.
-#' @param app_title The title for the app, which is typically the study area or place name.
+#' @param gh_repo Github repository
+#' @param scenario_dirs character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.
+#' @param app_title title for the app, which is typically the study area or place name
 #' @param gh_owner Github owner. Defaults to "OHI-Science".
 #' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
 #' @param gh_branch_app Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.
 #' @param app_url URL of the application
-#' @param projection defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results.
-#' @param map_shrink_pct percentage of shrinkage to apply to study area for default map view.
-#' @param debug produces a Message box with various debug outputs to evaluate reactivity of the app.
+#' @param projection defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results
+#' @param map_shrink_pct percentage of shrinkage to apply to study area for default map view
+#' @param debug produces a Message box with various debug outputs to evaluate reactivity of the app
+#' @param app_server the secure copy (scp) server location given by username@server:/dir/
+#' @param run_app run the Shiny app locally
+#' @param open_url open the web browser to the app_url
 #'
-#' @return Returns URL of Shiny app if successfully deployed, otherwise errors out.
+#' @return Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
+#' and SSH keys for secure copying to server.
 #' @examples
 #' \dontrun{
 #' deploy_app("bhi")
@@ -22,23 +26,23 @@ deploy_app <- function(
   gh_repo, app_title, scenario_dirs,
   gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
-  projection='Mercator', map_shrink_pct=10, debug=F){
+  app_server='jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/',
+  projection='Mercator', map_shrink_pct=10,
+  run_app=F, open_url=T, debug=F){
 
   library(tidyverse)
   library(yaml)
-
-  # library(devtools); load_all(); debug=T; projection='Mercator'; map_shrink_pct=10
-  # gh_repo='bhi'; scenario_dirs = 'baltic2015'; projection='Mercator'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
-  # gh_repo='ohi-global'; scenario_dirs = c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  library(brew)
 
   # derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
 
-  # old ----
-  #key <<- key # assign key to the global namespace so available for other functions
-  #source(file.path(dir_github, 'ohi-webapps/create_init_sc.R'))
-  # delete old
-  #dir_app_old <- sprintf('%s/git-annex/clip-n-ship/%s/shinyapps.io', dir_neptune, git_repo)
-  #unlink(dir_app_old, recursive=T)
+  # debug ----
+  # library(devtools); load_all();
+  # debug=T; run_app=T; open_url=T; app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/'
+  # projection='Mercator'; map_shrink_pct=10
+  # gh_repo='bhi'; scenario_dirs = 'baltic2015'; projection='Mercator'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # gh_repo='ohi-global'; scenario_dirs = c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # ----
 
   # use temporary directory
   if (debug){
@@ -51,7 +55,7 @@ deploy_app <- function(
   dir_branches = file.path(tmpdir, gh_repo)
   dir_data     = file.path(tmpdir, gh_repo, gh_branch_data)
   dir_app      = file.path(tmpdir, gh_repo, gh_branch_app)
-  dir_data_2   = file.path(tmpdir, gh_repo, gh_branch_app, gh_branch_data)
+  dir_data_2   = file.path(tmpdir, gh_repo, gh_branch_app, sprintf('%s_%s', gh_repo, gh_branch_data))
   gh_slug      = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url       = sprintf('https://github.com/%s.git', gh_slug)
 
@@ -131,34 +135,33 @@ deploy_app <- function(
 
   # add Rstudio project and gitignore files
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_app, gh_repo))
-  writeLines(c('.Rproj.user', '.Rhistory', '.RData', gh_branch_data), file.path(dir_app, '.gitignore'))
+  writeLines(c(
+    '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
+    sprintf('%s_%s.Rdata', gh_repo, scenario_dirs),           # [repo]_[scenario].Rdata
+    sprintf('%s_%s', gh_repo, gh_branch_data),                # [repo]_[branch]/
+    sprintf('%s_%s_remote_sha.txt', gh_repo, gh_branch_data)  # [repo]_[scenario]_remote_sha.txt
+    ), file.path(dir_app, '.gitignore'))
 
   # TODO: Travis?
   #brew::brew(system.file('app/travis.brew.yml', package='ohirepos'), file.path(dir_app, 'travis.yml'))
 
-  # TODO finish up from 2016-09-29.... ----
+  # move dir_data to dir_data_2
+  system(sprintf('mv %s %s', dir_data, dir_data_2))
 
-  # TODO next: move dir_data to dir_data_2
+  # prompt restart
+  system(sprintf('touch %s/restart.txt', dir_app))
 
-  # shiny::runApp()    # test app locally
+  # git commit and push to Github
+  system(sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_app, substr(ohirepos_commit, 1, 7)))
 
-  # clean up cloned / archived repos which get populated if testing app
-  unlink(git_repo, recursive=T, force=T)
-  unlink('github', recursive=T, force=T)
+  # push to server using secure copy (scp) recursively (-r), and update permissions so writable by shiny user
+  system(sprintf('scp -r %s %s/%s/', dir_app, app_server, gh_repo))
+  system(sprintf('ssh bbest@fitz.nceas.ucsb.edu "cd /srv/shiny-server/%s; chmod -R 775 ."', gh_repo))
 
-  # deploy
-  # Error: You must register an account using setAccountInfo prior to proceeding. Sign in to shinyapps.io via Github as bbest, Settings > Tokens to use setAccountInfo('ohi-science',...). March 16 Error: did as above. In console: shinyapps::setAccountInfo(name='jules32', token='...', secret='...')
-  deployApp(appDir='.', appName=app_name, upload=T, launch.browser=T, lint=F) # Change this with Nick Brand
-  # copying over ssh to the server with Nick Brand. From terminal
-  # rm first (rsync would be able to delete stuff that's missing)
-  # scp -r gye jstewart@fitz:/srv/shiny-server/ # scp is how to copy over ssh,  -r is recursive
+  # run app, local and remote
+  if (run_app)  shiny::runApp(dir_app)
+  if (open_url) utils::browseURL(app_url)
 
-  # push files to github app branch
-  system('git add -A; git commit -a -m "deployed app"')
-  push_branch('app')
-  system('git fetch')
-  system('git branch --set-upstream-to=origin/app app')
-
-  # restore wd
-  setwd(wd)
+  # remove temp files
+  if (!debug) unlink(dir_branches, recursive=T, force=T)
 }
