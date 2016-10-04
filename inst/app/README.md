@@ -8,10 +8,10 @@ Normally these files are translated from template files into a live Shiny app us
 library(ohirepos)
 
 # ohi-global
-deploy_app('ohi-global', 'Global', 'eez2015')
+deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide')
 
-# baltic
-deploy_app('ohi-global', 'Baltic', c('eez2015','eez2012','eez2013','eez2014','eez2016'))
+# bhi
+deploy_app('bhi', 'Baltic', 'baltic2015')
 ```
 
 When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp)), the github repository specified in `app.yml` will get downloaded for the specified `default_branch` from Github with `git clone` and all the scenarios (specified by `scenario_dirs`) will be processed into a `[scenario].Rdata` file(s) before launching the app.

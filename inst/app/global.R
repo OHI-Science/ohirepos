@@ -416,8 +416,8 @@ local_sha  = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 # check if github remote differs from local
 if (devtools:::different_sha(remote_sha, local_sha)){
 
-  # git pull
-  system(sprintf('cd %s; git pull', dir_scenario))
+  # git fetch & overwrite
+  system(sprintf('cd %s; git fetch %s; git reset --hard origin/%s', dir_data, y$gh_branch_data, y$gh_branch_data))
 
   # update local git commit sha
   local_sha = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
