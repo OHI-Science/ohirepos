@@ -11,7 +11,7 @@
 
 
 
-<title>Welcome</title>
+<title>Regions</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -208,50 +208,55 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Welcome</h1>
+<h1 class="title toc-ignore">Regions</h1>
 
 </div>
 
+<div id="TOC">
+true
+</div>
 
-<!-- Note: most of this language was borrowed from www.su.se/ostersjocentrum/english/baltic-eye/research/baltic-health-index -->
-<div class="page-lead" style="background-image:url(images/regions_1600x800.png)">
-<div class="wrap page-lead-content">
-<h1>
-Baltic Health Index
-</h1>
-<h2>
-An Ocean Health Index assessment for the Baltic Sea
-</h2>
+<p>Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire study area, {{ site.study_area }}. These template regions can be modified with some effort. They were identified as the largest subcountry division within {{ site.study_area }}.</p>
+<nav class="navbar navbar-default" role="navigation">
+<div class="container-fluid">
+<pre><code> &lt;div class=&quot;navbar-header&quot;&gt;       &lt;a class=&quot;navbar-brand&quot; href=&quot;#&quot;&gt;Branch/Scenario&lt;/a&gt;     &lt;/div&gt;     &lt;div class=&quot;collapse navbar-collapse&quot; id=&quot;navbar-1&quot;&gt;       &lt;ul class=&quot;nav navbar-nav&quot;&gt;         &lt;li class=&quot;dropdown&quot;&gt;           &lt;a href=&quot;#&quot; class=&quot;dropdown-toggle&quot; data-toggle=&quot;dropdown&quot; role=&quot;button&quot; aria-expanded=&quot;false&quot;&gt;published/baltic2015&lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;&lt;/a&gt;           &lt;ul class=&quot;dropdown-menu&quot; role=&quot;menu&quot;&gt;                       &lt;li&gt;&lt;a href=&quot;{{ site.baseurl }}/draft/baltic2015/regions/&quot;&gt;draft/baltic2015&lt;/a&gt;&lt;/li&gt;                     &lt;/ul&gt;         &lt;/li&gt;       &lt;/ul&gt;     &lt;/div&gt;   &lt;/div&gt; &lt;/nav&gt; </code></pre>
+<div class="figure">
+<img src="%7B%7B%20site.baseurl%20%7D%7D/results/%7B%7B%20page.branch_scenario%20%7D%7D/figures/regions_600x400.png" />
+
 </div>
-<!-- /.page-lead-content. -->
-</div>
-<!-- /.page-lead -->
-<div class="tiles">
-<div class="tile">
-<h2 class="post-title">
-<i class="fa fa-book fa-2x"></i> Project
-</h2>
-<p class="post-excerpt">
-The Baltic Health Index (BHI) is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of a tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability.
-</p>
-</div>
-<div class="tile">
-<h2 class="post-title">
-<i class="fa fa-cubes fa-2x"></i> Our team
-</h2>
-<p class="post-excerpt">
-BHI is jointly led by Stockholm Resilience Centre (SRC) and <a href="http://www.su.se/ostersjocentrum/english/baltic-eye">Baltic Eye</a> at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by <a href="http://www.su.se/ostersjocentrum/english/beam">Baltic Ecosystem Adaptive Management</a>, Baltic Eye, and the Johansson Family Foundation.
-</p>
-</div>
-<div class="tile">
-<h2 class="post-title">
-<i class="fa fa-globe fa-2x"></i> Ocean Health Index
-</h2>
-<p class="post-excerpt">
-The Ocean Health Index (‘OHI’) is a scientific framework to measure how healthy oceans are. Understanding the state of our oceans is a first step towards ensuring they can continue providing humans benefits now and in the future. Learn more at <a href="http://ohi-science.org">ohi-science.org</a>.
-</p>
-</div>
-</div>
+<p>Or see the <a href="https://github.com/OHI-Science/%7B%7B%20site.git_repo%20%7D%7D/blob/%7B%7B%20page.branch_scenario%20%7D%7D/spatial/regions_gcs.geojson">interactive map of the offshore regions on Github</a>.</p>
+<p>OHI {{ site.study_area }} has the following subcountry regions, each with a unique identifier (ID):</p>
+<p>{% capture regions_csv %}regions_{{ page.branch_scenario | replace:‘/’,’_’ }}{% endcapture %} {% assign regions = site.data[regions_csv] %}</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">ID</th>
+<th align="left">NAME</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">{% for rgn in regions %}</td>
+<td align="left">{{ rgn.region_id }}</td>
+</tr>
+</tbody>
+</table>
+<p>{% endfor %}</p>
+<p>IDs for subcountry regions were assigned geographically by increasing longitude. The entire study area ({{ site.study_area }}) has a special region ID of 0.</p>
+<p>Exclusive economic zones (EEZs) were identified by <a href="http://www.marineregions.org">MarineRegions.org</a> and the largest subcountry regions were identified by the generalized administrative boundary database <a href="http://www.gadm.org">GADM.org</a>. Region boundaries were extended offshore to divide the EEZ of {{ site.study_area }} into offshore regions. It is possible to use different regions than the ones provided here. See <a href="http://ohi-science.org/pages/create_regions.html">Create Regions</a> for more details.</p>
+<p>Regions were generated with the following inland and offshore buffers relative to the shoreline, which are visualized in the graphic above within increasing transparency away from the shoreline.</p>
+<ul>
+<li>offshore</li>
+<li>offshore1km</li>
+<li>offshore3nm</li>
+<li>inland</li>
+<li>inland1km</li>
+<li>inland25km</li>
+</ul>
+<p>These data are available as shapefiles as well as csv files summarizing total area per region. Since shapefiles are binary and can be large, they’re best stored outside the <strong>{{ site.git_repo }}</strong> Github repository. Instead, download the zipped set of shapefiles:</p>
+<ul>
+<li><a href="http://ohi.nceas.ucsb.edu/data/subcountry2014/%7B%7B%20site.git_repo%20%7D%7D_shapefiles.zip">{{ site.git_repo }}_shapefiles.zip</a></li>
+</ul>
 
 <footer role="contentinfo" id="site-footer">
 <!-- /.bottom-menu -->

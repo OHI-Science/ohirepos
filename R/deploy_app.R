@@ -18,9 +18,10 @@
 #' and SSH keys for secure copying to server.
 #' @examples
 #' \dontrun{
-#' deploy_app("bhi")
+#' deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide')
+#' deploy_app(       'bhi', 'Baltic', 'baltic2015')
 #' }
-#' @import tidyverse devtools brew
+#' @import tidyverse yaml devtools brew
 #' @export
 deploy_app <- function(
   gh_repo, app_title, scenario_dirs,
@@ -34,9 +35,9 @@ deploy_app <- function(
   library(yaml)
   library(brew)
 
-  # derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
-
   # debug ----
+
+  # history: derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
 
   # library(devtools); load_all();
   # gh_repo='bhi'       ; app_title='Baltic'; projection='Mercator';  scenario_dirs='baltic2015'
@@ -46,7 +47,7 @@ deploy_app <- function(
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
   # deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
-  # deploy_app(       'bhi', 'Baltic', 'baltic2015', projection='Mollweide', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
+  # deploy_app(       'bhi', 'Baltic', 'baltic2015', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
 
   # ----
 
@@ -78,14 +79,7 @@ deploy_app <- function(
   }
 
   # get remote branches
-  remote_branches = read_tsv(
-    paste(system(
-      sprintf('cd %s;git ls-remote --heads origin', dir_data),
-      intern=T), collapse='\n'),
-    col_names=c('sha','ref')) %>%
-    mutate(
-      repo = stringr::str_replace(ref, 'refs/heads/', '')) %>%
-    .$repo
+  remote_branches = gh_remote_branches(dir_data)
 
   # create/clear app branch
   if (!'app' %in% remote_branches){
@@ -139,8 +133,10 @@ deploy_app <- function(
   # cleanup unused files
   unlink(sprintf('%s/%s', dir_app, c('intro.brew.md')))
 
-  # add Rstudio project and gitignore files
+  # add Rstudio project file
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_app, gh_repo))
+
+  # add gitignore file
   writeLines(c(
     '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
     sprintf('%s_%s.Rdata', gh_repo, scenario_dirs),           # [repo]_[scenario].Rdata

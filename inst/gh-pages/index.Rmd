@@ -1,6 +1,9 @@
 ---
+title: "Welcome"
 ---
-
+---
+title: Welcome
+---
 ```{r, echo=F}
 source("./_site.R")
 ```
@@ -13,8 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <div class="page-lead" style="background-image:url(images/regions_1600x800.png)">
 <div class="wrap page-lead-content">
-<h1>`r title`</h1>
-<h2>An Ocean Health Index assessment for `r study_area`</h2>
+<h2>An Ocean Health Index assessment for `r web_title`</h2>
 
 </div><!-- /.page-lead-content. -->
 </div><!-- /.page-lead -->
@@ -24,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-book fa-2x"></i> Project</h2>
 <p class="post-excerpt">
-The Baltic Health Index (BHI) is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of a tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability. 
+The `r web_title` Health Index (BHI) is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of a tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability. 
 </p>
 </div>
 

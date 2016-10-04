@@ -2,7 +2,7 @@
 output:
   html_document:
     css:
-      - "./_css/styles_app.css"
+      - "./_sass/styles_app.css"
 ---
 
 ```{r, echo=F}

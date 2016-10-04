@@ -1,6 +1,6 @@
-name: "Baltic Ocean Health Index"
+name: "<%=web_title%> Ocean Health Index"
 navbar:
-  title: "BHI"
+  title: "<%=toupper(gh_repo)%>"
   left:
     - text: "About"
       href: about.html

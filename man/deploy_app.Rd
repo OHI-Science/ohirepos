@@ -47,7 +47,8 @@ Deploy Shiny application
 }
 \examples{
 \dontrun{
-deploy_app("bhi")
+deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide')
+deploy_app(       'bhi', 'Baltic', 'baltic2015')
 }
 }
 

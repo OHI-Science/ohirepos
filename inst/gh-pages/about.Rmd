@@ -1,21 +1,34 @@
 ---
+layout: article
+title: "About"
+excerpt: "This is the about page."
+image:
+  feature:
+  teaser:
+  thumb:
+share: false
+ads: false
 ---
 
-```{r, echo=F}
-source("./_site.R")
-```
+A healthy ocean sustainably delivers a range of benefits to people now and in the future.
 
-<div class="col-sm-6">
-![](images/baltic-eye.jpg){width=350 height=350 style="margin-top:27px;"}
-</div>
+While the Ocean Health Index framework was first demonstrated at the global scale (Halpern _et al._ 2012, _Nature_), assessments conducted at smaller spatial scales provide a clearer picture of local ocean health. Using existing data, indicators and priorities, **Ocean Health Index <i class="fa fa-search-plus"></i> subcountry assessments** combine local elements influencing ocean health at the spatial scales where policy and management decisions are made.  
 
-The Baltic Health Index formally started in 2015 and will run until late 2016. A trans-disciplinary project, it involves researchers from around the Baltic Sea who consult on the  development of a region-specific Index based on a comprehensive assessment of existing data.
+To enable and facilitate independent groups interested in conducting Ocean Health Index <i class="fa fa-search-plus"></i> subcountry assessments, we provide a suite of information, software, and guidance on this website. Since small-scale assessments often occur at the country-level, this website includes a template for each coastal country, including subcountry divisions (often coastal states or provinces) populated with data and models used in the global assessment.  
 
-The project is led by Thorsten Blenckner (SRC) and a project core team (see the top right box). Researchers appointed as Goalkeepers are together with the core team responsible for one goal each, and work with teams of researchers who are experts on subjects central to each goal. The Steering group includes Johan Rockström (SRC), Tina Elfwing (Baltic Sea Centre), Thorsten Blenckner, and Ben Halpern (OHI, NCEAS) and it is responsible for the over-arching project development and external representation.
+We encourage any group to use this website as a starting point, incorporating local data, models, and priorities to to the template we provide.
 
-Engagement with Regional Experts
-A project kick-off workshop with invited researchers was held in Stockholm in April 2015. The initial phase, which entailed gathering of data and initial calculation of the Index, ran through 2015 and early 2016.
 
-A policy-oriented workshop was organized together with the Ocean Health Index researchers from California in Stockholm in March, 2016. The two-day workshop gathered expert stakeholders, NGOs, and other scientists from the Baltic Sea region. The aims of the workshop were to present and verify preliminary goals calculations, identify data overlaps and gaps, and assess the connections to policy in a mixed group of experts both familiar with the Index, and new to it.
+## Contact
 
-The team now focuses on continuing the calculations until the launch, planned for late 2016.
+For more information:  
+
+- [OceanHealthIndex.org](http://www.oceanhealthindex.org)  
+
+For strategic guidance:
+
+- epacheco at conservation dot org  
+
+For technical guidance:
+
+- lowndes at nceas.ucsb.edu

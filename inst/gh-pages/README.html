@@ -11,7 +11,7 @@
 
 
 
-<title>Welcome</title>
+<title></title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -208,48 +208,28 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Welcome</h1>
 
 </div>
 
 
-<!-- Note: most of this language was borrowed from www.su.se/ostersjocentrum/english/baltic-eye/research/baltic-health-index -->
-<div class="page-lead" style="background-image:url(images/regions_1600x800.png)">
-<div class="wrap page-lead-content">
-<h1>
-Baltic Health Index
-</h1>
-<h2>
-An Ocean Health Index assessment for the Baltic Sea
-</h2>
+<div id="website-template-for-gh-pages-branch" class="section level1">
+<h1>Website Template for gh-pages Branch</h1>
+<p>Trying out new rmarkdown website (mv off Jekyll), borrowing from BHI gh-pages as starter material.</p>
+<div id="template" class="section level2">
+<h2>Template</h2>
+<p>Be sure to include R chunk with <code>echo=F</code> argument in order to use variables in <code>_site.R</code>:</p>
+<p><code>{r, echo=F} source(&quot;./_site.R&quot;)</code></p>
+<p>For example, in <code>app.Rmd</code>:</p>
+<pre class="html"><code>&lt;iframe frameborder=&#39;0&#39; width=&#39;100%&#39; height=&#39;850&#39; src=&#39;`r app_url`&#39;&gt;&lt;/iframe&gt;</code></pre>
 </div>
-<!-- /.page-lead-content. -->
-</div>
-<!-- /.page-lead -->
-<div class="tiles">
-<div class="tile">
-<h2 class="post-title">
-<i class="fa fa-book fa-2x"></i> Project
-</h2>
-<p class="post-excerpt">
-The Baltic Health Index (BHI) is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of a tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability.
-</p>
-</div>
-<div class="tile">
-<h2 class="post-title">
-<i class="fa fa-cubes fa-2x"></i> Our team
-</h2>
-<p class="post-excerpt">
-BHI is jointly led by Stockholm Resilience Centre (SRC) and <a href="http://www.su.se/ostersjocentrum/english/baltic-eye">Baltic Eye</a> at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by <a href="http://www.su.se/ostersjocentrum/english/beam">Baltic Ecosystem Adaptive Management</a>, Baltic Eye, and the Johansson Family Foundation.
-</p>
-</div>
-<div class="tile">
-<h2 class="post-title">
-<i class="fa fa-globe fa-2x"></i> Ocean Health Index
-</h2>
-<p class="post-excerpt">
-The Ocean Health Index (‘OHI’) is a scientific framework to measure how healthy oceans are. Understanding the state of our oceans is a first step towards ensuring they can continue providing humans benefits now and in the future. Learn more at <a href="http://ohi-science.org">ohi-science.org</a>.
-</p>
+<div id="navigation" class="section level2">
+<h2>Navigation</h2>
+<p>Check out <a href="http://rmarkdown.rstudio.com/rmarkdown_websites.html#site_navigation">R Markdown Websites - Site Navigation</a> and know you can use icons in the navigation bar elements with any of these libraries:</p>
+<ul>
+<li><a href="http://fontawesome.io/icons/">Font Awesome Icons</a></li>
+<li><a href="http://ionicons.com/">Ionicons: The premium icon font for Ionic Framework</a></li>
+<li><a href="https://getbootstrap.com/components/#glyphicons">Components · Bootstrap</a></li>
+</ul>
 </div>
 </div>
 
