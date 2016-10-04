@@ -37,11 +37,17 @@ deploy_app <- function(
   # derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
 
   # debug ----
+
   # library(devtools); load_all();
-  # debug=T; run_app=T; open_url=T; app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/'
-  # projection='Mercator'; map_shrink_pct=10
-  # gh_repo='bhi'; scenario_dirs = 'baltic2015'; projection='Mercator'; default_scenario='baltic2015'; app_title='Baltic'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
-  # gh_repo='ohi-global'; scenario_dirs = c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'; default_scenario='eez2015'; app_title='Global'; gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # gh_repo='bhi'       ; app_title='Baltic'; projection='Mercator';  scenario_dirs='baltic2015'
+  # gh_repo='ohi-global'; app_title='Global'; projection='Mollweide'; scenario_dirs=c('eez2015','eez2012','eez2013','eez2014','eez2016')
+  # gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # debug=T; run_app=T; open_url=T; map_shrink_pct=10; app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/'
+
+  # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
+  # deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
+  # deploy_app(       'bhi', 'Baltic', 'baltic2015', projection='Mollweide', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
+
   # ----
 
   # use temporary directory
@@ -155,7 +161,7 @@ deploy_app <- function(
   system(sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_app, substr(ohirepos_commit, 1, 7)))
 
   # push to server using secure copy (scp) recursively (-r), and update permissions so writable by shiny user
-  system(sprintf('scp -r %s %s/%s/', dir_app, app_server, gh_repo))
+  system(sprintf('scp -r %s %s%s/', dir_app, app_server, gh_repo))
   system(sprintf('ssh bbest@fitz.nceas.ucsb.edu "cd /srv/shiny-server/%s; chmod -R 775 ."', gh_repo))
 
   # run app, local and remote
