@@ -51,7 +51,7 @@ readr::write_file(
     gh_repo         = gh_repo,
     gh_branch_data  = gh_branch_data,
     app_url         = app_url,
-    scenario_dirs       = scenario_dirs,
+    scenario_dirs   = scenario_dirs,
     projection      = projection,
     map_shrink_pct  = map_shrink_pct,
     debug           = F,
@@ -90,7 +90,7 @@ Here's how the high resolution global EEZ shapefile was greatly simplified with 
 library(dplyr)
 library(sp)
 library(rgdal)
-library(geojsonio)  # install_github("ropensci/geojsonio")
+library(geojsonio)
 library(rmapshaper) # install_github("ateucher/rmapshaper")
 
 # downloaded from sftp://neptune.nceas.ucsb.edu/var/data/ohi/git-annex/Global/NCEAS-Regions_v2014/data/rgn_offshore_gcs.shp

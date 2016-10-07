@@ -46,18 +46,18 @@ deploy_website <- function(
 
   # use temporary directory
   if (debug){
-    tmpdir = '/var/folders/pj/l9cfhbn97xbcgqx6qyx0lr800000gn/T//RtmpD2k8jZ'
+    dir_tmp = '/var/folders/pj/l9cfhbn97xbcgqx6qyx0lr800000gn/T//Rtmp9FeM5e'
   } else {
-    tmpdir = tempdir()
+    dir_tmp = tempdir()
   }
 
   # construct vars
   web_url       = sprintf('http://%s.github.io/%s', gh_owner, gh_repo)
   gh_branch_web = 'gh-pages'
-  dir_branches  = file.path(tmpdir, gh_repo)
-  dir_data      = file.path(tmpdir, gh_repo, gh_branch_data)
-  dir_web       = file.path(tmpdir, gh_repo, gh_branch_web)
-  dir_data_2    = file.path(tmpdir, gh_repo, gh_branch_web, sprintf('%s_%s', gh_repo, gh_branch_data))
+  dir_branches  = file.path(dir_tmp, gh_repo)
+  dir_data      = file.path(dir_tmp, gh_repo, gh_branch_data)
+  dir_web       = file.path(dir_tmp, gh_repo, gh_branch_web)
+  dir_data_2    = file.path(dir_tmp, gh_repo, gh_branch_web, sprintf('%s_%s', gh_repo, gh_branch_data))
   dir_scenario  = sprintf('%s_%s/%s', gh_repo, gh_branch_data, scenario_dir)
   gh_slug       = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url        = sprintf('https://github.com/%s.git', gh_slug)
@@ -80,14 +80,14 @@ deploy_website <- function(
 
     # create orphan app branch
     system(sprintf(
-      'cp -rf %s %s; cd %s; git checkout --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -m "initialize %s branch"',
+      'cp -rf %s %s; cd %s; git checkout --orphan %s; git rm -rf .; touch README.md; git add README.md; git commit -m "initialize %s branch"',
       dir_data, dir_web, dir_web, gh_branch_web, gh_branch_web))
 
   } else {
 
     # clone app branch, clear existing files
     system(sprintf(
-      'git clone --quiet --depth 1 --branch %s %s %s; cd %s; rm -rf *', gh_branch_web, gh_url, dir_web, dir_web))
+      'git clone --quiet --depth 1 --branch %s %s %s; cd %s; git rm -rf .', gh_branch_web, gh_url, dir_web, dir_web))
 
   }
 
@@ -131,7 +131,7 @@ deploy_website <- function(
   # git commit and push to Github
   # DEBUG BHI: system(sprintf("dir_web=%s;cd ~github/bhi2; cp -R $dir_web/ ~/github/bhi2/; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_web, substr(ohirepos_commit, 1, 7)))
   #   Doh! copied over bhi2/.git with bhi's .git
-  system(sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_web, substr(ohirepos_commit, 1, 7)))
+  system(sprintf("cd %s; git add *; git add .gitignore .nojekyll; git commit -a -m 'updating app with ohihrepos commit %s'; git push origin gh-pages", dir_web, substr(ohirepos_commit, 1, 7)))
 
   # open website
   if (open_url) utils::browseURL(web_url)

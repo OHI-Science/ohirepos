@@ -7,7 +7,7 @@
 deploy_website(gh_repo, web_title, scenario_dir, gh_owner = "OHI-Science",
   gh_branch_data = "draft",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
-  open_url = T, debug = F)
+  open_url = F, debug = F)
 }
 \arguments{
 \item{gh_repo}{Github repository}

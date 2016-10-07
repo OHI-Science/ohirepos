@@ -53,16 +53,16 @@ deploy_app <- function(
 
   # use temporary directory
   if (debug){
-    tmpdir = '/var/folders/pj/l9cfhbn97xbcgqx6qyx0lr800000gn/T//Rtmpp9mCyh'
+    dir_tmp = '/var/folders/pj/l9cfhbn97xbcgqx6qyx0lr800000gn/T//Rtmpp9mCyh'
   } else {
-    tmpdir = tempdir()
+    dir_tmp = tempdir()
   }
 
   # construct vars
-  dir_branches = file.path(tmpdir, gh_repo)
-  dir_data     = file.path(tmpdir, gh_repo, gh_branch_data)
-  dir_app      = file.path(tmpdir, gh_repo, gh_branch_app)
-  dir_data_2   = file.path(tmpdir, gh_repo, gh_branch_app, sprintf('%s_%s', gh_repo, gh_branch_data))
+  dir_branches = file.path(dir_tmp, gh_repo)
+  dir_data     = file.path(dir_tmp, gh_repo, gh_branch_data)
+  dir_app      = file.path(dir_tmp, gh_repo, gh_branch_app)
+  dir_data_2   = file.path(dir_tmp, gh_repo, gh_branch_app, sprintf('%s_%s', gh_repo, gh_branch_data))
   gh_slug      = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url       = sprintf('https://github.com/%s.git', gh_slug)
 
