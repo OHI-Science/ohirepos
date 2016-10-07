@@ -9,7 +9,8 @@
 #' @param open_url open the web browser to the web_url
 #' @param debug debugging flag
 #'
-#' @return Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or updating gh-pages branch of Github repository.
+#' @return Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or
+#' updating gh-pages branch of Github repository.
 #'
 #' @examples
 #' \dontrun{

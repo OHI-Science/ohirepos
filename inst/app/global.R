@@ -90,8 +90,7 @@ load_scenario = function(scenario){
 #y$debug = F # toggles ui_msg output
 options(shiny.error=traceback)
 
-create_scenario_rdata = function(scenario, rdata){
-
+check_dir_data = function(){
   # check for data branch folder
   dir_data  = sprintf('%s_%s', y$gh_repo, y$gh_branch_data)
   if (!file.exists(dir_data)){
@@ -99,8 +98,13 @@ create_scenario_rdata = function(scenario, rdata){
     # git clone data branch
     system(sprintf(
       'git clone --quiet --branch %s %s %s', y$gh_branch_data, y$gh_url, dir_data))
-
   }
+}
+
+create_scenario_rdata = function(scenario, rdata){
+
+  # check for data branch folder
+  check_dir_data()
 
   # check dir_scenario subfolder exists
   dir_scenario = file.path(dir_data, scenario)
@@ -409,6 +413,7 @@ gh_write_remote = function(gh_slug, gh_branch, txt=sprintf('%s_remote_sha.txt', 
   return(remote_sha)
 }
 
+check_dir_data()
 remote_sha_txt = sprintf('%s_remote_sha.txt', dir_data)
 remote_sha = gh_write_remote(y$gh_slug, y$gh_branch_data, remote_sha_txt)
 local_sha  = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
