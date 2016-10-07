@@ -4,22 +4,51 @@
 \alias{deploy_app}
 \title{Deploy Shiny application}
 \usage{
-deploy_app(gh_repo, gh_owner = "OHI-Science")
+deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
+  gh_branch_data = "draft", gh_branch_app = "app",
+  app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
+  app_server = "jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/",
+  projection = "Mercator", map_shrink_pct = 10, run_app = F,
+  open_url = T, debug = F)
 }
 \arguments{
-\item{gh_repo}{Github repository.}
+\item{gh_repo}{Github repository}
 
-\item{gh_owner}{Github owner. Defaults to "OHI-Science"}
+\item{app_title}{title for the app, which is typically the study area or place name}
+
+\item{scenario_dirs}{character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.}
+
+\item{gh_owner}{Github owner. Defaults to "OHI-Science".}
+
+\item{gh_branch_data}{Github branch containing data. Defaults to "draft" and must already exist in the repo.}
+
+\item{gh_branch_app}{Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.}
+
+\item{app_url}{URL of the application}
+
+\item{app_server}{the secure copy (scp) server location given by username@server:/dir/}
+
+\item{projection}{defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results}
+
+\item{map_shrink_pct}{percentage of shrinkage to apply to study area for default map view}
+
+\item{run_app}{run the Shiny app locally}
+
+\item{open_url}{open the web browser to the app_url}
+
+\item{debug}{produces a Message box with various debug outputs to evaluate reactivity of the app}
 }
 \value{
-Returns URL of app if successfully deployed, otherwise errors out.
+Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
+and SSH keys for secure copying to server.
 }
 \description{
 Deploy Shiny application
 }
 \examples{
 \dontrun{
-deploy_app("bhi")
+deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide')
+deploy_app(       'bhi', 'Baltic', 'baltic2015')
 }
 }
 
