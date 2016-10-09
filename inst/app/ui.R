@@ -7,9 +7,11 @@ dashboardPage(
     sidebarMenu(
       id = 'sidebarmenu',
 
-      menuItem("Explore Data", tabName='explore',icon=icon("globe",lib='font-awesome'), selected=T),
-
       htmlOutput('ui_commit'),
+
+      menuItem("Explore", tabName='explore',icon=icon("globe",lib='font-awesome'), selected=T),
+
+      menuItem("Compare", tabName='compare',icon=icon("exchange",lib='font-awesome'), selected=F),
 
       conditionalPanel(
         "input.sidebarmenu === 'explore'",
@@ -62,7 +64,6 @@ dashboardPage(
 
         fluidRow(
           tabBox(width=12, selected='Map',
-          #tabBox(width=12, selected='Elements',
 
             tabPanel(
               'Map', #title    = 'Map', status='primary', collapsible=T,
@@ -89,9 +90,12 @@ dashboardPage(
                       style     = 'float:right; display:block;',
                       asterOutput(outputId = "aster", width='100px', height='100px')))))),
 
+            tabPanel(
+              'Table',
+              dataTableOutput('table')),
+
               tabPanel(
                 'Elements',
-                #visNetworkOutput("network")))),
                 sunburstOutput("sunburst"),
                 textOutput("selection")))),
 

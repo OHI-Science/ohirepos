@@ -26,6 +26,7 @@ pkgs_df = tibble::tribble(
   'geojsonio',        'CRAN',                                                               '',           '',
   'jsonlite',         'CRAN',                                                               '',           '',
   'yaml',             'CRAN',                                                               '',           '',
+  'DT',               'CRAN',                                                               '',           '',
   'leaflet',        'Github',                                     list(repo='rstudio/leaflet'),           '',
   'ohicore',        'Github',                     list(repo='ohi-science/ohicore' , ref='dev'),           '',
   'htmlwidgets',    'Github',        list(repo='ramnathv/htmlwidgets', ref=github_pull('237')),           '',
@@ -88,7 +89,7 @@ load_scenario = function(scenario){
 #options(warn = 0) # warnings: into errors (2) or print as occur (1), store and print (0) or ignore (-1)
 #cat(file=stderr(), input$map1_bounds)
 #y$debug = F # toggles ui_msg output
-options(shiny.error=traceback)
+#options(shiny.error=traceback)
 
 check_dir_data = function(){
   # check for data branch folder

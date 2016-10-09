@@ -170,6 +170,13 @@ shinyServer(function(input, output, session) {
   output$var_description = renderText({
     get_selected()$description })
 
+  # output$table ----
+  output$table = renderDataTable({
+    rgns@data %>%
+      select(rgn_id, rgn_name) %>%
+      left_join(get_selected()$data, by='rgn_id')
+  })
+
   # output$map1 ----
 
   # input$map_shape_mouseover gets updated a lot, even if the id doesn't change, so use reactiveValues
