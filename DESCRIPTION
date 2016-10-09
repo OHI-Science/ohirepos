@@ -1,10 +1,21 @@
 Package: ohirepos
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Create OHI tailored repositories
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: as.person(c(
+    "Ben Best <bdbest@gmail.com> [aut]",
+    "Julia Stewart Lowndes <lowndes@nceas.ucsb.edu> [aut, cre]"
+  ))
+Maintainer: Julia Stewart Lowndes <lowndes@nceas.ucsb.edu>
+Description: The Ocean Health Index Toolbox is the combination of 1) a repository of data
+    and models tailored to the assessment area and 2) the `ohicore` package. The `ohirepos`
+    package creates the tailored repository based on the structure of OHI Global Assessments.
+License: MIT
 LazyData: TRUE
-RoxygenNote: 5.0.1
+URL: http://ohi-science.org/
+BugReports: https://github.com/OHI-Science/ohirepos/issues
+Depends:
+    R (>= 3.1.0)
+Imports:
+    tidyverse (>= 1.0.0),
+    rgdal
