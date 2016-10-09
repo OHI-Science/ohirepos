@@ -50,6 +50,7 @@ readr::write_file(
     gh_owner        = gh_owner,
     gh_repo         = gh_repo,
     gh_branch_data  = gh_branch_data,
+    gh_branch_app   = gh_branch_app,
     app_url         = app_url,
     scenario_dirs   = scenario_dirs,
     projection      = projection,
@@ -57,10 +58,10 @@ readr::write_file(
     debug           = F,
     ohirepos_commit = ohirepos_commit,
     last_updated    = Sys.Date())),
-    'app.yml')
+    'inst/app/app.yml')
 
 # brew intro.md
-brew::brew('intro.brew.md', sprintf('%s_intro.md', gh_repo))
+brew::brew('inst/app/intro.brew.md', sprintf('inst/app/%s_intro.md', gh_repo))
 
 # run app
 shiny::runApp()

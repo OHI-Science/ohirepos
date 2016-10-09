@@ -294,6 +294,19 @@ shinyServer(function(input, output, session) {
 
   })
 
+  # zoom to region
+  observeEvent(input$sel_rgn, {
+
+    if (input$sel_rgn==y$app_title){
+      b = bbox(rgns)
+    } else {
+      b = bbox(subset(rgns, rgn_name == input$sel_rgn))
+    }
+
+    leafletProxy('map1',session) %>%
+      fitBounds(lng1 = b[1],lat1 = b[2],lng2 = b[3],lat2 = b[4])
+  })
+
   # aster hover ----
 
   # handle mouseover/mouseout per leaflet::examples/shiny.R style

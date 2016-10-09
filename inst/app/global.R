@@ -142,6 +142,7 @@ create_scenario_rdata = function(scenario, rdata){
   cat(file=stderr(), 'read rgns from geojson\n')
   rgns = geojsonio::geojson_read(geojson, what="sp")
   if ('rgn_nam' %in% names(rgns@data) & !'rgn_name' %in% names(rgns@data)) rgns@data = rgns@data %>% mutate(rgn_name = rgn_nam)
+  # TODO: check for rgn_area_km2 or remove
 
   # get countries for Mollweide projection
   if ('projection' %in% names(y) && y$projection == 'Mollweide'){
