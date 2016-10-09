@@ -374,18 +374,33 @@ shinyServer(function(input, output, session) {
 
     # if default input Index score, show aster
     if (input$sel_type=='output' & input$sel_output_goal=='Index' & input$sel_output_goal_dimension=='score'){
-      aster(
-        data = scores %>%
-          filter(
-            region_id == v$hi_id,
-            dimension == 'score') %>%
-          left_join(goals, by='goal') %>%
-          filter(is.na(parent), !is.na(order_color)) %>%
-          arrange(order_color) %>%
-          mutate(label=NA) %>%
-          select(id=goal, order=order_color, score, weight, color, label),
+
+      #if (v$hi_id==200) browser()
+
+      data = scores %>%
+        filter(region_id == v$hi_id, dimension == 'score') %>%
+        left_join(goals, by='goal') %>%
+        filter(is.na(parent), !is.na(order_color)) %>%
+        arrange(order_color) %>%
+        mutate(label=NA) %>%
+        select(id=goal, order=order_color, score, weight, color, label)
+
+      data = bind_rows(
+        data %>%
+          filter(!is.na(score)),
+        data %>%
+          filter(is.na(score)) %>%
+          mutate(
+            score = 100,
+            color = '#BEBEBE')) # gplots::col2hex('gray')
+
+      score = scores %>%
+        filter( region_id == v$hi_id, dimension == 'score', goal == 'Index') %>%
+        .$score
+
+      aster(data, score,
         background_color = "transparent",
-        font_color = "black", stroke = "blue", font_size_center = "12px", font_size = "8px",
+        font_color = "black", stroke = "black", font_size_center = "12px", font_size = "8px",
         margin_top=5, margin_right=5, margin_bottom=5, margin_left=5)
     }
   })

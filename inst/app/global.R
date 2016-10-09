@@ -30,7 +30,7 @@ pkgs_df = tibble::tribble(
   'leaflet',        'Github',                                     list(repo='rstudio/leaflet'),           '',
   'ohicore',        'Github',                     list(repo='ohi-science/ohicore' , ref='dev'),           '',
   'htmlwidgets',    'Github',        list(repo='ramnathv/htmlwidgets', ref=github_pull('237')),           '',
-  'aster',          'Github', list(repo='FrissAnalytics/ohi-aster' , subdir='asterHTMLwidget'),           '',
+  'aster',          'Github',    list(repo='ohi-science/ohi-aster' , subdir='asterHTMLwidget'),           '',
   'sunburstR',      'Github',                           list(repo='timelyportfolio/sunburstR'),           '')
 
 install_packages = function(pkgs){
