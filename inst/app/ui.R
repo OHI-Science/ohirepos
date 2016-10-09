@@ -7,8 +7,6 @@ dashboardPage(
     sidebarMenu(
       id = 'sidebarmenu',
 
-      menuItem("Introduction",tabName = 'intro',icon=icon("info-circle",lib='font-awesome')),
-
       menuItem("Explore Data", tabName='explore',icon=icon("globe",lib='font-awesome'), selected=T),
 
       htmlOutput('ui_commit'),
@@ -58,10 +56,6 @@ dashboardPage(
 
   dashboardBody(
     tabItems(
-
-      tabItem(
-        tabName='intro',
-        includeMarkdown(sprintf('%s_intro.md', y$gh_repo))),
 
       tabItem(
         tabName='explore',
