@@ -1,10 +1,7 @@
 shinyServer(function(input, output, session) {
 
-  # read_csv('draft/eez2012/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==0) %>% .$score
-  # read_csv('draft/eez2015/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==0) %>% .$score
-  #
-  # read_csv('draft/eez2012/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==163) %>% .$score
-  # read_csv('draft/eez2015/scores.csv') %>% filter(goal=='Index', dimension=='score', region_id==163) %>% .$score
+
+  # get_scenario ----
 
   # write remote git commit hash every 5 seconds to compare with remote
   log_gitsha <- observe({
@@ -16,20 +13,13 @@ shinyServer(function(input, output, session) {
   })
 
   # monitor file for changes every 1 seconds (1000 milliseconds)
-  fileReaderData <- reactiveFileReader(
-    1000, session, remote_sha_txt, readLines)
+  fileReaderData <- reactiveFileReader(1000, session, remote_sha_txt, readLines)
 
-  ## get_selected() ----
-  get_selected = reactive({
+  # get_scenario ----
+  get_scenario = function(env=.GlobalEnv){
 
-    req(input$sel_scenario)
-    req(input$sel_type)
-
-    if (input$sel_scenario != scenario){
-      load_scenario(input$sel_scenario)
-    }
-
-    switch(input$sel_type,
+    switch(
+      input$sel_type,
 
       # case: output
       output = {
@@ -37,7 +27,7 @@ shinyServer(function(input, output, session) {
         req(input$sel_output_goal_dimension)
 
         list(
-          data = scores %>%
+          data = env$scores %>%
             filter(
               goal      == input$sel_output_goal,
               dimension == input$sel_output_goal_dimension) %>%
@@ -46,7 +36,7 @@ shinyServer(function(input, output, session) {
               value  = score) %>%
             select(rgn_id, value),
           label = sprintf('%s - %s', input$sel_output_goal, input$sel_output_goal_dimension),
-          description = dims %>%
+          description = env$dims %>%
             filter(dimension == input$sel_output_goal_dimension)  %>%
             markdownToHTML(text = .$description, fragment.only=T)) },
 
@@ -54,40 +44,100 @@ shinyServer(function(input, output, session) {
       input = {
         req(input$sel_input_target_layer)
 
-        fld_category = filter(layers, layer==input$sel_input_target_layer) %>% .$fld_category
-        fld_year     = filter(layers, layer==input$sel_input_target_layer) %>% .$fld_year
+        env$fld_category = filter(env$layers, layer==input$sel_input_target_layer) %>% .$fld_category
+        env$fld_year     = filter(env$layers, layer==input$sel_input_target_layer) %>% .$fld_year
 
         # get data
-        data = d_lyrs %>%
-            filter(layer == input$sel_input_target_layer) %>%
-            mutate(
-              rgn_id = fld_id_num,
-              value  = fld_val_num)
+        env$data = env$d_lyrs %>%
+          filter(layer == input$sel_input_target_layer) %>%
+          mutate(
+            rgn_id = fld_id_num,
+            value  = fld_val_num)
 
         # if layer has category, filter
         if (!is.na(fld_category)){
           req(input$sel_input_target_layer_category)
-          data = data %>%
+          env$data = env$data %>%
             filter(fld_category == input$sel_input_target_layer_category)
         }
 
         # if layer has category year, filter
-        if (!is.na(fld_year)){
+        if (!is.na(env$fld_year)){
           req(input$sel_input_target_layer_category_year)
-          data = data %>%
+          env$data = env$data %>%
             filter(fld_year == input$sel_input_target_layer_category_year)
         }
 
-
         # return list
         list(
-          data = data %>%
+          data = env$data %>%
             select(rgn_id, value),
           label = input$sel_input_target_layer,
-          description = layers %>%
+          description = env$layers %>%
             filter(layer == input$sel_input_target_layer) %>%
             markdownToHTML(text = .$description, fragment.only=T))
-      })
+
+    }) # end switch
+  }
+
+  ## get_selected() ----
+  get_selected = reactive({
+
+    req(input$sel_scenario)
+    req(input$sel_type)
+
+    # TODO:
+    # - make value A - B
+    # - update Table with label
+    # - Plot tab, conditional on compare
+    # - if score, then compare all goals
+
+    if (input$sel_scenario != scenario){
+      load_scenario(input$sel_scenario)
+    }
+
+    results = get_scenario()
+    if (input$sidebarmenu == 'compare'){
+      req(input$sel_scenario_b)
+      env_a = new.env()
+      env_b = new.env()
+      load_scenario(input$sel_scenario  , env=env_a)
+      load_scenario(input$sel_scenario_b, env=env_b)
+      res_a = get_scenario(env_a)
+      res_b = get_scenario(env_b)
+
+      data = res_a$data %>%
+        mutate(value_a = value) %>%
+        select(rgn_id, value_a) %>%
+        left_join(
+          res_b$data %>%
+            mutate(value_b = value) %>%
+            select(rgn_id, value_b),
+          by='rgn_id') %>%
+        mutate(
+          value = value_a - value_b)
+
+      compare = bind_rows(
+        res_a$data %>%
+          mutate(
+            scenario = input$sel_scenario),
+        res_b$data %>%
+          mutate(
+            scenario = input$sel_scenario_b),
+        data  %>%
+          mutate(
+            scenario = sprintf('%s - %s', input$sel_scenario, input$sel_scenario_b))) %>%
+        select(scenario, rgn_id, value)
+
+      results = list(
+        data = data %>%
+          select(rgn_id, value),
+        compare = compare,
+        label = res_a$label,
+        description = res_a$description)
+    }
+
+    return(results)
     })
 
   ## output$ui_sel_output ----
@@ -172,9 +222,70 @@ shinyServer(function(input, output, session) {
 
   # output$table ----
   output$table = renderDataTable({
-    rgns@data %>%
+
+    if (input$sidebarmenu == 'compare'){
+      get_selected()$compare %>%
+        spread(scenario, value)
+    } else {
+      rgns@data %>%
+        select(rgn_id, rgn_name) %>%
+        left_join(get_selected()$data, by='rgn_id')
+    }
+  })
+
+  # Compare sidebar, Plot boxplot ----
+
+  output$ui_sel_scenario_b <- renderUI({
+    req(input$sel_scenario)
+
+    if (input$sidebarmenu == 'compare'){
+
+      ui = selectInput(
+        'sel_scenario_b',
+        label    = '0.B. Choose other scenario:',
+        choices  = setdiff(sort(y$scenario_dirs), input$sel_scenario))
+
+    } else {
+      ui = NULL
+    }
+    return(ui)
+  })
+
+  observeEvent(input$sidebarmenu, {
+    if (input$sidebarmenu != 'compare'){
+      updateSelectInput(session, 'sel_scenario', label = '0. Choose scenario:')
+    } else {
+      updateSelectInput(session, 'sel_scenario', label = '0.A. Choose scenario:')
+    }
+  })
+
+  output$ui_boxplot <- renderUI({
+    if (input$sidebarmenu != 'compare'){
+      return(
+        'This boxplot is currently only available when choosing to Compare scenarios from sidebar.')
+    } else {
+      exploding_boxplotOutput('boxplot')
+    }
+  })
+
+  output$boxplot <- renderExploding_boxplot({
+    req(input$sidebarmenu, input$sel_scenario, input$sel_scenario_b)
+
+    if (input$sidebarmenu != 'compare') return()
+
+
+    d = rgns@data %>%
       select(rgn_id, rgn_name) %>%
-      left_join(get_selected()$data, by='rgn_id')
+      left_join(get_selected()$compare, by='rgn_id')
+
+    #browser() # save.image('tmp.Rdata') # View(d)
+
+    exploding_boxplot(
+      d,
+      y = 'value',
+      group = 'scenario',
+      color = 'scenario',
+      label = 'rgn_name')
   })
 
   # output$map1 ----
@@ -375,14 +486,12 @@ shinyServer(function(input, output, session) {
     # if default input Index score, show aster
     if (input$sel_type=='output' & input$sel_output_goal=='Index' & input$sel_output_goal_dimension=='score'){
 
-      #if (v$hi_id==200) browser()
-
       data = scores %>%
         filter(region_id == v$hi_id, dimension == 'score') %>%
         left_join(goals, by='goal') %>%
         filter(is.na(parent), !is.na(order_color)) %>%
         arrange(order_color) %>%
-        mutate(label=NA) %>%
+        mutate(label=name) %>%
         select(id=goal, order=order_color, score, weight, color, label)
 
       data = bind_rows(
@@ -463,7 +572,7 @@ shinyServer(function(input, output, session) {
 
           # git fetch & overwrite
           incProgress(1/n, detail = 'git fetch & reset')
-          system(sprintf('cd %s; git fetch %s; git reset --hard origin/%s', dir_data, y$gh_branch_data, y$gh_branch_data))
+          system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
           local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 
           # redo [scenario].Rdata files
@@ -523,8 +632,47 @@ shinyServer(function(input, output, session) {
     input$sunburst_mouseover
   })
 
-  output$selection <- renderUI(
-    selection())
+  output$selection <- renderUI({
+    v = selection()
+    if (is.null(v)) return(NULL)
+
+    n = length(v)
+    g = goals %>%
+        filter(goal == v[1])
+
+    if (n == 1){
+      return(HTML(sprintf(
+        'goal: <b>%s</b>\n<br>description: <i>%s</i>', g$name, g$description)))
+    }
+    if (n >= 2){
+      sg = goals %>%
+        filter(goal == v[2])
+      sg_name = ifelse(
+        v[1] == v[2],
+        sprintf('<b>%s</b> (%s)', g$name, v[1]),
+        sprintf('<b>%s</b> (%s) > <b>%s</b> (%s)', g$name, v[1], sg$name, v[2]))
+      sg_description = sg$description
+    }
+    if (n == 2){
+      return(HTML(sprintf(
+        'goal: %s (%s)\n<br>description: <i>%s</i>', sg_name, v[2], sg_description)))
+    }
+    #browser()
+    if (n == 3){
+      l_dim = c(p='pressure',r='resilience',s='status')[str_sub(v[3],1,1)]
+      l_id = str_sub(v[3], 3)
+      l = layers %>%
+        filter(layer == l_id)
+      return(HTML(sprintf(
+        'goal: %s\n<br>%s layer: <b>%s</b> (%s) \n<br>description: <i>%s</i>', sg_name, l_dim, l$name, l_id, l$description)))
+    }
+    # TODO: populate description
+    # el1: goal: name (code)
+    #  el2: subgoal: name (code) if goal != subgoal
+    #    el3: <status|pressures> layer: name (code)
+    # description: descriptions[length(v)]
+
+    })
 
   # message ----
   output$ui_msg <- renderUI({

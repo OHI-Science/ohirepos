@@ -13,25 +13,26 @@ library(tidyverse, quietly=T)
 
 pkgs_df = tibble::tribble(
   ~package   ,     ~location,                                                    ~install_args, ~version_min,
-  'dplyr',            'CRAN',                                                               '',           '',
-  'tidyr',            'CRAN',                                                               '',           '',
-  'readr',            'CRAN',                                                               '',           '',
-  'stringr',          'CRAN',                                                               '',           '',
-  'lubridate',        'CRAN',                                                               '',           '',
-  'rgdal',            'CRAN',                                                               '',           '',
-  'shiny',            'CRAN',                                                               '',           '',
-  'shinydashboard',   'CRAN',                                                               '',           '',
-  'htmltools',        'CRAN',                                                               '',           '',
-  'markdown',         'CRAN',                                                               '',           '',
-  'geojsonio',        'CRAN',                                                               '',           '',
-  'jsonlite',         'CRAN',                                                               '',           '',
-  'yaml',             'CRAN',                                                               '',           '',
-  'DT',               'CRAN',                                                               '',           '',
-  'leaflet',        'Github',                                     list(repo='rstudio/leaflet'),           '',
-  'ohicore',        'Github',                     list(repo='ohi-science/ohicore' , ref='dev'),           '',
-  'htmlwidgets',    'Github',        list(repo='ramnathv/htmlwidgets', ref=github_pull('237')),           '',
-  'aster',          'Github',    list(repo='ohi-science/ohi-aster' , subdir='asterHTMLwidget'),           '',
-  'sunburstR',      'Github',                           list(repo='timelyportfolio/sunburstR'),           '')
+  'dplyr',              'CRAN',                                                               '',           '',
+  'tidyr',              'CRAN',                                                               '',           '',
+  'readr',              'CRAN',                                                               '',           '',
+  'stringr',            'CRAN',                                                               '',           '',
+  'lubridate',          'CRAN',                                                               '',           '',
+  'rgdal',              'CRAN',                                                               '',           '',
+  'shiny',              'CRAN',                                                               '',           '',
+  'shinydashboard',     'CRAN',                                                               '',           '',
+  'htmltools',          'CRAN',                                                               '',           '',
+  'markdown',           'CRAN',                                                               '',           '',
+  'geojsonio',          'CRAN',                                                               '',           '',
+  'jsonlite',           'CRAN',                                                               '',           '',
+  'yaml',               'CRAN',                                                               '',           '',
+  'DT',                 'CRAN',                                                               '',           '',
+  'leaflet',           'Github',                                    list(repo='rstudio/leaflet'),           '',
+  'explodingboxplotR', 'Github',                  list(repo='timelyportfolio/explodingboxplotR'),           '',
+  'ohicore',           'Github',                    list(repo='ohi-science/ohicore' , ref='dev'),           '',
+  'htmlwidgets',       'Github',       list(repo='ramnathv/htmlwidgets', ref=github_pull('237')),           '',
+  'aster',             'Github',   list(repo='ohi-science/ohi-aster' , subdir='asterHTMLwidget'),           '',
+  'sunburstR',         'Github',                          list(repo='timelyportfolio/sunburstR'),           '')
 
 install_packages = function(pkgs){
   for (i in 1:nrow(pkgs)){ # i = 11
@@ -52,6 +53,11 @@ install_packages(pkgs_df)
 for (p in pkgs_df$package){
   library(p, character.only=T, quietly=T)
 }
+
+# DEBUG explodingboxplotR
+library(shiny)
+library(explodingboxplotR)
+data(iris)
 
 now_s = function(){
   format(now(), format='%H:%M:%S')
@@ -76,12 +82,12 @@ init = function(){
 }
 init()
 
-load_scenario = function(scenario){
+load_scenario = function(scenario, env=.GlobalEnv){
   # load new scenario data
   scenario     <<- scenario
   dir_scenario <<- file.path(dir_data, scenario)
   rdata        <<- sprintf('%s_%s.Rdata', y$gh_repo, scenario)
-  load(rdata, envir=.GlobalEnv)
+  load(rdata, envir=env)
   init()
 }
 
@@ -424,18 +430,18 @@ local_sha  = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 if (devtools:::different_sha(remote_sha, local_sha)){
 
   # git fetch & overwrite
-  system(sprintf('cd %s; git fetch %s; git reset --hard origin/%s', dir_data, y$gh_branch_data, y$gh_branch_data))
+  system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
 
   # update local git commit sha
-  local_sha = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
+  local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 
   # wipe [scenario].Rdata files
-  for (scenario in y$scenario_dirs){
+  for (scenario in sort(y$scenario_dirs)){
     unlink(sprintf('%s_%s.Rdata', y$gh_repo, scenario))
   }
 }
 
-for (scenario in y$scenario_dirs){
+for (scenario in sort(y$scenario_dirs)){
   rdata = sprintf('%s_%s.Rdata', y$gh_repo, scenario)
   if (!file.exists(rdata)){
     # create [scenario].Rdata files
