@@ -66,14 +66,13 @@ deploy_app <- function(
   # ensure top level dir exists
   dir.create(dir_branches, showWarnings = F, recursive = T)
 
-  # clear existing
-  #if (file.exists(dir_branches)) unlink(dir_branches, recursive = T)
-
-  # delete existing, if not in debug mode
+  # data branch: fetch existing, or clone new
   if (file.exists(dir_data)){
 
     # git fetch & overwrite
-    system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, gh_branch_data))
+    cmd = sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, gh_branch_data)
+    cat(sprintf('running command:\n  %s', cmd))
+    system(cmd)
 
   } else {
 
@@ -82,27 +81,34 @@ deploy_app <- function(
     cat(sprintf('running command:\n  %s', cmd))
     system(cmd)
   }
+  cat('  finished command')
 
   # get remote branches
   remote_branches = gh_remote_branches(dir_data)
 
-  # create/clear app branch
+  # app branch: clone existing or create orphan
   if (!'app' %in% remote_branches){
 
     # create orphan app branch
-    system(sprintf(
+    cmd = sprintf(
       'cp -rf %s %s; cd %s; git checkout --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -m "initialize %s branch"',
-      dir_data, dir_app, dir_app, gh_branch_app, gh_branch_app))
+      dir_data, dir_app, dir_app, gh_branch_app, gh_branch_app)
+    cat(sprintf('running command:\n  %s', cmd))
+    system(cmd)
 
   } else {
 
     # clone app branch, clear existing files
-    system(sprintf(
-      'git clone --quiet --depth 1 --branch %s %s %s; cd %s; rm -rf *', gh_branch_app, gh_url, dir_app, dir_app))
+    cmd = sprintf(
+      'git clone --quiet --depth 1 --branch %s %s %s; cd %s; rm -rf *', gh_branch_app, gh_url, dir_app, dir_app)
+    cat(sprintf('running command:\n  %s', cmd))
+    system(cmd)
 
   }
+  cat('  finished command')
 
   # copy shiny app files into dir_app
+  cat('copying app files from ohirepos package')
   suppressWarnings(file.copy(system.file('app', package='ohirepos'), dir_branches, recursive=T, overwrite=T))
 
   # get commit of ohirepos for Shiny app provenance
@@ -116,6 +122,7 @@ deploy_app <- function(
   }
 
   # write app.yml configuration
+  cat('writing app.yml')
   write_file(
     as.yaml(list(
       gh_repo         = gh_repo,
@@ -132,13 +139,8 @@ deploy_app <- function(
       last_updated    = Sys.Date())),
     file.path(dir_app, 'app.yml'))
 
-  # brew intro.md
-  brew(system.file('app/intro.brew.md', package='ohirepos'), sprintf('%s/%s_intro.md', dir_app, gh_repo))
-
-  # cleanup unused files
-  unlink(sprintf('%s/%s', dir_app, c('intro.brew.md')))
-
   # add Rstudio project file
+  cat('writing Rproj, gitignore files')
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_app, gh_repo))
 
   # add gitignore file
@@ -152,23 +154,28 @@ deploy_app <- function(
   # TODO: Travis?
   #brew::brew(system.file('app/travis.brew.yml', package='ohirepos'), file.path(dir_app, 'travis.yml'))
 
-  # move dir_data to dir_data_2
-  system(sprintf('mv %s %s', dir_data, dir_data_2))
-
-  # prompt restart
-  system(sprintf('touch %s/restart.txt', dir_app))
-
-  # git commit and push to Github
-  system(sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_app, substr(ohirepos_commit, 1, 7)))
-
-  # push to server using secure copy (scp) recursively (-r), and update permissions so writable by shiny user
-  system(sprintf('scp -r %s %s%s/', dir_app, app_server, gh_repo))
-  system(sprintf('ssh %s "cd /srv/shiny-server/%s; chmod -R 775 ."', app_server, gh_repo))
+  commands = c(
+    # move dir_data to dir_data_2
+    sprintf('mv %s %s', dir_data, dir_data_2),
+    # prompt restart
+    sprintf('touch %s/restart.txt', dir_app),
+    # git commit and push to Github
+    sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_app, substr(ohirepos_commit, 1, 7)),
+    # push to server using secure copy (scp) recursively (-r), and update permissions so writable by shiny user
+    sprintf('scp -r %s %s%s/', dir_app, app_server, gh_repo),
+    sprintf('ssh %s "cd /srv/shiny-server/%s; chmod -R 775 ."', app_server, gh_repo)
+  )
+  for (cmd in commands){
+    cat('running command:\n  ', cmd)
+    system(cmd)
+  }
 
   # run app, local and remote
+  cat('run app locally (run_app=T) or remotely (open_url=T)')
   if (run_app)  shiny::runApp(dir_app)
   if (open_url) utils::browseURL(app_url)
 
   # remove temp files
-  if (!debug) unlink(dir_branches, recursive=T, force=T)
+  cat('rm temp files if del_tmp==T')
+  if (!del_tmp) unlink(dir_branches, recursive=T, force=T)
 }
