@@ -117,6 +117,7 @@ shinyServer(function(input, output, session) {
         mutate(
           value = value_a - value_b)
 
+      dif_scenario <<- sprintf('%s - %s', input$sel_scenario, input$sel_scenario_b)
       compare = bind_rows(
         res_a$data %>%
           mutate(
@@ -126,7 +127,7 @@ shinyServer(function(input, output, session) {
             scenario = input$sel_scenario_b),
         data  %>%
           mutate(
-            scenario = sprintf('%s - %s', input$sel_scenario, input$sel_scenario_b))) %>%
+            scenario = dif_scenario)) %>%
         select(rgn_id, scenario, value)
 
       results = list(
@@ -279,9 +280,14 @@ shinyServer(function(input, output, session) {
 
     d = rgns@data %>%
       select(rgn_id, rgn_name) %>%
-      left_join(get_selected()$compare, by='rgn_id')
+      left_join(
+        get_selected()$compare %>%
+          filter(scenario == dif_scenario),
+        by='rgn_id')
 
     #browser() # save.image('tmp.Rdata') # View(d)
+    #saveRDS(d, 'tmp_d.Rdata') #
+    #loadRDS()
 
     exploding_boxplot(
       d,
@@ -559,7 +565,7 @@ shinyServer(function(input, output, session) {
   #       format(round(subset(rgns@data, rgn_id==v$hi_id, area_km2, drop=T)), big.mark =','))
   #   }
   #   })
-  
+
   observeEvent(fileReaderData(), {
     # get remote_sha from file
     remote_sha <- fileReaderData()
