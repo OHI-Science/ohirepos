@@ -286,7 +286,8 @@ shinyServer(function(input, output, session) {
         by='rgn_id')
 
     #browser() # save.image('tmp.Rdata') # View(d)
-    #saveRDS(d, 'tmp_d.Rdata')
+    #saveRDS(d, 'tmp_d.Rdata') #
+    #loadRDS()
 
     exploding_boxplot(
       d,
