@@ -9,10 +9,11 @@
 #' @param app_url URL of the application
 #' @param projection defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results
 #' @param map_shrink_pct percentage of shrinkage to apply to study area for default map view
-#' @param debug produces a Message box with various debug outputs to evaluate reactivity of the app
 #' @param app_server the secure copy (scp) server location given by username@server:/dir/
 #' @param run_app run the Shiny app locally
 #' @param open_url open the web browser to the app_url
+#' @param dir_tmp temporary directory to use for populating, defaults to tmpdir()
+#' @param del_tmp whether to delete temporarory directory when done, defaults to TRUE
 #'
 #' @return Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
 #' and SSH keys for secure copying to server.
@@ -29,7 +30,7 @@ deploy_app <- function(
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   app_server='jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/',
   projection='Mercator', map_shrink_pct=10,
-  run_app=F, open_url=T, debug=F){
+  run_app=F, open_url=T, dir_tmp=tempdir(), del_tmp=T){
 
   library(tidyverse)
   library(yaml)
@@ -51,13 +52,6 @@ deploy_app <- function(
 
   # ----
 
-  # use temporary directory
-  if (debug){
-    dir_tmp = '/var/folders/pj/l9cfhbn97xbcgqx6qyx0lr800000gn/T//Rtmpp9mCyh'
-  } else {
-    dir_tmp = tempdir()
-  }
-
   # construct vars
   dir_branches = file.path(dir_tmp, gh_repo)
   dir_data     = file.path(dir_tmp, gh_repo, gh_branch_data)
@@ -69,13 +63,24 @@ deploy_app <- function(
   # extra bash commands
   rm_allnotgit = 'find . -path ./.git -prune -o -exec rm -rf {} \\; 2> /dev/null'
 
+  # ensure top level dir exists
+  dir.create(dir_branches, showWarnings = F, recursive = T)
+
+  # clear existing
+  #if (file.exists(dir_branches)) unlink(dir_branches, recursive = T)
+
   # delete existing, if not in debug mode
-  if (!debug){
-    # clear existing
-    if (file.exists(dir_branches)) unlink(dir_branches, recursive = T)
+  if (file.exists(dir_data)){
+
+    # git fetch & overwrite
+    system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, gh_branch_data))
+
+  } else {
 
     # clone data branch, shallowly and quietly
-    system(sprintf('git clone --quiet --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
+    cmd = sprintf('git clone --quiet --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data)
+    cat(sprintf('running command:\n  %s', cmd))
+    system(cmd)
   }
 
   # get remote branches
@@ -158,7 +163,7 @@ deploy_app <- function(
 
   # push to server using secure copy (scp) recursively (-r), and update permissions so writable by shiny user
   system(sprintf('scp -r %s %s%s/', dir_app, app_server, gh_repo))
-  system(sprintf('ssh bbest@fitz.nceas.ucsb.edu "cd /srv/shiny-server/%s; chmod -R 775 ."', gh_repo))
+  system(sprintf('ssh %s "cd /srv/shiny-server/%s; chmod -R 775 ."', app_server, gh_repo))
 
   # run app, local and remote
   if (run_app)  shiny::runApp(dir_app)
