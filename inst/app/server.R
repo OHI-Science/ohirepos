@@ -222,9 +222,15 @@ shinyServer(function(input, output, session) {
 
   # output$table ----
   output$table = renderDataTable({
-    rgns@data %>%
-      select(rgn_id, rgn_name) %>%
-      left_join(get_selected()$data, by='rgn_id')
+
+    if (input$sidebarmenu == 'compare'){
+      get_selected()$compare %>%
+        spread(scenario, value)
+    } else {
+      rgns@data %>%
+        select(rgn_id, rgn_name) %>%
+        left_join(get_selected()$data, by='rgn_id')
+    }
   })
 
   # Compare sidebar, Plot boxplot ----
