@@ -424,18 +424,18 @@ local_sha  = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 if (devtools:::different_sha(remote_sha, local_sha)){
 
   # git fetch & overwrite
-  system(sprintf('cd %s; git fetch %s; git reset --hard origin/%s', dir_data, y$gh_branch_data, y$gh_branch_data))
+  system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
 
   # update local git commit sha
-  local_sha = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
+  local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 
   # wipe [scenario].Rdata files
-  for (scenario in y$scenario_dirs){
+  for (scenario in sort(y$scenario_dirs)){
     unlink(sprintf('%s_%s.Rdata', y$gh_repo, scenario))
   }
 }
 
-for (scenario in y$scenario_dirs){
+for (scenario in sort(y$scenario_dirs)){
   rdata = sprintf('%s_%s.Rdata', y$gh_repo, scenario)
   if (!file.exists(rdata)){
     # create [scenario].Rdata files

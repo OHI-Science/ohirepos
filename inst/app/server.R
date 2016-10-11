@@ -16,8 +16,7 @@ shinyServer(function(input, output, session) {
   })
 
   # monitor file for changes every 1 seconds (1000 milliseconds)
-  fileReaderData <- reactiveFileReader(
-    1000, session, remote_sha_txt, readLines)
+  fileReaderData <- reactiveFileReader(1000, session, remote_sha_txt, readLines)
 
   ## get_selected() ----
   get_selected = reactive({
@@ -375,14 +374,12 @@ shinyServer(function(input, output, session) {
     # if default input Index score, show aster
     if (input$sel_type=='output' & input$sel_output_goal=='Index' & input$sel_output_goal_dimension=='score'){
 
-      #if (v$hi_id==200) browser()
-
       data = scores %>%
         filter(region_id == v$hi_id, dimension == 'score') %>%
         left_join(goals, by='goal') %>%
         filter(is.na(parent), !is.na(order_color)) %>%
         arrange(order_color) %>%
-        mutate(label=NA) %>%
+        mutate(label=name) %>%
         select(id=goal, order=order_color, score, weight, color, label)
 
       data = bind_rows(
@@ -463,7 +460,7 @@ shinyServer(function(input, output, session) {
 
           # git fetch & overwrite
           incProgress(1/n, detail = 'git fetch & reset')
-          system(sprintf('cd %s; git fetch %s; git reset --hard origin/%s', dir_data, y$gh_branch_data, y$gh_branch_data))
+          system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
           local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 
           # redo [scenario].Rdata files
