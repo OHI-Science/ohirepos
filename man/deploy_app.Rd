@@ -9,7 +9,7 @@ deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
   app_server = "jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/",
   projection = "Mercator", map_shrink_pct = 10, run_app = F,
-  open_url = T, debug = F)
+  open_url = T, dir_tmp = tempdir(), del_tmp = T)
 }
 \arguments{
 \item{gh_repo}{Github repository}
@@ -36,7 +36,9 @@ deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
 
 \item{open_url}{open the web browser to the app_url}
 
-\item{debug}{produces a Message box with various debug outputs to evaluate reactivity of the app}
+\item{dir_tmp}{temporary directory to use for populating, defaults to tmpdir()}
+
+\item{del_tmp}{whether to delete temporarory directory when done, defaults to TRUE}
 }
 \value{
 Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
