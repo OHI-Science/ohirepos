@@ -127,7 +127,7 @@ shinyServer(function(input, output, session) {
         data  %>%
           mutate(
             scenario = sprintf('%s - %s', input$sel_scenario, input$sel_scenario_b))) %>%
-        select(scenario, rgn_id, value)
+        select(rgn_id, scenario, value)
 
       results = list(
         data = data %>%
@@ -224,7 +224,10 @@ shinyServer(function(input, output, session) {
   output$table = renderDataTable({
 
     if (input$sidebarmenu == 'compare'){
-      get_selected()$compare %>%
+      rgns@data %>%
+        select(rgn_id, rgn_name) %>%
+        left_join(
+          get_selected()$compare, by='rgn_id') %>%
         spread(scenario, value)
     } else {
       rgns@data %>%
@@ -546,16 +549,18 @@ shinyServer(function(input, output, session) {
         'data:', a(sha_txt, href=sha_url))))
   })
 
-  output$hoverText <- renderText({
-    if (v$hi_id == 0){
-      sprintf("Global: %s km2", format(area_global, big.mark =','))
-    } else {
-      sprintf(
-        "%s: %s km2",
-        subset(rgns@data, rgn_id==v$hi_id, rgn_name, drop=T),
-        format(round(subset(rgns@data, rgn_id==v$hi_id, area_km2, drop=T)), big.mark =','))
-    }
-
+  # output$hoverText <- renderText({
+  #   if (v$hi_id == 0){
+  #     sprintf("Global: %s km2", format(area_global, big.mark =','))
+  #   } else {
+  #     sprintf(
+  #       "%s: %s km2",
+  #       subset(rgns@data, rgn_id==v$hi_id, rgn_name, drop=T),
+  #       format(round(subset(rgns@data, rgn_id==v$hi_id, area_km2, drop=T)), big.mark =','))
+  #   }
+  #   })
+  
+  observeEvent(fileReaderData(), {
     # get remote_sha from file
     remote_sha <- fileReaderData()
 

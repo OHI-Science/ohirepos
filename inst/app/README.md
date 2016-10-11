@@ -22,16 +22,16 @@ In practice, for developing this Shiny app, I launch RStudio with `app.Rproj` to
 
 ```r
 # vars for ohi-global
-gh_repo    = 'ohi-global'
-app_title  = 'Global'
+gh_repo        = 'ohi-global'
+app_title      = 'Global'
 scenario_dirs  = c('eez2015','eez2012','eez2013','eez2014','eez2016')
-projection = 'Mollweide'
+projection     = 'Mollweide'
 
 # vars for bhi
-gh_repo    = 'bhi'
-app_title  = 'Baltic'
+gh_repo        = 'bhi'
+app_title      = 'Baltic'
 scenario_dirs  = 'baltic2015'
-projection = 'Mercator'
+projection     = 'Mercator'
 
 # common vars
 gh_owner       = 'OHI-Science'

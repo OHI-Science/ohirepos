@@ -80,8 +80,8 @@ dashboardPage(
 
                 # hover text showing info on hover area
                 absolutePanel(
-                  bottom=10, left=10, style='background-color:white',
-                  textOutput('hoverText')),
+                  bottom=10, left=10, style='background-color:white'),
+                  #textOutput('hoverText')),
 
                 # region info, possibly with aster chart
                 absolutePanel(
