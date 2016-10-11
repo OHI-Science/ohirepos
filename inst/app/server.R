@@ -634,15 +634,44 @@ shinyServer(function(input, output, session) {
 
   output$selection <- renderUI({
     v = selection()
-    if (!is.null(v)){
-      #browser()
-      # TODO: populate description
-      # el1: goal: name (code)
-      #  el2: subgoal: name (code) if goal != subgoal
-      #    el3: <status|pressures> layer: name (code)
-      # description: descriptions[length(v)]
-      return(paste(v, collapse=' - '))
+    if (is.null(v)) return(NULL)
+
+    n = length(v)
+    g = goals %>%
+        filter(goal == v[1])
+
+    if (n == 1){
+      return(HTML(sprintf(
+        'goal: <b>%s</b>\n<br>description: <i>%s</i>', g$name, g$description)))
     }
+    if (n >= 2){
+      sg = goals %>%
+        filter(goal == v[2])
+      sg_name = ifelse(
+        v[1] == v[2],
+        sprintf('<b>%s</b> (%s)', g$name, v[1]),
+        sprintf('<b>%s</b> (%s) > <b>%s</b> (%s)', g$name, v[1], sg$name, v[2]))
+      sg_description = sg$description
+    }
+    if (n == 2){
+      return(HTML(sprintf(
+        'goal: %s (%s)\n<br>description: <i>%s</i>', sg_name, v[2], sg_description)))
+    }
+    #browser()
+    if (n == 3){
+      l_dim = c(p='pressure',r='resilience',s='status')[str_sub(v[3],1,1)]
+      l_id = str_sub(v[3], 3)
+      l = layers %>%
+        filter(layer == l_id)
+      return(HTML(sprintf(
+        'goal: %s\n<br>%s layer: <b>%s</b> (%s) \n<br>description: <i>%s</i>', sg_name, l_dim, l$name, l_id, l$description)))
+    }
+    # TODO: populate description
+    # el1: goal: name (code)
+    #  el2: subgoal: name (code) if goal != subgoal
+    #    el3: <status|pressures> layer: name (code)
+    # description: descriptions[length(v)]
+
     })
 
   # message ----
