@@ -13,14 +13,16 @@ dashboardPage(
 
       menuItem("Compare", tabName='compare',icon=icon("exchange",lib='font-awesome'), selected=F),
 
-      conditionalPanel(
-        "input.sidebarmenu === 'explore'",
+      selectInput(
+        'sel_scenario',
+        label    = '0. Choose scenario:',
+        choices  = sort(y$scenario_dirs),
+        selected = y$scenario_dirs[1]),
 
-        selectInput(
-          'sel_scenario',
-          label    = '0. Choose scenario:',
-          choices  = sort(y$scenario_dirs),
-          selected = y$scenario_dirs[1]),
+      conditionalPanel(
+        "input.sidebarmenu == 'compare'",
+
+        uiOutput('ui_sel_scenario_b')),
 
         selectInput(
           'sel_type',
@@ -54,7 +56,8 @@ dashboardPage(
           label    = 'Zoom to region:',
           choices  = c(y$app_title,sort(as.character(rgns@data$rgn_name)))),
 
-        htmlOutput('var_description', class='shiny-input-container') ))),
+        htmlOutput('var_description', class='shiny-input-container') )),
+  #),
 
   dashboardBody(
     tabItems(
@@ -86,7 +89,7 @@ dashboardPage(
                   div(class='well', style='margin-right: 15px; margin-top: 44px; text-align: right; overflow: hidden;',
                     htmlOutput('rgnInfo'),
                     conditionalPanel(
-                      condition = "input.sel_type === 'output' & input.sel_output_goal=='Index' & input.sel_output_goal_dimension=='score'",
+                      condition = "input.sel_type === 'output' & input.sel_output_goal=='Index' & input.sel_output_goal_dimension=='score' & input.sidebarmenu!='compare'",
                       style     = 'float:right; display:block;',
                       asterOutput(outputId = "aster", width='100px', height='100px')))))),
 
@@ -94,10 +97,14 @@ dashboardPage(
               'Table',
               dataTableOutput('table')),
 
-              tabPanel(
-                'Elements',
-                sunburstOutput("sunburst"),
-                textOutput("selection")))),
+            tabPanel(
+              'Elements',
+              sunburstOutput("sunburst"),
+              uiOutput("selection")),
+
+            tabPanel(
+              'Plot',
+              uiOutput('ui_boxplot')))),
 
         uiOutput('ui_msg')
 
