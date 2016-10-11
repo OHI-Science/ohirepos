@@ -14,6 +14,7 @@
 #' @param open_url open the web browser to the app_url
 #' @param dir_tmp temporary directory to use for populating, defaults to tmpdir()
 #' @param del_tmp whether to delete temporarory directory when done, defaults to TRUE
+#' @param dir_server directory on the app_server
 #'
 #' @return Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
 #' and SSH keys for secure copying to server.
@@ -28,7 +29,8 @@ deploy_app <- function(
   gh_repo, app_title, scenario_dirs,
   gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
-  app_server='jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/',
+  app_server='jstewart@128.111.84.76',
+  dir_server='/srv/shiny-server',
   projection='Mercator', map_shrink_pct=10,
   run_app=F, open_url=T, dir_tmp=tempdir(), del_tmp=T){
 
@@ -161,9 +163,9 @@ deploy_app <- function(
     sprintf('touch %s/restart.txt', dir_app),
     # git commit and push to Github
     sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_app, substr(ohirepos_commit, 1, 7)),
-    # push to server using secure copy (scp) recursively (-r), and update permissions so writable by shiny user
-    sprintf('scp -r %s %s%s/', dir_app, app_server, gh_repo),
-    sprintf('ssh %s "cd /srv/shiny-server/%s; chmod -R 775 ."', app_server, gh_repo)
+    # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
+    sprintf('rsync -r --exclude %s %s/ %s:%s/%s/', basename(dir_data_2), dir_app, app_server, dir_server, gh_repo),
+    sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo)
   )
   for (cmd in commands){
     cat('running command:\n  ', cmd)

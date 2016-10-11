@@ -7,7 +7,7 @@
 deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
   gh_branch_data = "draft", gh_branch_app = "app",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
-  app_server = "jstewart@fitz.nceas.ucsb.edu:/srv/shiny-server/",
+  app_server = "jstewart@128.111.84.76", dir_server = "/srv/shiny-server",
   projection = "Mercator", map_shrink_pct = 10, run_app = F,
   open_url = T, dir_tmp = tempdir(), del_tmp = T)
 }
@@ -27,6 +27,8 @@ deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
 \item{app_url}{URL of the application}
 
 \item{app_server}{the secure copy (scp) server location given by username@server:/dir/}
+
+\item{dir_server}{directory on the app_server}
 
 \item{projection}{defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results}
 
