@@ -27,7 +27,8 @@ deploy_website(gh_repo, web_title, scenario_dir, gh_owner = "OHI-Science",
 \item{debug}{debugging flag}
 }
 \value{
-Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or updating gh-pages branch of Github repository.
+Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or
+updating gh-pages branch of Github repository.
 }
 \description{
 Deploy website to gh-pages branch in Github repository

@@ -5,7 +5,7 @@
 #' @return Returns character vector of repositories.
 #' @export
 #'
-#' @import readr, dplyr
+#' @import readr dplyr
 gh_remote_branches = function(dir_repo){
   library(readr)
   library(dplyr)
