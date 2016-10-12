@@ -69,7 +69,7 @@ deploy_app <- function(
   dir.create(dir_branches, showWarnings = F, recursive = T)
 
   # data branch: fetch existing, or clone new
-  if (file.exists(dir_data)){
+  if (!file.exists(dir_data)){
 
     # git fetch & overwrite
     cmd = sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, gh_branch_data)
