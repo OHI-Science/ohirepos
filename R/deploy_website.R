@@ -132,7 +132,7 @@ deploy_website <- function(
   # git commit and push to Github
   # DEBUG BHI: system(sprintf("dir_web=%s;cd ~github/bhi2; cp -R $dir_web/ ~/github/bhi2/; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_web, substr(ohirepos_commit, 1, 7)))
   #   Doh! copied over bhi2/.git with bhi's .git
-  system(sprintf("cd %s; git add *; git add .gitignore .nojekyll; git commit -a -m 'updating app with ohihrepos commit %s'; git push origin gh-pages", dir_web, substr(ohirepos_commit, 1, 7)))
+  system(sprintf("cd %s; git add *; git add .gitignore .nojekyll; git commit -a -m 'updating website with ohirepos commit %s'; git push origin gh-pages", dir_web, substr(ohirepos_commit, 1, 7)))
 
   # open website
   if (open_url) utils::browseURL(web_url)
