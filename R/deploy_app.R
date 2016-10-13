@@ -12,8 +12,8 @@
 #' @param app_server the secure copy (scp) server location given by username@server:/dir/
 #' @param run_app run the Shiny app locally
 #' @param open_url open the web browser to the app_url
-#' @param dir_tmp temporary directory to use for populating, defaults to tmpdir()
-#' @param del_tmp whether to delete temporarory directory when done, defaults to TRUE
+#' @param dir_out top-level directory to use for populating git repo folder and branch subfolders within, defaults to tmpdir()
+#' @param del_out whether to delete output directory when done, defaults to TRUE
 #' @param dir_server directory on the app_server
 #'
 #' @return Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
@@ -23,42 +23,50 @@
 #' deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide')
 #' deploy_app(       'bhi', 'Baltic', 'baltic2015')
 #' }
-#' @import tidyverse yaml devtools brew
+#' @import tidyverse yaml devtools
 #' @export
 deploy_app <- function(
   gh_repo, app_title, scenario_dirs,
   gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
-  app_server='jstewart@128.111.84.76',
-  dir_server='/srv/shiny-server',
+  app_server='jstewart@128.111.84.76', dir_server='/srv/shiny-server',
   projection='Mercator', map_shrink_pct=10,
-  run_app=F, open_url=T, dir_tmp=tempdir(), del_tmp=T){
+  run_app=F, open_url=T,
+  dir_out=tempdir(), del_out=T){
 
   library(tidyverse)
   library(yaml)
-  library(brew)
 
   # debug ----
 
   # history: derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
 
   # library(devtools); load_all();
-  # gh_repo='bhi'       ; app_title='Baltic'; projection='Mercator';  scenario_dirs='baltic2015'
-  # gh_repo='ohi-global'; app_title='Global'; projection='Mollweide'; scenario_dirs=c('eez2015','eez2012','eez2013','eez2014','eez2016')
-  # gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
-  # debug=T; run_app=T; open_url=T; map_shrink_pct=10; app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/'
+  # gh_repo='bhi'; app_title='Baltic'; scenario_dirs='baltic2015'; projection='Mercator'
+  # gh_repo='ohi-global'; app_title='Global'; scenario_dirs=c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'
+  # gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'
+  # app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
+  # app_server='bbest@128.111.84.76'; dir_server='/srv/shiny-server'
+  # map_shrink_pct=10
+  # run_app=T; open_url=T
+  # dir_out='~/Desktop/ohirepos_tmp'; del_out=F
 
-  # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
-  # deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
-  # deploy_app(       'bhi', 'Baltic', 'baltic2015', app_server='bbest@fitz.nceas.ucsb.edu:/srv/shiny-server/')
-
+  # library(devtools); load_all(); # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
+  # deploy_app(
+  #   'ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide',
+  #   app_server='bbest@128.111.84.76',
+  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F)
+  # deploy_app(
+  #   'bhi', 'Baltic', 'baltic2015',
+  #   app_server='bbest@128.111.84.76',
+  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F)
   # ----
 
   # construct vars
-  dir_branches = file.path(dir_tmp, gh_repo)
-  dir_data     = file.path(dir_tmp, gh_repo, gh_branch_data)
-  dir_app      = file.path(dir_tmp, gh_repo, gh_branch_app)
-  dir_data_2   = file.path(dir_tmp, gh_repo, gh_branch_app, sprintf('%s_%s', gh_repo, gh_branch_data))
+  dir_branches = file.path(dir_out, gh_repo)
+  dir_data     = file.path(dir_out, gh_repo, gh_branch_data)
+  dir_app      = file.path(dir_out, gh_repo, gh_branch_app)
+  dir_data_2   = file.path(dir_out, gh_repo, gh_branch_app, sprintf('%s_%s', gh_repo, gh_branch_data))
   gh_slug      = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url       = sprintf('https://github.com/%s.git', gh_slug)
 
@@ -68,50 +76,63 @@ deploy_app <- function(
   # ensure top level dir exists
   dir.create(dir_branches, showWarnings = F, recursive = T)
 
+  run_cmd = function(cmd){
+    cat(sprintf('running command:\n  %s\n', cmd))
+    system.time(system(cmd))
+  }
+
+  # check if app branch dir already exists
+  if (file.exists(dir_app)){
+
+    if (file.exists(dir_data_2)){
+
+      # move dir_data_2 inside dir_app back out to dir_data as sibling to dir_app
+      run_cmd(sprintf('mv %s %s', dir_data_2, dir_data))
+    }
+  }
+
   # data branch: fetch existing, or clone new
   if (!file.exists(dir_data)){
 
-    # git fetch & overwrite
-    cmd = sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, gh_branch_data)
-    cat(sprintf('running command:\n  %s', cmd))
-    system(cmd)
-
+    # clone data branch, shallowly and quietly
+    run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
   } else {
 
-    # clone data branch, shallowly and quietly
-    cmd = sprintf('git clone --quiet --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data)
-    cat(sprintf('running command:\n  %s', cmd))
-    system(cmd)
+    # git fetch & overwrite
+    run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
   }
-  cat('  finished command')
 
   # get remote branches
   remote_branches = gh_remote_branches(dir_data)
 
-  # app branch: clone existing or create orphan
+  if (!file.exists(dir_app)){
+
+    # dir_app: copy from dir_data, if needed
+    run_cmd(sprintf('cp -rf %s %s', dir_data, dir_app))
+  }
+
   if (!'app' %in% remote_branches){
 
-    # create orphan app branch
-    cmd = sprintf(
-      'cp -rf %s %s; cd %s; git checkout --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -m "initialize %s branch"',
-      dir_data, dir_app, dir_app, gh_branch_app, gh_branch_app)
-    cat(sprintf('running command:\n  %s', cmd))
-    system(cmd)
-
-  } else {
-
-    # clone app branch, clear existing files
-    cmd = sprintf(
-      'git clone --quiet --depth 1 --branch %s %s %s; cd %s; rm -rf *', gh_branch_app, gh_url, dir_app, dir_app)
-    cat(sprintf('running command:\n  %s', cmd))
-    system(cmd)
-
+    # create orphan app branch, if needed
+    run_cmd(sprintf(
+      'cd %s; git checkout -q --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -q -m "initialize %s branch"; git push -q origin %s',
+      dir_app, gh_branch_app, gh_branch_app, gh_branch_app))
   }
-  cat('  finished command')
 
-  # copy shiny app files into dir_app
-  cat('copying app files from ohirepos package')
-  suppressWarnings(file.copy(system.file('app', package='ohirepos'), dir_branches, recursive=T, overwrite=T))
+  if ('app' %in% remote_branches){
+
+    # checkout app branch and clear files
+    run_cmd(sprintf(
+      'cd %s; git fetch -q; git checkout -q %s; git reset -q --hard origin/%s; rm -rf *',
+      dir_app, gh_branch_app, gh_branch_app))
+  }
+
+  # copy shiny app files into dir_app, excluding all files in .gitignore
+  cat('\ncopying app files from ohirepos package')
+  run_cmd(
+    sprintf(
+      'cd %s; rsync -rv --exclude=.git/ --exclude-from=.gitignore . %s',
+      system.file('app', package='ohirepos'), dir_app))
 
   # get commit of ohirepos for Shiny app provenance
   ohirepos_commit = devtools:::local_sha('ohirepos')
@@ -124,7 +145,7 @@ deploy_app <- function(
   }
 
   # write app.yml configuration
-  cat('writing app.yml')
+  cat('\nwriting app.yml')
   write_file(
     as.yaml(list(
       gh_repo         = gh_repo,
@@ -142,7 +163,7 @@ deploy_app <- function(
     file.path(dir_app, 'app.yml'))
 
   # add Rstudio project file
-  cat('writing Rproj, gitignore files')
+  cat('\nwriting Rproj, gitignore files\n')
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_app, gh_repo))
 
   # add gitignore file
@@ -162,14 +183,17 @@ deploy_app <- function(
     # prompt restart
     sprintf('touch %s/restart.txt', dir_app),
     # git commit and push to Github
-    sprintf("cd %s; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_app, substr(ohirepos_commit, 1, 7)),
+    sprintf(
+      "cd %s; git add --all; git commit -q -a -m 'updating app with ohihrepos commit %s'; git push -q origin %s",
+      dir_app, substr(ohirepos_commit, 1, 7), gh_branch_app),
     # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
-    sprintf('rsync -r --exclude %s %s/ %s:%s/%s/', basename(dir_data_2), dir_app, app_server, dir_server, gh_repo),
-    sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo)
+    sprintf(
+      'cd %s; rsync -r --exclude .git --exclude-from=.gitignore . %s:%s/%s',
+      dir_app, app_server, dir_server, gh_repo),
+    cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )
-  for (cmd in commands){
-    cat('running command:\n  ', cmd)
-    system(cmd)
+  for (cmd in commands[1:2]){ # commands[1:2]
+    run_cmd(cmd)
   }
 
   # run app, local and remote
@@ -178,6 +202,6 @@ deploy_app <- function(
   if (open_url) utils::browseURL(app_url)
 
   # remove temp files
-  cat('rm temp files if del_tmp==T')
-  if (!del_tmp) unlink(dir_branches, recursive=T, force=T)
+  cat('rm temp files if del_out==T')
+  if (del_out) unlink(dir_branches, recursive=T, force=T)
 }

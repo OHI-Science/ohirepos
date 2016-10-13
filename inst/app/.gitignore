@@ -1,6 +1,13 @@
+.DS_Store
+.Rhistory
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
 app.yml
-rsconnect
-bhi_app.yml
+app_bhi.yml
+app_ohi-global.yml
 bhi_intro.md
 bhi_baltic2015.Rdata
 bhi_draft
@@ -13,5 +20,4 @@ ohi-global_eez2013.Rdata
 ohi-global_eez2014.Rdata
 ohi-global_eez2015.Rdata
 ohi-global_eez2016.Rdata
-app_ohi-global.yml
-app_bhi.yml
+rsconnect
