@@ -203,7 +203,7 @@ deploy_app <- function(
       dir_app, app_server, dir_server, gh_repo),
     cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )
-  for (cmd in commands[1:2]){ # commands[1:2]
+  for (cmd in commands){ # commands[1:2]
     run_cmd(cmd)
   }
 
