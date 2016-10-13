@@ -45,6 +45,12 @@ deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
 \value{
 Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
 and SSH keys for secure copying to server.
+Suggestions to update Shiny app:
+\enumerate{
+ \item Ensure permissions are set for you on fitz. \code{ssh fitz; sudo chown -R jstewart /srv/shiny-server/ohi-global}
+ \item Copy your repo with the data branch checked out to the dir_out locally. For example, if input argument \code{dir_out='~/Desktop/ohirepos_tmp'},
+       then copy \code{'~/github/ohi-global'} to \code{dir_out='~/Desktop/ohirepos_tmp/ohi-global/draft'}.
+}
 }
 \description{
 Deploy Shiny application

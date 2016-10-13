@@ -5,12 +5,11 @@
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
 #' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
 #'
-#' @return
+#' @return TBD
 #' @export
 #'
 #' @examples
-#'
-#'
+#' \dontrun{# TBD}
 populate_etc <- function(key, dir_scenario) {
 
   ## calculate_scores.r:: copy ## TODO: make this a template. ----

@@ -2,14 +2,16 @@
 
 #' Clone existing repo
 #'
-#' @param dir_repos
-#' @param dir_repo
-#' @param git_url
+#' @param dir_repos TBD
+#' @param dir_repo TBD
+#' @param git_url TBD
 #'
-#' @return
+#' @return TBD
 #' @export
 #'
 #' @examples
+#' \dontrun{# TBD}
+
 clone_repo <- function(dir_repos, dir_repo, git_url) {
 
   ## clone repo

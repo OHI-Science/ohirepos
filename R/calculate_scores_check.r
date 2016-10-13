@@ -4,10 +4,11 @@
 #'
 #' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
 #'
-#' @return
+#' @return TBD
 #' @export
 #'
 #' @examples
+#' \dontrun{# TBD}
 calculate_scores_check <- function(dir_scenario){
 
   ## libraries

@@ -6,10 +6,11 @@
 #' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
 #' @param dir_global full path of local `ohi-global` scenario, e.g. `~/github/ohi-global/eez2016'
 #'
-#' @return
+#' @return TBD
 #' @export
 #'
 #' @examples
+#' \dontrun{# TBD}
 populate_conf <- function(key, dir_scenario, dir_global) {
 
   ## create conf folder

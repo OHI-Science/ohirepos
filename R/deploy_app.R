@@ -18,6 +18,12 @@
 #'
 #' @return Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
 #' and SSH keys for secure copying to server.
+#' Suggestions to update Shiny app:
+#' \enumerate{
+#'  \item Ensure permissions are set for you on fitz. \code{ssh fitz; sudo chown -R jstewart /srv/shiny-server/ohi-global}
+#'  \item Copy your repo with the data branch checked out to the dir_out locally. For example, if input argument \code{dir_out='~/Desktop/ohirepos_tmp'},
+#'        then copy \code{'~/github/ohi-global'} to \code{dir_out='~/Desktop/ohirepos_tmp/ohi-global/draft'}.
+#' }
 #' @examples
 #' \dontrun{
 #' deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide')
@@ -55,11 +61,11 @@ deploy_app <- function(
   # deploy_app(
   #   'ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide',
   #   app_server='bbest@128.111.84.76',
-  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F)
+  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   # deploy_app(
   #   'bhi', 'Baltic', 'baltic2015',
   #   app_server='bbest@128.111.84.76',
-  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F)
+  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   # ----
 
   # construct vars
