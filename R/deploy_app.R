@@ -66,6 +66,11 @@ deploy_app <- function(
   #   'bhi', 'Baltic', 'baltic2015',
   #   app_server='bbest@128.111.84.76',
   #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
+  #
+  # jlowndes latest:
+  # deploy_app(
+  #   'bhi', 'Baltic', 'baltic2015',
+  #   dir_out='~/github/clip-n-ship', del_out=F)
   # ----
 
   # construct vars
@@ -134,7 +139,7 @@ deploy_app <- function(
   }
 
   # copy shiny app files into dir_app, excluding all files in .gitignore
-  cat('\ncopying app files from ohirepos package')
+  cat('\ncopying app files from ohirepos package\n')
   run_cmd(
     sprintf(
       'cd %s; rsync -rv --exclude=.git/ --exclude-from=.gitignore . %s',
