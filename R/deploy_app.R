@@ -72,7 +72,7 @@ deploy_app <- function(
   #   app_server='bbest@128.111.84.76',
   #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   #
-  # jlowndes latest after `cp -rf ~/github/bhi ~/github/clip-n-ship/bhi/draft`
+  # jlowndes latest after `mkdir ~/github/clip-n-ship/bhi; cp -rf ~/github/bhi ~/github/clip-n-ship/bhi/draft`
   # deploy_app(
   #   'bhi', 'Baltic', 'baltic2015',
   #   dir_out='~/github/clip-n-ship', del_out=F)
@@ -200,7 +200,7 @@ deploy_app <- function(
     sprintf('touch %s/restart.txt', dir_app),
     # git commit and push to Github
     sprintf(
-      "cd %s; git add --all; git commit -q -a -m 'updating app with ohihrepos commit %s'; git push -q origin %s",
+      "cd %s; git add --all; git commit -q -a -m 'updating app with ohirepos commit %s'; git push -q origin %s",
       dir_app, substr(ohirepos_commit, 1, 7), gh_branch_app),
     # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
     sprintf(
