@@ -12,8 +12,6 @@ source("./_site.R")
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-<!-- Note: most of this language was borrowed from www.su.se/ostersjocentrum/english/baltic-eye/research/baltic-health-index -->
-
 <div class="page-lead" style="background-image:url(images/regions_1600x800.png)">
 <div class="wrap page-lead-content">
 <h2>An Ocean Health Index assessment for `r web_title`</h2>
@@ -26,14 +24,21 @@ knitr::opts_chunk$set(echo = TRUE)
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-book fa-2x"></i> Project</h2>
 <p class="post-excerpt">
-The `r web_title` Health Index (BHI) is a regional study applying the Ocean Health Index framework. The aim is to initiate the development of a tool that can be used by decision-makers to guide management of the Baltic Sea region towards increased sustainability. 
+
+<!-- Suggested instructions: Add several sentences describing the project here.  -->
+This is a study of the `r web_title` using the  Ocean Health Index framework...
+
+
 </p>
 </div>
 
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-cubes fa-2x"></i> Our team</h2>
 <p class="post-excerpt">
-BHI is jointly led by Stockholm Resilience Centre (SRC) and [Baltic Eye](http://www.su.se/ostersjocentrum/english/baltic-eye) at the Baltic Sea Centre, both at Stockholm University, together with the Ocean Health Index team. The project is funded by [Baltic Ecosystem Adaptive Management](http://www.su.se/ostersjocentrum/english/beam), Baltic Eye, and the Johansson Family Foundation.
+
+<!-- Suggested instructions: Add several sentences describing the team here.  -->
+The `r web_title` Ocean Health Index team consists of...
+
 </p>
 </div>
 
