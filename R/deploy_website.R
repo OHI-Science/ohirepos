@@ -14,8 +14,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' deploy_app('ohi-global', 'Global', 'eez2015')
-#' deploy_app(       'bhi', 'Baltic', 'baltic2015')
+#' deploy_website('ohi-global', 'Global', 'eez2015')
+#' deploy_website('bhi',        'Baltic', 'baltic2015')
 #' }
 #'
 #' @import tidyverse yaml devtools brew
@@ -24,7 +24,7 @@ deploy_website <- function(
   gh_repo, web_title, scenario_dir,
   gh_owner='OHI-Science', gh_branch_data='draft',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
-  open_url=F, debug=F){
+  open_url=FALSE, debug=FALSE){
 
   # debug ----
 
@@ -36,8 +36,8 @@ deploy_website <- function(
   # debug=T; gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
-  # deploy_app('ohi-global', 'Global', 'eez2015')
-  # deploy_app(       'bhi', 'Baltic', 'baltic2015')
+  # deploy_website('ohi-global', 'Global', 'eez2015')
+  # deploy_website('bhi',        'Baltic', 'baltic2015')
 
   # ----
 
