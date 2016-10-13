@@ -67,7 +67,7 @@ deploy_app <- function(
   #   app_server='bbest@128.111.84.76',
   #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   #
-  # jlowndes latest:
+  # jlowndes latest after `cp -rf ~/github/bhi ~/github/clip-n-ship/bhi/draft`
   # deploy_app(
   #   'bhi', 'Baltic', 'baltic2015',
   #   dir_out='~/github/clip-n-ship', del_out=F)
