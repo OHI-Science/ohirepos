@@ -34,9 +34,11 @@ deploy_website <- function(
   # history: from ohi-webapps, create_gh_repo.r https://github.com/OHI-Science/ohirepos/blob/07110dacad98fcc0a0080ca8f5ab248ae46e7f51/R/create_gh_repo.r
 
   # library(devtools); load_all();
+  # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
+  # bbest:    dir_out='~/Desktop/ohirepos_tmp'
+  # jlowndes: dir_out='~/github/clip-n-ship'; del_out=FALSE
   # gh_repo='bhi'       ; web_title='Baltic'; scenario_dir='baltic2015'
   # gh_repo='ohi-global'; web_title='Global'; scenario_dir='eez2015'
-  # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; dir_out='~/github/clip-n-ship'; del_out=FALSE
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
   # deploy_website('ohi-global', 'Global', 'eez2015')
@@ -59,35 +61,63 @@ deploy_website <- function(
   gh_slug       = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url        = sprintf('https://github.com/%s.git', gh_slug)
 
-  # delete existing
-  if (file.exists(dir_branches)) unlink(dir_branches, recursive = T)
+  # ensure top level dir exists
+  dir.create(dir_branches, showWarnings = F, recursive = T)
 
-  # clone data branch, shallowly and quietly
-  dir.create(dir_branches, showWarnings = F)
-  system(sprintf('git clone --quiet --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
+  run_cmd = function(cmd){
+    cat(sprintf('running command:\n  %s\n', cmd))
+    system.time(system(cmd))
+  }
+
+  # data branch: fetch existing, or clone new
+  if (!file.exists(dir_data)){
+
+    # clone data branch, shallowly and quietly
+    run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
+  } else {
+
+    # git fetch & overwrite
+    run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
+  }
+
+  # check if web branch dir already exists
+  if (file.exists(dir_web)){
+
+    if (file.exists(dir_data_2)){
+
+      # move dir_data_2 inside dir_app back out to dir_data as sibling to dir_app
+      run_cmd(sprintf('mv %s %s', dir_data_2, dir_data))
+    }
+  }
 
   # get remote branches
   remote_branches = gh_remote_branches(dir_data)
 
-  # create/clear app branch
-  if (!'gh-pages' %in% remote_branches){
+  if (!file.exists(dir_web)){
 
-    # create orphan app branch
-    system(sprintf(
-      'cp -rf %s %s; cd %s; git checkout --orphan %s; git rm -rf .; touch README.md; git add README.md; git commit -m "initialize %s branch"',
-      dir_data, dir_web, dir_web, gh_branch_web, gh_branch_web))
-
-  } else {
-
-    # clone app branch, clear existing files
-    system(sprintf(
-      'git clone --quiet --depth 1 --branch %s %s %s; cd %s; git rm -rf .', gh_branch_web, gh_url, dir_web, dir_web))
-
+    # dir_app: copy from dir_data, if needed
+    run_cmd(sprintf('cp -rf %s %s', dir_data, dir_web))
   }
 
-  # copy gh-pages web files into dir_web
-  # debug: system(sprintf('cd %s; rm -rf *', dir_web))
-  suppressWarnings(file.copy(system.file('gh-pages', package='ohirepos'), dir_branches, recursive=T, overwrite=T))
+  if (!'gh-pages' %in% remote_branches){
+
+    # create orphan gh-pages branch, if needed
+    run_cmd(sprintf(
+      'cd %s; git checkout -q --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -q -m "initialize %s branch"; git push -q origin %s',
+      dir_web, gh_branch_web, gh_branch_web, gh_branch_web))
+  } else {
+
+    # checkout gh-pages branch and clear files
+    run_cmd(sprintf(
+      'cd %s; git fetch -q; git checkout -q %s; git reset -q --hard origin/%s; rm -rf *',
+      dir_web, gh_branch_web, gh_branch_web))
+  }
+
+  # copy gh-pages web files into dir_web, excluding all files in .gitignore
+  run_cmd(
+    sprintf(
+      'cd %s; rsync -rv --exclude=.git/ --exclude=_other/ --exclude=.gitignore --exclude-from=.gitignore . %s',
+      system.file('gh-pages', package='ohirepos'), dir_web))
 
   # get commit of ohirepos for website provenance
   ohirepos_commit = devtools:::local_sha('ohirepos')

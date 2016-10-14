@@ -63,14 +63,14 @@ deploy_app <- function(
   # dir_out='~/Desktop/ohirepos_tmp'; del_out=F
 
   # library(devtools); load_all(); # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
-  # deploy_app(
-  #   'ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide',
-  #   app_server='bbest@128.111.84.76',
-  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
-  # deploy_app(
-  #   'bhi', 'Baltic', 'baltic2015',
-  #   app_server='bbest@128.111.84.76',
-  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
+  deploy_app(
+    'ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide',
+    app_server='bbest@128.111.84.76',
+    dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
+  deploy_app(
+    'bhi', 'Baltic', 'baltic2015',
+    app_server='bbest@128.111.84.76',
+    dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   #
   # jlowndes latest after `mkdir ~/github/clip-n-ship/bhi; cp -rf ~/github/bhi ~/github/clip-n-ship/bhi/draft`
   # deploy_app(
@@ -95,16 +95,6 @@ deploy_app <- function(
   run_cmd = function(cmd){
     cat(sprintf('running command:\n  %s\n', cmd))
     system.time(system(cmd))
-  }
-
-  # check if app branch dir already exists
-  if (file.exists(dir_app)){
-
-    if (file.exists(dir_data_2)){
-
-      # move dir_data_2 inside dir_app back out to dir_data as sibling to dir_app
-      run_cmd(sprintf('mv %s %s', dir_data_2, dir_data))
-    }
   }
 
   # data branch: fetch existing, or clone new
@@ -133,9 +123,7 @@ deploy_app <- function(
     run_cmd(sprintf(
       'cd %s; git checkout -q --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -q -m "initialize %s branch"; git push -q origin %s',
       dir_app, gh_branch_app, gh_branch_app, gh_branch_app))
-  }
-
-  if ('app' %in% remote_branches){
+  } else {
 
     # checkout app branch and clear files
     run_cmd(sprintf(
@@ -144,7 +132,6 @@ deploy_app <- function(
   }
 
   # copy shiny app files into dir_app, excluding all files in .gitignore
-  cat('\ncopying app files from ohirepos package\n')
   run_cmd(
     sprintf(
       'cd %s; rsync -rv --exclude=.git/ --exclude-from=.gitignore . %s',
@@ -194,8 +181,8 @@ deploy_app <- function(
   #brew::brew(system.file('app/travis.brew.yml', package='ohirepos'), file.path(dir_app, 'travis.yml'))
 
   commands = c(
-    # move dir_data to dir_data_2
-    sprintf('mv %s %s', dir_data, dir_data_2),
+    # copy dir_data to dir_data_2
+    sprintf('cp -rf %s %s', dir_data, dir_data_2),
     # prompt restart
     sprintf('touch %s/restart.txt', dir_app),
     # git commit and push to Github
@@ -214,8 +201,8 @@ deploy_app <- function(
 
   # run app, local and remote
   cat('run app locally (run_app=T) or remotely (open_url=T)')
-  if (run_app)  shiny::runApp(dir_app)
   if (open_url) utils::browseURL(app_url)
+  if (run_app)  shiny::runApp(dir_app)
 
   # remove temp files
   cat('rm temp files if del_out==T')
