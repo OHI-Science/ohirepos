@@ -35,8 +35,7 @@ deploy_website <- function(
 
   # library(devtools); load_all();
   # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
-  # bbest:    dir_out='~/Desktop/ohirepos_tmp'
-  # jlowndes: dir_out='~/github/clip-n-ship'; del_out=FALSE
+  # dir_out='~/github/clip-n-ship' # dir_out='~/Desktop/ohirepos_tmp'
   # gh_repo='bhi'       ; web_title='Baltic'; scenario_dir='baltic2015'
   # gh_repo='ohi-global'; web_title='Global'; scenario_dir='eez2015'
 

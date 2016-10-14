@@ -5,5 +5,7 @@
 .RData
 rsconnect
 .DS_Store
-bhi_baltic2015
 _sass/.sass-cache
+_site.R
+_site.yml
+bhi_baltic2015

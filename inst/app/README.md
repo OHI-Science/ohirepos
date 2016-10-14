@@ -14,7 +14,7 @@ deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','ee
 deploy_app('bhi', 'Baltic', 'baltic2015')
 ```
 
-When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp)), the github repository specified in `app.yml` will get downloaded for the specified `default_branch` from Github with `git clone` and all the scenarios (specified by `scenario_dirs`) will be processed into a `[scenario].Rdata` file(s) before launching the app.
+When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocumentation.org/packages/shiny/versions/0.13.2/topics/runApp)), the github repository specified in `app.yml` will be git cloned into the `[gh_repo]_[gh_branch_data]` folder from Github and all the scenarios (specified by `scenario_dirs`) will be loaded into `[gh_repo]_[scenario].Rdata` file(s) before launching the app.
 
 ## Debugging
 
@@ -59,9 +59,6 @@ readr::write_file(
     ohirepos_commit = ohirepos_commit,
     last_updated    = Sys.Date())),
     'inst/app/app.yml')
-
-# brew intro.md
-brew::brew('inst/app/intro.brew.md', sprintf('inst/app/%s_intro.md', gh_repo))
 
 # run app
 shiny::runApp()
