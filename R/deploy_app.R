@@ -134,7 +134,7 @@ deploy_app <- function(
   # copy shiny app files into dir_app, excluding all files in .gitignore
   run_cmd(
     sprintf(
-      'cd %s; rsync -rv --exclude=.git/ --exclude-from=.gitignore . %s',
+      'cd %s; rsync -rq --exclude=.git/ --exclude-from=.gitignore . %s',
       system.file('app', package='ohirepos'), dir_app))
 
   # get commit of ohirepos for Shiny app provenance
@@ -172,8 +172,8 @@ deploy_app <- function(
   # add gitignore file
   writeLines(c(
     '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
+    basename(dir_data_2),                                     # [repo]_[branch]/
     sprintf('%s_%s.Rdata', gh_repo, scenario_dirs),           # [repo]_[scenario].Rdata
-    sprintf('%s_%s', gh_repo, gh_branch_data),                # [repo]_[branch]/
     sprintf('%s_%s_remote_sha.txt', gh_repo, gh_branch_data)  # [repo]_[scenario]_remote_sha.txt
     ), file.path(dir_app, '.gitignore'))
 
@@ -182,7 +182,7 @@ deploy_app <- function(
 
   commands = c(
     # copy dir_data to dir_data_2
-    sprintf('cp -rf %s %s', dir_data, dir_data_2),
+    run_cmd(sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2)),
     # prompt restart
     sprintf('touch %s/restart.txt', dir_app),
     # git commit and push to Github
@@ -191,7 +191,7 @@ deploy_app <- function(
       dir_app, substr(ohirepos_commit, 1, 7), gh_branch_app),
     # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
     sprintf(
-      'cd %s; rsync -r --exclude .git --exclude-from=.gitignore . %s:%s/%s',
+      'cd %s; rsync -rq --exclude .git --exclude-from=.gitignore . %s:%s/%s',
       dir_app, app_server, dir_server, gh_repo),
     cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )

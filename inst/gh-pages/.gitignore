@@ -1,0 +1,9 @@
+*.html
+!_footer.html
+.Rproj.user
+.Rhistory
+.RData
+rsconnect
+.DS_Store
+bhi_baltic2015
+_sass/.sass-cache

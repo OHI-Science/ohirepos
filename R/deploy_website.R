@@ -116,7 +116,10 @@ deploy_website <- function(
   # copy gh-pages web files into dir_web, excluding all files in .gitignore
   run_cmd(
     sprintf(
-      'cd %s; rsync -rv --exclude=.git/ --exclude=_other/ --exclude=.gitignore --exclude-from=.gitignore . %s',
+      'cd %s; rsync -rq \\
+      --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=_other/ --exclude=.gitignore \\
+      --include=_footer.html --exclude-from=.gitignore \\
+      . %s',
       system.file('gh-pages', package='ohirepos'), dir_web))
 
   # get commit of ohirepos for website provenance
@@ -132,7 +135,6 @@ deploy_website <- function(
   # brew _site.* files
   brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'), sprintf('%s/_site.yml', dir_web))
   brew(system.file('gh-pages/_site.brew.R'  , package='ohirepos'), sprintf('%s/_site.R'  , dir_web))
-  unlink(sprintf('%s/_site.brew.%s', dir_web, c('yml','R')))
 
   # add Rstudio project file
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_web, gh_repo))
@@ -143,19 +145,22 @@ deploy_website <- function(
   # add gitignore file
   writeLines(c(
     '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
-    sprintf('%s_%s', gh_repo, gh_branch_data)                # [repo]_[branch]/
+    basename(dir_data_2)
   ), file.path(dir_web, '.gitignore'))
 
-  # move dir_data to dir_data_2
-  system(sprintf('mv %s %s', dir_data, dir_data_2))
+  # copy dir_data to dir_data_2
+  run_cmd(sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2))
 
   # render website
   rmarkdown::render_site(dir_web)
 
   # git commit and push to Github
-  # DEBUG BHI: system(sprintf("dir_web=%s;cd ~github/bhi2; cp -R $dir_web/ ~/github/bhi2/; git add *; git commit -a -m 'updating app with ohihrepos commit %s'; git push", dir_web, substr(ohirepos_commit, 1, 7)))
-  #   Doh! copied over bhi2/.git with bhi's .git
-  system(sprintf("cd %s; git add *; git add .gitignore .nojekyll; git commit -a -m 'updating website with ohirepos commit %s'; git push origin gh-pages", dir_web, substr(ohirepos_commit, 1, 7)))
+  run_cmd(sprintf(
+    "cd %s; git add --all; git add .gitignore .nojekyll; \\
+    git commit -a -m -q 'updating website with ohirepos commit %s'; \\
+    git push -q origin gh-pages",
+    dir_web, substr(ohirepos_commit, 1, 7))
+    )
 
   # open website
   if (open_url) utils::browseURL(web_url)
