@@ -45,7 +45,7 @@ The `r web_title` Ocean Health Index team consists of...
 <div class="tile">
 <h2 class="post-title"><i class="fa fa-globe fa-2x"></i> Ocean Health Index </h2>
 <p class="post-excerpt">
-The Ocean Health Index ('OHI') is a scientific framework to measure how healthy oceans are. Understanding the state of our oceans is a first step towards ensuring they can continue providing humans benefits now and in the future. Learn more at [ohi-science.org](http://ohi-science.org).
+The Ocean Health Index ('OHI') is a scientific framework to measure how healthy oceans are. Understanding the state of our oceans is a step towards their being able to continue providing humans benefits now and in the future. Learn more at [ohi-science.org](http://ohi-science.org).
 </p>
 </div>
 </div>
