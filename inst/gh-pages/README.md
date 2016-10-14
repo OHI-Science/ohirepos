@@ -30,12 +30,25 @@ gh_repo='ohi-global'; web_title='Global'; dir_scenario='eez2015'
 gh_repo='bhi'       ; web_title='Baltic'; dir_scenario='baltic2015'
 
 # vars
+gh_branch_data='draft'
 app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); 
 ohirepos_commit = devtools:::local_sha('ohirepos')
+dir_data = sprintf('%s_%s', gh_repo, gh_branch_data)
 
 # brew config files
 brew::brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'), '_site.yml')
 brew::brew(system.file('gh-pages/_site.brew.R'  , package='ohirepos'), '_site.R'  )
+
+# get data branch 
+system(sprintf('git clone https://github.com/ohi-science/%s.git %s', dir_data))
+# OR copy from local
+system(sprintf('cp -rf ~/github/%s %s', gh_repo, dir_data))
+
+# update data branch with latest on Github
+system(sprintf('cd %s; git reset -q --hard origin/%s', dir_data, gh_branch_data))
+
+# be sure to add to .gitignore
+cat(sprintf('\n%s', dir_data), file='.gitignore', append=T)
 
 # render and launch
 rmarkdown::render_site('.')
