@@ -30,9 +30,7 @@ gh_repo='ohi-global'; web_title='Global'; dir_scenario='eez2015'
 gh_repo='bhi'       ; web_title='Baltic'; dir_scenario='baltic2015'
 
 # vars
-gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); 
-open_url=T; del_out=FALSE
-dir_out='~/github/clip-n-ship' # dir_out='~/Desktop/ohirepos_tmp'
+app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); 
 ohirepos_commit = devtools:::local_sha('ohirepos')
 
 # brew config files
