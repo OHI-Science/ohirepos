@@ -4,7 +4,7 @@
 \alias{deploy_app}
 \title{Deploy Shiny application}
 \usage{
-deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
+deploy_app(gh_repo, study_area, scenario_dirs, gh_owner = "OHI-Science",
   gh_branch_data = "draft", gh_branch_app = "app",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
   app_server = "jstewart@128.111.84.76", dir_server = "/srv/shiny-server",
@@ -14,7 +14,7 @@ deploy_app(gh_repo, app_title, scenario_dirs, gh_owner = "OHI-Science",
 \arguments{
 \item{gh_repo}{Github repository}
 
-\item{app_title}{title for the app, which is typically the study area or place name}
+\item{study_area}{place name of the entire study area}
 
 \item{scenario_dirs}{character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.}
 

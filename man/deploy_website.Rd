@@ -4,15 +4,15 @@
 \alias{deploy_website}
 \title{Deploy website to gh-pages branch in Github repository}
 \usage{
-deploy_website(gh_repo, web_title, scenario_dir, gh_owner = "OHI-Science",
+deploy_website(gh_repo, study_area, scenario_dir, gh_owner = "OHI-Science",
   gh_branch_data = "draft",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
-  open_url = F, debug = F)
+  open_url = FALSE, dir_out = tempdir(), del_out = TRUE)
 }
 \arguments{
 \item{gh_repo}{Github repository}
 
-\item{web_title}{title for the website, which is typically the study area or place name}
+\item{study_area}{place name of the entire study area}
 
 \item{scenario_dir}{subfolder from data branch of repo that will be the default scenario to display on website}
 
@@ -24,7 +24,9 @@ deploy_website(gh_repo, web_title, scenario_dir, gh_owner = "OHI-Science",
 
 \item{open_url}{open the web browser to the web_url}
 
-\item{debug}{debugging flag}
+\item{dir_out}{top-level directory to use for populating git repo folder and branch subfolders within, defaults to tmpdir()}
+
+\item{del_out}{whether to delete output directory when done, defaults to TRUE}
 }
 \value{
 Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or
@@ -35,8 +37,8 @@ Deploy website to gh-pages branch in Github repository
 }
 \examples{
 \dontrun{
-deploy_app('ohi-global', 'Global', 'eez2015')
-deploy_app(       'bhi', 'Baltic', 'baltic2015')
+deploy_website('ohi-global', 'Global', 'eez2015')
+deploy_website('bhi',        'Baltic', 'baltic2015')
 }
 
 }

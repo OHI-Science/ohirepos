@@ -15,9 +15,9 @@ License: MIT
 LazyData: TRUE
 URL: http://ohi-science.org/
 BugReports: https://github.com/OHI-Science/ohirepos/issues
-Depends: 
+Depends:
     R (>= 3.1.0)
-Imports: 
+Imports:
     tidyverse (>= 1.0.0),
     rgdal
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1
