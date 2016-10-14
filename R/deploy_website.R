@@ -35,10 +35,10 @@ deploy_website <- function(
   # history: from ohi-webapps, create_gh_repo.r https://github.com/OHI-Science/ohirepos/blob/07110dacad98fcc0a0080ca8f5ab248ae46e7f51/R/create_gh_repo.r
 
   # library(devtools); load_all();
-  # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
   # dir_out='~/github/clip-n-ship' # dir_out='~/Desktop/ohirepos_tmp'
   # gh_repo='bhi'       ; study_area='Baltic'; scenario_dir='baltic2015'
   # gh_repo='ohi-global'; study_area='Global'; scenario_dir='eez2015'
+  # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
   # deploy_website('ohi-global', 'Global', 'eez2015')
@@ -156,9 +156,9 @@ deploy_website <- function(
 
   # git commit and push to Github
   run_cmd(sprintf(
-    "cd %s; git add --all; git add .gitignore .nojekyll \\
-    git commit -q -a -m 'updating website with ohirepos commit %s' \\
-    git push -q origin gh-pages",
+    "cd %s; git add --all; git add .gitignore .nojekyll;
+    git commit -m 'updating website with ohirepos commit %s';
+    git push origin gh-pages",
     dir_web, substr(ohirepos_commit, 1, 7)))
 
   # open website
