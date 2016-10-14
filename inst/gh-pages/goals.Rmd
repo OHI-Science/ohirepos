@@ -6,7 +6,7 @@ output:
     toc_float: true
 ---
 
-```{r, echo=F}
+```{r setup, echo=F, warning=FALSE, message=F}
 source("./_site.R")
 ```
 

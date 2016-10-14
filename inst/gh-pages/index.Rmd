@@ -2,12 +2,8 @@
 title: "Welcome"
 ---
 
-```{r, echo=F}
+```{r setup, echo=F, warning=FALSE, message=F}
 source("./_site.R")
-```
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 ```
 
 <div class="page-lead" style="background-image:url(images/regions_1600x800.png)">

@@ -2,7 +2,7 @@
 title: "Regions"
 ---
 
-```{r, echo=F}
+```{r setup, echo=F, warning=FALSE, message=F}
 source("./_site.R")
 ```
 
