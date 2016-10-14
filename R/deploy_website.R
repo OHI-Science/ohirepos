@@ -12,7 +12,8 @@
 
 #'
 #' @return Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or
-#' updating gh-pages branch of Github repository.
+#' updating gh-pages branch of Github repository. Please also visit
+#' \link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/gh-pages/README.md]{gh-pages/README.md} for more details.
 #'
 #' @examples
 #' \dontrun{
