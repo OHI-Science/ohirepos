@@ -5,13 +5,14 @@ These files provide the template for creating a website for an OHI repository pe
 Normally these files are translated from template files into the website using `ohirepos::deploy_website()` function, like so:
 
 ```r
-library(ohirepos)
+library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
 
 # ohi-global
-deploy_website('ohi-global', 'Global', 'eez2015')
+deploy_website('ohi-global', 'Global', 'eez2015', dir_out='~/Desktop/ohirepos_tmp', del_out=F, open_url=T)
+#  cannot open file './ohi-global_draft/eez2015/conf/goals.Rmd': No such file or directory
 
 # baltic
-deploy_website('ohi-global', 'Baltic', 'eez2015')
+deploy_website('bhi', 'Baltic', 'baltic2015', dir_out='~/Desktop/ohirepos_tmp', del_out=F, open_url=T)
 ```
 
 When [`rmarkdown::render_site(dir_web)`](http://rmarkdown.rstudio.com/rmarkdown_websites.html) runs, it knits each Rmarkdown (*.Rmd) based on parameters in `_site.R` and `_site.yml` before pushing the files back to Github. These Rmd files also pull from the `data_branch`, typically `draft`, that gets copied into `[gh_repo]_[gh_branch_data]`. 

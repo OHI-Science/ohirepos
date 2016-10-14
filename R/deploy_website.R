@@ -83,10 +83,10 @@ deploy_website <- function(
   # check if web branch dir already exists
   if (file.exists(dir_web)){
 
-    if (file.exists(dir_data_2)){
+    if (file.exists(dir_data_2) & !file.exists(dir_data)){
 
-      # move dir_data_2 inside dir_app back out to dir_data as sibling to dir_app
-      run_cmd(sprintf('mv %s %s', dir_data_2, dir_data))
+      # copy dir_data_2 back to dir_data as sibling to gh-pages
+      run_cmd(sprintf('cp -rf %s %s', dir_data_2, dir_data))
     }
   }
 
@@ -156,18 +156,18 @@ deploy_website <- function(
 
   # git commit and push to Github
   run_cmd(sprintf(
-    "cd %s; git add --all; git add .gitignore .nojekyll; \\
-    git commit -a -m -q 'updating website with ohirepos commit %s'; \\
+    "cd %s; git add --all; git add .gitignore .nojekyll \\
+    git commit -q -a -m 'updating website with ohirepos commit %s' \\
     git push -q origin gh-pages",
-    dir_web, substr(ohirepos_commit, 1, 7))
-    )
+    dir_web, substr(ohirepos_commit, 1, 7)))
 
   # open website
   if (open_url) utils::browseURL(web_url)
 
   # remove temp files
-  cat('rm temp files if del_out==T')
-  if (del_out) unlink(dir_branches, recursive=T, force=T)
+  if (del_out){
+    run_cmd(sprintf('rm -rf %s', dir_branches))
+  }
 
   # return website
   return(web_url)

@@ -4,15 +4,16 @@ output:
   html_document:
     toc: true
     toc_float: true
+#    keep_md: true
 ---
 
-```{r, echo=F}
+```{r setup, echo=F, warning=FALSE, message=F}
 source("./_site.R")
 ```
 
-The following data layers are used in Ocean Health Index calculations for goal status, trend, pressures, and resilience. Values for `r title` were extracted from the global assessment and saved for each region to serve as a template as you gather higher-resolution data and indicators. Note that many values do not have a range because they were equally extracted from the global data layer.
+The following data layers are used in Ocean Health Index calculations for goal status, trend, pressures, and resilience. Values for `r study_area` were extracted from the global assessment and saved for each region to serve as a template as you gather higher-resolution data and indicators. Note that many values do not have a range because they were equally extracted from the global data layer.
 
-```{r, results='asis'}
+```{r layers, results='asis'}
 layers      = read_csv(sprintf('%s/layers.csv', dir_scenario))      # View(layers)
 layers_meta = read_csv(sprintf('%s/layers_meta.csv', dir_scenario)) # View(layers_meta)
 
@@ -26,48 +27,4 @@ for (lyr in sort(layers$layer)){ # lyr = sort(layers$layer)[1]
   
 }
 ```
-
-<!-- ## alien_species -->
-
-<!-- Alien species -->
-
-<!-- | metadata          | value                                                                | -->
-<!-- |-------------------|----------------------------------------------------------------------| -->
-<!-- | filename          | alien_species_gl2014.csv                                                   | -->
-<!-- | value units       | resilience score                                                      | -->
-<!-- | value range       | 0.5 to 1                               | -->
-<!-- | global extraction | equal: global resilience data were applied equally to all regions. | -->
-
-<!-- <p>The number and type of invasive and harmful invasive species in each marine ecoregion (Molnar et al. 2008). </p> -->
-
-<!-- <p>Data sources:</p> -->
-
-<!-- <ul> -->
-<!-- <li>Molnar, J.L., Gamboa, R.L., Revenga C., Spalding, M. (2008). <strong>Assessing the global threat of invasive species to marine biodiversity</strong>. <em>Frontiers in Ecology and the Environment</em> 6(485). <a href="http://dx.doi.org/10.1890/070064">doi:10.1890/070064</a></li> -->
-<!-- </ul> -->
-
-
-
-<!-- ## ao_access -->
-
-<!-- Fisheries management effectiveness and opportunity -->
-
-<!-- | metadata          | value                                                                | -->
-<!-- |-------------------|----------------------------------------------------------------------| -->
-<!-- | filename          | ao_access_gl2014.csv                                                   | -->
-<!-- | value units       | value                                                      | -->
-<!-- | value range       | 0.484 to 0.704592                               | -->
-<!-- | global extraction | equal: global management effectiveness scores were applied equally to all regions. | -->
-
-<!-- <p>The opportunity for artisanal and recreational fishing based on the quality of management of the small- scale fishing sector (Mora et al 2009).</p> -->
-
-<!-- <p>Data sources:</p> -->
-
-<!-- <ul> -->
-<!-- <li>Mora, C., Myers, R.A., Coll, M., Libralato, S., Pitcher, T.J., Sumaila, R.U., Worm, B. (2009). <strong>Management Effectiveness of the World�����s Marine Fisheries</strong>. <em>PLoS Biol</em>, 7(6), e1000131. <a href="http://dx.doi.org/10.1371/journal.pbio.1000131">doi:10.1371/journal.pbio.1000131</a></li> -->
-<!-- </ul> -->
-
-
-
-
 

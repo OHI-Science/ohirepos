@@ -7,7 +7,7 @@ output:
 #    keep_md: true
 ---
 
-```{r, echo=F, warning=FALSE, message=F}
+```{r setup, echo=F, warning=FALSE, message=F}
 source("./_site.R")
 ```
 
@@ -90,7 +90,7 @@ for (rid in regions$rgn_id){ # rid = regions$rgn_id[1]
 }
 ```
 
-```{r markdown, results='asis'}
+```{r print scores, results='asis'}
 for (rid in regions$rgn_id){ # r_label = sort(regions$label)[1]
   
   # rgn
