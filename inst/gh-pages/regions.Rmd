@@ -6,7 +6,7 @@ title: "Regions"
 source("./_site.R")
 ```
 
-Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire study area, `r title`. These template regions can be modified with some effort. They were identified as the largest subcountry division within `r title`.
+Regions are the fundamental spatial units of analysis for the Ocean Health Index. Scores are calculated for each region individually and then combined (with an offshore area-weighted average) to produce scores for the entire study area, `r study_area`. These template regions can be modified with some effort. They were identified as the largest subcountry division within `r study_area`.
 
 
 ```{r}
@@ -77,7 +77,7 @@ leaflet() %>%
 ```
 
 
-OHI `r title` has the following regions, each with a unique identifier (ID):
+OHI `r study_area` has the following regions, each with a unique identifier (ID):
 
 ```{r}
 datatable(
@@ -86,9 +86,9 @@ datatable(
 ```
 
 
-IDs for subcountry regions were assigned geographically by increasing longitude. The entire study area `r title` has a special region ID of 0.
+IDs for subcountry regions were assigned geographically by increasing longitude. The entire study area `r study_area` has a special region ID of 0.
 
-Exclusive economic zones (EEZs) were identified by [MarineRegions.org](http://www.marineregions.org) and the largest subcountry regions were identified by the generalized administrative boundary database [GADM.org](http://www.gadm.org). Region boundaries were extended offshore to divide the EEZ of `r title` into offshore regions. It is possible to use different regions than the ones provided here. See [Create Regions](http://ohi-science.org/pages/create_regions.html) for more details.
+Exclusive economic zones (EEZs) were identified by [MarineRegions.org](http://www.marineregions.org) and the largest subcountry regions were identified by the generalized administrative boundary database [GADM.org](http://www.gadm.org). Region boundaries were extended offshore to divide the EEZ of `r study_area` into offshore regions. It is possible to use different regions than the ones provided here. See [Create Regions](http://ohi-science.org/pages/create_regions.html) for more details.
 
 Regions were generated with the following inland and offshore buffers relative to the shoreline, which are visualized in the graphic above within increasing transparency away from the shoreline.
 

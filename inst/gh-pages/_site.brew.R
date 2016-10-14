@@ -1,15 +1,19 @@
 suppressPackageStartupMessages({
   library(readr)
   library(dplyr)
+  library(tidyr)
   library(sp)
   library(geojsonio)
   library(leaflet)
   library(htmltools)
   library(DT)
+  library(knitr)
+  library(printr)  # devtools::install_github('yihui/printr')
+  library(ohicore) # devtools::install_github('ohi-science/ohicore')
 })
 
 # brewed vars
-title           = "<%=web_title%>"
+study_area      = "<%=study_area%>"
 gh_repo         = "<%=gh_repo%>"
 gh_branch_data  = "<%=gh_branch_data%>"
 scenario_dir    = "<%=scenario_dir%>"

@@ -2,7 +2,7 @@
 #'
 #' @param gh_repo Github repository
 #' @param scenario_dirs character vector of subfolders from the data branch that will be scenarios available for display. The first one will become the default viewed.
-#' @param app_title title for the app, which is typically the study area or place name
+#' @param study_area place name of the entire study area
 #' @param gh_owner Github owner. Defaults to "OHI-Science".
 #' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
 #' @param gh_branch_app Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.
@@ -37,7 +37,7 @@
 #' @import tidyverse yaml devtools
 #' @export
 deploy_app <- function(
-  gh_repo, app_title, scenario_dirs,
+  gh_repo, study_area, scenario_dirs,
   gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   app_server='jstewart@128.111.84.76', dir_server='/srv/shiny-server',
@@ -53,8 +53,8 @@ deploy_app <- function(
   # history: derived from ohi-webapps [create_functions.R#L1045-L1116](https://github.com/OHI-Science/ohi-webapps/blob/723ded3a6e1cfeb0addb3e8d88a3ccf1081daaa3/create_functions.R#L1045-L1116)
 
   # library(devtools); load_all();
-  # gh_repo='bhi'; app_title='Baltic'; scenario_dirs='baltic2015'; projection='Mercator'
-  # gh_repo='ohi-global'; app_title='Global'; scenario_dirs=c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'
+  # gh_repo='bhi'; study_area='Baltic'; scenario_dirs='baltic2015'; projection='Mercator'
+  # gh_repo='ohi-global'; study_area='Global'; scenario_dirs=c('eez2015','eez2012','eez2013','eez2014','eez2016'); projection='Mollweide'
   # gh_owner='OHI-Science'; gh_branch_data='draft'; gh_branch_app='app'
   # app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo)
   # app_server='bbest@128.111.84.76'; dir_server='/srv/shiny-server'
@@ -152,7 +152,7 @@ deploy_app <- function(
   write_file(
     as.yaml(list(
       gh_repo         = gh_repo,
-      app_title       = app_title,
+      study_area      = study_area,
       scenario_dirs   = scenario_dirs,
       gh_owner        = gh_owner,
       gh_branch_data  = gh_branch_data,

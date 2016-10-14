@@ -1,9 +1,7 @@
 ---
 title: "Welcome"
 ---
----
-title: Welcome
----
+
 ```{r, echo=F}
 source("./_site.R")
 ```
@@ -14,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <div class="page-lead" style="background-image:url(images/regions_1600x800.png)">
 <div class="wrap page-lead-content">
-<h2>An Ocean Health Index assessment for `r title`</h2>
+<h2>An Ocean Health Index assessment for `r study_area`</h2>
 
 </div><!-- /.page-lead-content. -->
 </div><!-- /.page-lead -->
@@ -26,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 <p class="post-excerpt">
 
 <!-- Suggested instructions: Add several sentences describing the project here.  -->
-This is a study of the `r title` using the  Ocean Health Index framework...
+This is a study of the `r study_area` using the  Ocean Health Index framework...
 
 
 </p>
@@ -37,7 +35,7 @@ This is a study of the `r title` using the  Ocean Health Index framework...
 <p class="post-excerpt">
 
 <!-- Suggested instructions: Add several sentences describing the team here.  -->
-The `r title` Ocean Health Index team consists of...
+The `r study_area` Ocean Health Index team consists of...
 
 </p>
 </div>

@@ -26,10 +26,10 @@ Here's how to generate the `_site.yml` and `_site.R` manually for local developm
 # library(devtools); load_all()
 
 # ohi-global
-gh_repo='ohi-global'; web_title='Global'; scenario_dir='eez2015'
+gh_repo='ohi-global'; study_area='Global'; scenario_dir='eez2015'
 
 # bhi
-gh_repo='bhi'       ; web_title='Baltic'; scenario_dir='baltic2015'
+gh_repo='bhi'       ; study_area='Baltic'; scenario_dir='baltic2015'
 
 # vars
 gh_branch_data='draft'

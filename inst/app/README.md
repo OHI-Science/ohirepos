@@ -23,13 +23,13 @@ In practice, for developing this Shiny app, I launch RStudio with `app.Rproj` to
 ```r
 # vars for ohi-global
 gh_repo        = 'ohi-global'
-app_title      = 'Global'
+study_area     = 'Global'
 scenario_dirs  = c('eez2015','eez2012','eez2013','eez2014','eez2016')
 projection     = 'Mollweide'
 
 # vars for bhi
 gh_repo        = 'bhi'
-app_title      = 'Baltic'
+study_area     = 'Baltic'
 scenario_dirs  = 'baltic2015'
 projection     = 'Mercator'
 
@@ -46,7 +46,7 @@ ohirepos_commit = devtools:::local_sha('ohirepos')
 
 readr::write_file(
     yaml::as.yaml(list(
-    app_title       = app_title,
+    study_area      = study_area,
     gh_owner        = gh_owner,
     gh_repo         = gh_repo,
     gh_branch_data  = gh_branch_data,

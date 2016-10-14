@@ -1,7 +1,7 @@
 #' Deploy website to gh-pages branch in Github repository
 #'
 #' @param gh_repo Github repository
-#' @param web_title title for the website, which is typically the study area or place name
+#' @param study_area place name of the entire study area
 #' @param scenario_dir subfolder from data branch of repo that will be the default scenario to display on website
 #' @param gh_owner Github owner. Defaults to "OHI-Science".
 #' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
@@ -23,7 +23,7 @@
 #' @import tidyverse yaml devtools brew
 #' @export
 deploy_website <- function(
-  gh_repo, web_title, scenario_dir,
+  gh_repo, study_area, scenario_dir,
   gh_owner='OHI-Science', gh_branch_data='draft',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   open_url=FALSE,
@@ -36,8 +36,8 @@ deploy_website <- function(
   # library(devtools); load_all();
   # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
   # dir_out='~/github/clip-n-ship' # dir_out='~/Desktop/ohirepos_tmp'
-  # gh_repo='bhi'       ; web_title='Baltic'; scenario_dir='baltic2015'
-  # gh_repo='ohi-global'; web_title='Global'; scenario_dir='eez2015'
+  # gh_repo='bhi'       ; study_area='Baltic'; scenario_dir='baltic2015'
+  # gh_repo='ohi-global'; study_area='Global'; scenario_dir='eez2015'
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
   # deploy_website('ohi-global', 'Global', 'eez2015')

@@ -1,4 +1,4 @@
-name: "<%=web_title%> Ocean Health Index"
+name: "<%=study_area%> Ocean Health Index"
 navbar:
   title: "<%=toupper(gh_repo)%>"
   left:
