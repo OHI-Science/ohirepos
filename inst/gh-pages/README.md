@@ -23,11 +23,13 @@ In practice, for developing these Rmarkdown files, I launch RStudio with `ohirep
 Here's how to generate the `_site.yml` and `_site.R` manually for local development in `ohirepos/inst/gh-pages`:
 
 ```r
+# library(devtools); load_all()
+
 # ohi-global
-gh_repo='ohi-global'; web_title='Global'; dir_scenario='eez2015'
+gh_repo='ohi-global'; web_title='Global'; scenario_dir='eez2015'
 
 # bhi
-gh_repo='bhi'       ; web_title='Baltic'; dir_scenario='baltic2015'
+gh_repo='bhi'       ; web_title='Baltic'; scenario_dir='baltic2015'
 
 # vars
 gh_branch_data='draft'
