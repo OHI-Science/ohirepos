@@ -7,7 +7,9 @@
 #' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
 #' @param app_url URL of Shiny application that gets embedded as iframe
 #' @param open_url open the web browser to the web_url
-#' @param debug debugging flag
+#' @param dir_out top-level directory to use for populating git repo folder and branch subfolders within, defaults to tmpdir()
+#' @param del_out whether to delete output directory when done, defaults to TRUE
+
 #'
 #' @return Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or
 #' updating gh-pages branch of Github repository.
@@ -24,7 +26,8 @@ deploy_website <- function(
   gh_repo, web_title, scenario_dir,
   gh_owner='OHI-Science', gh_branch_data='draft',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
-  open_url=FALSE, debug=FALSE){
+  open_url=FALSE,
+  dir_out=tempdir(), del_out=TRUE){
 
   # debug ----
 
@@ -33,7 +36,7 @@ deploy_website <- function(
   # library(devtools); load_all();
   # gh_repo='bhi'       ; web_title='Baltic'; scenario_dir='baltic2015'
   # gh_repo='ohi-global'; web_title='Global'; scenario_dir='eez2015'
-  # debug=T; gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T
+  # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; dir_out='~/github/clip-n-ship'; del_out=FALSE
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
   # deploy_website('ohi-global', 'Global', 'eez2015')
@@ -45,33 +48,23 @@ deploy_website <- function(
   library(yaml)
   library(brew)
 
-  # use temporary directory
-  if (debug){
-    dir_tmp = '/var/folders/pj/l9cfhbn97xbcgqx6qyx0lr800000gn/T//Rtmp9FeM5e'
-  } else {
-    dir_tmp = tempdir()
-  }
-
   # construct vars
   web_url       = sprintf('http://%s.github.io/%s', gh_owner, gh_repo)
   gh_branch_web = 'gh-pages'
-  dir_branches  = file.path(dir_tmp, gh_repo)
-  dir_data      = file.path(dir_tmp, gh_repo, gh_branch_data)
-  dir_web       = file.path(dir_tmp, gh_repo, gh_branch_web)
-  dir_data_2    = file.path(dir_tmp, gh_repo, gh_branch_web, sprintf('%s_%s', gh_repo, gh_branch_data))
+  dir_branches  = file.path(dir_out, gh_repo)
+  dir_data      = file.path(dir_out, gh_repo, gh_branch_data)
+  dir_web       = file.path(dir_out, gh_repo, gh_branch_web)
+  dir_data_2    = file.path(dir_out, gh_repo, gh_branch_web, sprintf('%s_%s', gh_repo, gh_branch_data))
   dir_scenario  = sprintf('%s_%s/%s', gh_repo, gh_branch_data, scenario_dir)
   gh_slug       = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url        = sprintf('https://github.com/%s.git', gh_slug)
 
-  # delete existing, if not in debug mode
-  if (!debug){
-    # clear existing
-    if (file.exists(dir_branches)) unlink(dir_branches, recursive = T)
+  # delete existing
+  if (file.exists(dir_branches)) unlink(dir_branches, recursive = T)
 
-    # clone data branch, shallowly and quietly
-    dir.create(dir_branches, showWarnings = F)
-    system(sprintf('git clone --quiet --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
-  }
+  # clone data branch, shallowly and quietly
+  dir.create(dir_branches, showWarnings = F)
+  system(sprintf('git clone --quiet --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
 
   # get remote branches
   remote_branches = gh_remote_branches(dir_data)
@@ -136,6 +129,10 @@ deploy_website <- function(
 
   # open website
   if (open_url) utils::browseURL(web_url)
+
+  # remove temp files
+  cat('rm temp files if del_out==T')
+  if (del_out) unlink(dir_branches, recursive=T, force=T)
 
   # return website
   return(web_url)
