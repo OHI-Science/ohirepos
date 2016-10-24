@@ -5,7 +5,7 @@
 \title{Deploy Shiny application}
 \usage{
 deploy_app(gh_repo, study_area, scenario_dirs, gh_owner = "OHI-Science",
-  gh_branch_data = "draft", gh_branch_app = "app",
+  gh_branch_data = "draft", gh_branch_app = "app", gh_data_commit = NULL,
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
   app_server = "jstewart@128.111.84.76", dir_server = "/srv/shiny-server",
   projection = "Mercator", map_shrink_pct = 10, run_app = F,
@@ -23,6 +23,8 @@ deploy_app(gh_repo, study_area, scenario_dirs, gh_owner = "OHI-Science",
 \item{gh_branch_data}{Github branch containing data. Defaults to "draft" and must already exist in the repo.}
 
 \item{gh_branch_app}{Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.}
+
+\item{gh_data_commit}{commit of gh_branch_data for freezing the app, ie do not automatically update}
 
 \item{app_url}{URL of the application}
 
