@@ -15,6 +15,7 @@
 #' @param dir_out top-level directory to use for populating git repo folder and branch subfolders within, defaults to tmpdir()
 #' @param del_out whether to delete output directory when done, defaults to TRUE
 #' @param dir_server directory on the app_server
+#' @param gh_data_commit commit of gh_branch_data for freezing the app, ie do not automatically update
 #'
 #' @return Returns URL of Shiny app if successfully deployed, otherwise errors out. Requires git credentials to push to Github repository,
 #' and SSH keys for secure copying to server.
@@ -42,6 +43,7 @@
 deploy_app <- function(
   gh_repo, study_area, scenario_dirs,
   gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
+  gh_data_commit=NULL,
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   app_server='jstewart@128.111.84.76', dir_server='/srv/shiny-server',
   projection='Mercator', map_shrink_pct=10,
@@ -72,7 +74,7 @@ deploy_app <- function(
   #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   # deploy_app(
   #   'bhi', 'Baltic', 'baltic2015',
-  #   app_server='bbest@128.111.84.76',
+  #   app_server='bbest@128.111.84.76', gh_data_commit='096f2900d262d5672178903276747f4e668013d5', # https://github.com/OHI-Science/bhi/commit/096f2900d262d5672178903276747f4e668013d5
   #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   #
   # jlowndes latest after `mkdir ~/github/clip-n-ship/bhi; cp -rf ~/github/bhi ~/github/clip-n-ship/bhi/draft`
@@ -165,6 +167,7 @@ deploy_app <- function(
       map_shrink_pct  = map_shrink_pct,
       debug           = F,
       ohirepos_commit = ohirepos_commit,
+      gh_data_commit  = gh_data_commit,
       last_updated    = Sys.Date())),
     file.path(dir_app, 'app.yml'))
 

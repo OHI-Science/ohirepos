@@ -583,7 +583,13 @@ shinyServer(function(input, output, session) {
 
           # git fetch & overwrite
           incProgress(1/n, detail = 'git fetch & reset')
-          system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
+          
+          # git fetch & overwrite
+          if (is.null(y$gh_data_commit)){
+            system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
+          } else {
+            system(sprintf('cd %s; git fetch; git reset --hard %s', dir_data, y$gh_data_commit))
+          }
           local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 
           # redo [scenario].Rdata files

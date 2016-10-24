@@ -41,8 +41,8 @@ deploy_website <- function(
   # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
-  # deploy_website('ohi-global', 'Global', 'eez2015')
-  # deploy_website('bhi',        'Baltic', 'baltic2015')
+  # deploy_website('ohi-global', 'Global', 'eez2015'   , dir_out='~/Desktop/ohirepos_tmp', del_out=F, open_url=T)
+  # deploy_website('bhi',        'Baltic', 'baltic2015', dir_out='~/Desktop/ohirepos_tmp', del_out=F, open_url=T)
 
   # ----
 

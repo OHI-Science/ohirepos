@@ -60,6 +60,7 @@ readr::write_file(
     map_shrink_pct  = map_shrink_pct,
     debug           = F,
     ohirepos_commit = ohirepos_commit,
+    gh_data_commit  = NULL,
     last_updated    = Sys.Date())),
     'app.yml')
 

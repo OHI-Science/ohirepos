@@ -415,9 +415,14 @@ create_scenario_rdata = function(scenario, rdata){
 }
 
 gh_write_remote = function(gh_slug, gh_branch, txt=sprintf('%s_remote_sha.txt', gh_branch)){
-  remote     = devtools:::github_remote(gh_slug, ref=gh_branch)
-  remote_sha = devtools:::remote_sha(remote)
-  write(remote_sha, txt)
+  if (is.null(y$gh_data_commit)){
+    remote     = devtools:::github_remote(gh_slug, ref=gh_branch)
+    remote_sha = devtools:::remote_sha(remote)
+    write(remote_sha, txt)
+  } else {
+    remote_sha = y$gh_data_commit
+    write(remote_sha, txt)
+  }
   return(remote_sha)
 }
 
@@ -430,7 +435,11 @@ local_sha  = devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
 if (devtools:::different_sha(remote_sha, local_sha)){
 
   # git fetch & overwrite
-  system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
+  if (is.null(y$gh_data_commit)){
+    system(sprintf('cd %s; git fetch; git reset --hard origin/%s', dir_data, y$gh_branch_data))
+  } else {
+    system(sprintf('cd %s; git fetch; git reset --hard %s', dir_data, y$gh_data_commit))
+  }
 
   # update local git commit sha
   local_sha <<- devtools:::git_sha1(path=dir_data, n=nchar(remote_sha))
