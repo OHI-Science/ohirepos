@@ -66,14 +66,14 @@ deploy_app <- function(
   # dir_out='~/Desktop/ohirepos_tmp'; del_out=F
 
   # library(devtools); load_all(); # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
-  deploy_app(
-    'ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide',
-    app_server='bbest@128.111.84.76',
-    dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
-  deploy_app(
-    'bhi', 'Baltic', 'baltic2015',
-    app_server='bbest@128.111.84.76',
-    dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
+  # deploy_app(
+  #   'ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','eez2016'), projection='Mollweide',
+  #   app_server='bbest@128.111.84.76',
+  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
+  # deploy_app(
+  #   'bhi', 'Baltic', 'baltic2015',
+  #   app_server='bbest@128.111.84.76',
+  #   dir_out='~/Desktop/ohirepos_tmp', del_out=F, run_app=T)
   #
   # jlowndes latest after `mkdir ~/github/clip-n-ship/bhi; cp -rf ~/github/bhi ~/github/clip-n-ship/bhi/draft`
   # deploy_app(

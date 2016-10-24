@@ -3,10 +3,10 @@ shinyServer(function(input, output, session) {
   # hide compare ----
   observeEvent(input$sidebarmenu, {
     if (length(y$scenario_dirs) == 1){
-      shinyjs::hide(selector = "a[data-value=='compare']")    
+      shinyjs::hide(selector = "a[data-value=='compare']")
     }
   })
-  
+
 
   # get_scenario ----
 
@@ -424,7 +424,7 @@ shinyServer(function(input, output, session) {
   # zoom to region
   observeEvent(input$sel_rgn, {
 
-    if (input$sel_rgn==y$app_title){
+    if (input$sel_rgn==y$study_area){
       b = bbox(rgns)
     } else {
       b = bbox(subset(rgns, rgn_name == input$sel_rgn))
@@ -516,7 +516,7 @@ shinyServer(function(input, output, session) {
         filter( region_id == v$hi_id, dimension == 'score', goal == 'Index') %>%
         .$score
 
-      aster(data, score,
+      ohiaster(data, score,
         background_color = "transparent",
         font_color = "black", stroke = "black", font_size_center = "12px", font_size = "8px",
         margin_top=5, margin_right=5, margin_bottom=5, margin_left=5)
@@ -526,7 +526,7 @@ shinyServer(function(input, output, session) {
   output$rgnInfo = renderText({
 
     if (v$hi_id == 0){
-      txt = y$app_title
+      txt = y$study_area
     } else {
       req(get_selected())
 

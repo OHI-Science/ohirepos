@@ -21,6 +21,9 @@ When the Shiny app first launches (eg with [`shiny::runApp()`](https://www.rdocu
 In practice, for developing this Shiny app, I launch RStudio with `app.Rproj` to set the working directory here, and create the `app.yml` and `[repo]_intro.md` for whichever repo before launching the app:
 
 ```r
+# set working directory
+setwd('~/github/ohirepos/inst/app')
+
 # vars for ohi-global
 gh_repo        = 'ohi-global'
 study_area     = 'Global'
@@ -58,7 +61,7 @@ readr::write_file(
     debug           = F,
     ohirepos_commit = ohirepos_commit,
     last_updated    = Sys.Date())),
-    'inst/app/app.yml')
+    'app.yml')
 
 # run app
 shiny::runApp()
