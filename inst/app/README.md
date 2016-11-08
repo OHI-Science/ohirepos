@@ -27,7 +27,7 @@ setwd('~/github/ohirepos/inst/app')
 # vars for ohi-global
 gh_repo        = 'ohi-global'
 study_area     = 'Global'
-scenario_dirs  = c('eez2015','eez2012','eez2013','eez2014','eez2016')
+scenario_dirs  = c('eez2016','eez2015')
 projection     = 'Mollweide'
 
 # vars for bhi
