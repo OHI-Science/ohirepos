@@ -104,11 +104,12 @@ deploy_app <- function(
 
   # data branch: fetch existing, or clone new
   if (!file.exists(dir_data)){
-
+    
     # clone data branch, shallowly and quietly
     run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
+    
   } else {
-
+    
     # git fetch & overwrite
     run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
   }
@@ -188,7 +189,7 @@ deploy_app <- function(
 
   commands = c(
     # copy dir_data to dir_data_2
-    run_cmd(sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2)),
+    sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2),
     # prompt restart
     sprintf('touch %s/restart.txt', dir_app),
     # git commit and push to Github
@@ -201,7 +202,7 @@ deploy_app <- function(
       dir_app, app_server, dir_server, gh_repo),
     cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )
-  for (cmd in commands){ # commands[1:2]
+  for (cmd in commands){ # cmd = commands[3]
     run_cmd(cmd)
   }
 
