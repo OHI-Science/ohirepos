@@ -3,14 +3,14 @@
 #' Populate OHI repo with configuration folder
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
+#' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye/region2015`
 #' @param dir_global full path of local `ohi-global` scenario, e.g. `~/github/ohi-global/eez2016'
 #'
-#' @return TBD
+#' @return key's repo with config folder populated
 #' @export
 #'
 #' @examples
-#' \dontrun{# TBD}
+
 populate_conf <- function(key, dir_scenario, dir_global) {
 
   ## create conf folder

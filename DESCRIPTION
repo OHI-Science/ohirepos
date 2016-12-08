@@ -19,5 +19,6 @@ Depends:
     R (>= 3.1.0)
 Imports:
     tidyverse (>= 1.0.0),
-    rgdal
+    rgdal,
+    stringr
 RoxygenNote: 5.0.1

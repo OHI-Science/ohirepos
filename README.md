@@ -34,3 +34,15 @@ deploy_website('bhi', 'Baltic', 'baltic2015')
 ```
 
 Code to make OHI+ websites: `ohirepos/inst/gh-pages`. 
+
+
+## Notes on package building
+*from Hadley Wickham's R Packages: r-pkgs.had.co.nz*
+
+- `devtools::use_package` to add packages to DESCRIPTION
+
+- NAMESPACE Workflow
+    - Add roxygen comments to your .R files.
+    - Run devtools::document() (or press Ctrl/Cmd + Shift + D in RStudio) to convert roxygen comments to .Rd files.
+    - Look at NAMESPACE and run tests to check that the specification is correct.
+    - Rinse and repeat until the correct functions are exported.
