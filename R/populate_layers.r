@@ -28,8 +28,8 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
   lyrs_sc = lyrs_gl %>%
     select(
       targets, layer, filename, fld_value, units,
-      name, description,
-      starts_with('clip_n_ship')) %>%
+      name, description) %>% # ,
+      # starts_with('clip_n_ship')) %>% 
     mutate(
       layer_gl = layer,
       path_in  = file.path(dir_global, 'layers', filename),
@@ -137,7 +137,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
     for (lyr in lyrs_sc$layer){ # lyr = "ao_access"
 
       ## call copy_layer and then write to layer to csv as separate step
-      d <- copy_layer(lyr, sc_rgns,
+      d <- ohirepos::copy_layer(lyr, sc_rgns,
                       dir_global, sfx_global,
                       lyrs_sc, write_to_csv = FALSE)
       if ('rgn_id' %in% names(d)) d = d %>% arrange(rgn_id)
@@ -165,8 +165,8 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
       units,
       name,
       description,
-      clip_n_ship_disag,
-      clip_n_ship_disag_description,
+     # clip_n_ship_disag,
+    #  clip_n_ship_disag_description,
       layer_gl,
       path_in)
 
@@ -175,7 +175,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
   readr::write_csv(lyrs_reg, layers_csv, na='')
 
   ## check for empty layers
-  CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
+  ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
               flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
   lyrs = read.csv(layers_csv, na='')
   lyrs_empty = filter(lyrs, data_na==T)
@@ -256,7 +256,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
 
 
   ## check again now empty layers now populated by global averages
-  CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
+  ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
               flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
 
 }
