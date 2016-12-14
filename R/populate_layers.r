@@ -29,7 +29,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
     select(
       targets, layer, filename, fld_value, units,
       name, description) %>% # ,
-      # starts_with('clip_n_ship')) %>% 
+      # starts_with('clip_n_ship')) %>%
     mutate(
       layer_gl = layer,
       path_in  = file.path(dir_global, 'layers', filename),
@@ -103,7 +103,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
     for (lyr in lyrs_sc$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global'
 
       ## call copy_layer and write to layer to csv
-      d <- copy_layer(lyr, sc_rgns,
+      d <- ohirepos::copy_layer(lyr, sc_rgns,
                       dir_global, sfx_global,
                       lyrs_sc, write_to_csv = TRUE)
 
