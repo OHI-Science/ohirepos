@@ -25,7 +25,7 @@
 #' @export
 deploy_website <- function(
   gh_repo, study_area, scenario_dir,
-  gh_owner='OHI-Science', gh_branch_data='draft',
+  gh_owner='OHI-Science', gh_branch_data='master',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   open_url=FALSE,
   dir_out=tempdir(), del_out=TRUE){
@@ -74,7 +74,8 @@ deploy_website <- function(
 
     # clone data branch, shallowly and quietly
     run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
-  } else {
+
+    } else {
 
     # git fetch & overwrite
     run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
