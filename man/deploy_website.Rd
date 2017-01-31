@@ -5,7 +5,7 @@
 \title{Deploy website to gh-pages branch in Github repository}
 \usage{
 deploy_website(gh_repo, study_area, scenario_dir, gh_owner = "OHI-Science",
-  gh_branch_data = "draft",
+  gh_branch_data = "master",
   app_url = sprintf("http://ohi-science.nceas.ucsb.edu/\%s", gh_repo),
   open_url = FALSE, dir_out = tempdir(), del_out = TRUE)
 }

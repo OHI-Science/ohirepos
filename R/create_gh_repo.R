@@ -1,3 +1,13 @@
+#' Create GitHub Repo
+#'
+#' @param key
+#' @param gh_token
+#' @param github_user
+#'
+#' @return
+#' @export
+#'
+#' @examples
 create_gh_repo <- function(key, gh_token, github_user){
 
   repo_name <- key
@@ -17,5 +27,6 @@ create_gh_repo <- function(key, gh_token, github_user){
 
   } else{
     message(sprintf('%s: repo already exists.', repo_name))
+
   }
 }

@@ -2,6 +2,7 @@
 
 export(calculate_scores_check)
 export(clone_repo)
+export(create_gh_repo)
 export(deploy_app)
 export(deploy_website)
 export(gh_remote_branches)
