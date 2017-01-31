@@ -2,6 +2,7 @@
 
 export(calculate_scores_check)
 export(clone_repo)
+export(copy_layer)
 export(create_gh_repo)
 export(deploy_app)
 export(deploy_website)

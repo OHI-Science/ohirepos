@@ -1,7 +1,16 @@
-## copy_layer.r
-## extracted from create_functions.r - populate_draft_branch(); make its own function.
-# https://github.com/OHI-Science/ohi-webapps/blob/26054a43d118a50c275ed75da41430147ab35d0e/create_functions.R#L487-L554
-
+#' Copy OHI Layer
+#'
+#' @param lyr OHI data layer to be copied
+#' @param sc_rgns OHI+ regions (sc = 'subcountry', vestigal)
+#' @param dir_global global OHI assessment directory
+#' @param sfx_global suffix to identify global source for OHI+data layers
+#' @param lyrs_sc layers.csv data object
+#' @param write_to_csv whether to write to .csv; default is TRUE
+#'
+#' @return
+#' @export
+#'
+#' @examples
 copy_layer <- function(lyr, sc_rgns,
                        dir_global, sfx_global,
                        lyrs_sc, write_to_csv = TRUE){
