@@ -1,8 +1,8 @@
 #' Create GitHub Repo
 #'
-#' @param key
-#' @param gh_token
-#' @param github_user
+#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
+#' @param gh_token GitHub Token
+#' @param github_user GitHub User, set in create_init.r
 #'
 #' @return
 #' @export

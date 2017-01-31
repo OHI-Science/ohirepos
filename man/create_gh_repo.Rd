@@ -7,7 +7,11 @@
 create_gh_repo(key, gh_token, github_user)
 }
 \arguments{
-\item{github_user}{}
+\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
+
+\item{gh_token}{GitHub Token}
+
+\item{github_user}{GitHub User, set in create_init.r}
 }
 \description{
 Create GitHub Repo
