@@ -46,3 +46,17 @@ Code to make OHI+ websites: `ohirepos/inst/gh-pages`.
     - Run devtools::document() (or press Ctrl/Cmd + Shift + D in RStudio) to convert roxygen comments to .Rd files.
     - Look at NAMESPACE and run tests to check that the specification is correct.
     - Rinse and repeat until the correct functions are exported.
+
+
+### Troubleshooting
+
+If something like `Error ... : lazy-load database '.......rdb' is corrupt`, [stackoverflow](http://stackoverflow.com/questions/30424608/error-in-fetchkey-lazy-load-database) says:
+I think the explanation for what is causing this is [here](https://github.com/hadley/devtools/pull/1001). It's related to devtools.
+
+Fix: delete the .rdb package and RESTART R
+
+```
+cd ~/Rlibs/descopl/help
+rm *.rdb
+```
+Restart R. Look at the help for the package again. Fixed!
