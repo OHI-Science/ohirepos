@@ -12,6 +12,7 @@ populate_prep <- function(key){
 
   ## clone repo
   if (!file.exists(dir_repo)) system(sprintf('git clone %s %s', git_url, dir_repo))
+  setwd(dir_repo)
   repo = repository(dir_repo)
 
   # pull the latest from master branch
