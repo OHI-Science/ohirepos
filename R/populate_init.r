@@ -8,11 +8,13 @@
 #' @export
 #'
 #' @examples
-populate_init <- function(key){
+populate_init <- function(key, dir_repo){
 
   ## clone repo
+  setwd(dir_repos)
   unlink(dir_repo, recursive=T, force=T)
   repo <- clone(git_url, normalizePath(dir_repo, mustWork=F))
+  setwd(dir_repo)
 
   ## get remote branches
   remote_branches <- sapply(branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
