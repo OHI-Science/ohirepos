@@ -100,7 +100,10 @@ copy_layer <- function(lyr, sc_rgns,
       dtmp[is.na(dtmp)] <- as.integer(0)
     }
 
-    ## TODO: handle hd_subtidal_hb
+    ## handle hd_subtidal_hb --TODO CHECK THIS FIX
+    if (lyr =='hd_subtidal_hb'){
+      dtmp[is.na(dtmp)] <- as.integer(0)
+    }
 
     ## fill 'cf' as placeholder for LIV/ECO
     if ('sector' %in% names(dtmp)) {
