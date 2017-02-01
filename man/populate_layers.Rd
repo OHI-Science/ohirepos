@@ -10,13 +10,13 @@ populate_layers(key, dir_repo, lyrs_gl, dir_global, dir_scenario,
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
 
-\item{dir_repo}{full path of temporary OHI repo e.g. `~/github/clip-n-ship/gye`}
+\item{dir_repo}{full path of temporary OHI repo e.g. \code{~/github/clip-n-ship/gye}}
 
 \item{lyrs_gl}{list of global layers to copy}
 
 \item{dir_global}{full local path of ohi-global scenario}
 
-\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`}
+\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye}}
 
 \item{multi_nation}{T/F whether to pull information from multiple nations}
 }
@@ -30,4 +30,3 @@ Populate new OHI repos with layers from global assessments
 
 
 }
-

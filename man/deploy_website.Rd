@@ -29,9 +29,9 @@ deploy_website(gh_repo, study_area, scenario_dir, gh_owner = "OHI-Science",
 \item{del_out}{whether to delete output directory when done, defaults to TRUE}
 }
 \value{
-Returns web_url (http://[gh_owner].github.io/[gh_repo]) based on creating or
+Returns web_url (http://\link{gh_owner}.github.io/\link{gh_repo}) based on creating or
 updating gh-pages branch of Github repository. Please also visit
-\link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/gh-pages/README.md]{gh-pages/README.md} for more details.
+\link\link{=https://github.com/OHI-Science/ohirepos/blob/master/inst/gh-pages/README.md}{gh-pages/README.md} for more details.
 }
 \description{
 Deploy website to gh-pages branch in Github repository
@@ -43,4 +43,3 @@ deploy_website('bhi',        'Baltic', 'baltic2015')
 }
 
 }
-

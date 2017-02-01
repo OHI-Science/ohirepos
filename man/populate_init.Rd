@@ -12,4 +12,3 @@ populate_init(key, dir_repo)
 \description{
 Title
 }
-

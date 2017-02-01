@@ -22,4 +22,3 @@ copy_layer(lyr, sc_rgns, dir_global, sfx_global, lyrs_sc, write_to_csv = TRUE)
 \description{
 Copy OHI Layer
 }
-

@@ -9,9 +9,9 @@ populate_conf(key, dir_scenario, dir_global)
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
 
-\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye/region2015`}
+\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye/region2015}}
 
-\item{dir_global}{full path of local `ohi-global` scenario, e.g. `~/github/ohi-global/eez2016'}
+\item{dir_global}{full path of local \code{ohi-global} scenario, e.g. `~/github/ohi-global/eez2016'}
 }
 \value{
 key's repo with config folder populated
@@ -19,4 +19,3 @@ key's repo with config folder populated
 \description{
 Populate OHI repo with configuration folder
 }
-

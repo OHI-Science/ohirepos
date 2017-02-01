@@ -9,7 +9,7 @@ populate_etc(key, dir_scenario)
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
 
-\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`}
+\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye}}
 }
 \value{
 TBD
@@ -20,4 +20,3 @@ Populate other items in OHI repos
 \examples{
 \dontrun{# TBD}
 }
-

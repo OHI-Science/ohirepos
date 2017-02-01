@@ -7,7 +7,7 @@
 calculate_scores_check(dir_scenario)
 }
 \arguments{
-\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`}
+\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye}}
 }
 \value{
 TBD
@@ -18,4 +18,3 @@ Calculate scores for OHI repository
 \examples{
 \dontrun{# TBD}
 }
-

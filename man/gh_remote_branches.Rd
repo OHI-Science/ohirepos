@@ -15,4 +15,3 @@ Returns character vector of repositories.
 \description{
 Get remote branches on Github from local repository.
 }
-

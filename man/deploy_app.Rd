@@ -49,17 +49,17 @@ Returns URL of Shiny app if successfully deployed, otherwise errors out. Require
 and SSH keys for secure copying to server.
 Suggestions to update Shiny app:
 \enumerate{
- \item Ensure permissions are set for you and shiny on fitz:
- \verb{
+\item Ensure permissions are set for you and shiny on fitz:
+\verb{
  ssh jstewart@fitz
  sudo chown -R jstewart /srv/shiny-server/ohi-global
  sudo chmod -R 775 .
  sudo chgrp -R shiny .}
- \item Copy your repo to dir_out locally. For example, if input argument \code{dir_out='~/Desktop/ohirepos_tmp'},
-       copy \code{'~/github/ohi-global'} to \code{dir_out='~/Desktop/ohirepos_tmp/ohi-global/draft'}.
+\item Copy your repo to dir_out locally. For example, if input argument \code{dir_out='~/Desktop/ohirepos_tmp'},
+copy \code{'~/github/ohi-global'} to \code{dir_out='~/Desktop/ohirepos_tmp/ohi-global/draft'}.
 }
- Please also visit
-\link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md]{app/README.md} for more details.
+Please also visit
+\link\link{=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md}{app/README.md} for more details.
 }
 \description{
 Deploy Shiny application
@@ -70,4 +70,3 @@ deploy_app('ohi-global', 'Global', c('eez2015','eez2012','eez2013','eez2014','ee
 deploy_app(       'bhi', 'Baltic', 'baltic2015')
 }
 }
-

@@ -16,4 +16,3 @@ create_repo_map(key, dir_spatial, dir_scenario)
 \description{
 Title
 }
-

@@ -16,4 +16,3 @@ create_gh_repo(key, gh_token, github_user)
 \description{
 Create GitHub Repo
 }
-
