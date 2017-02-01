@@ -19,7 +19,7 @@ populate_prep <- function(key){
   system('git checkout master; git pull')
 
   ## create prep dir
-  dir.create('prep', showWarnings=F)
+  dir.create('prep', showWarnings=FALSE)
   file.copy(file.path(dir_github, 'ohi-webapps/README_prep.md'),
             file.path('prep/README.md'), overwrite=T)
 
@@ -30,7 +30,7 @@ populate_prep <- function(key){
 
   ## populate prep folder's subfolders
   file.copy(file.path(dir_github, 'ohi-webapps/README_prep_subfolders.md'),
-            file.path(sprintf('prep/%s/README.md', prep_subfolders)), overwrite=T)
+            file.path(sprintf('prep/%s/README.md', prep_subfolders)), overwrite=TRUE)
 
   ## git add, commit and push
   system(sprintf('git add -A; git commit -a -m "%s repo populated with prep folders"', key))
