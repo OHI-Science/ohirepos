@@ -4,7 +4,7 @@
 \alias{populate_init}
 \title{Title}
 \usage{
-populate_init(key)
+populate_init(key, dir_repo)
 }
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
