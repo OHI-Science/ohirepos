@@ -21,7 +21,7 @@ create_repo_map <- function(key, dir_spatial, dir_scenario){
   }))
 
   ## process shapefiles; ensure projection and rename ----
-  shp_name = tools::file_path_sans_ext(list.files(dir_spatial))[1]
+  shp_name = tools::file_path_sans_ext(list.files(dir_spatial, pattern = '.shp'))
   shp_orig = rgdal::readOGR(dsn=dir_spatial, layer=shp_name)
   crs = sp::CRS("+proj=longlat +datum=WGS84")
   shp = sp::spTransform(shp_orig,crs)
@@ -36,7 +36,7 @@ create_repo_map <- function(key, dir_spatial, dir_scenario){
   f_shp     = file.path(dir_annex_sc, 'spatial', 'rgn_offshore_gcs.shp')
 
   cat(sprintf('  creating geojson file with ohirepos::shp_to_geojson -- %s\n', format(Sys.time(), '%X')))
-  ohicore::shp_to_geojson(f_shp, f_js, f_geojson) # TODO: preappend ohirepos::
+  ohirepos::shp_to_geojson(f_shp, f_js, f_geojson)
 
   ## copy geojson files to repo/spatial
   for (f in c(f_js, f_geojson)){ # f = f_geojson
