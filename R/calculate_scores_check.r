@@ -36,7 +36,7 @@ calculate_scores_check <- function(dir_scenario){
 
     # calculate scenario scores
     scores = CalculateAll(conf, layers)
-    write.csv(scores, 'scores.csv', na='', row.names=F)
+    write.csv(scores, 'scores.csv', na='', row.names=FALSE)
 
     # document versions of packages and specifics of ohicore
     cat(
