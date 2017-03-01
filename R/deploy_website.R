@@ -4,7 +4,7 @@
 #' @param study_area place name of the entire study area
 #' @param scenario_dir subfolder from data branch of repo that will be the default scenario to display on website
 #' @param gh_owner Github owner. Defaults to "OHI-Science".
-#' @param gh_branch_data Github branch containing data. Defaults to "draft" and must already exist in the repo.
+#' @param gh_branch_data Github branch containing data. Defaults to "master" and must already exist in the repo.
 #' @param app_url URL of Shiny application that gets embedded as iframe
 #' @param open_url open the web browser to the web_url
 #' @param dir_out top-level directory to use for populating git repo folder and branch subfolders within, defaults to tmpdir()
