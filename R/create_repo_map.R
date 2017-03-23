@@ -22,7 +22,7 @@ create_repo_map <- function(key, dir_spatial, dir_scenario){
   }))
 
   ## process shapefiles; ensure projection and rename ----
-  shp_name = tools::file_path_sans_ext(list.files(dir_spatial, pattern = '.shp'))
+  shp_name = tools::file_path_sans_ext(list.files(dir_spatial, pattern = '.shp')) ## TODO: too brittle.
   shp_orig = rgdal::readOGR(dsn=dir_spatial, layer=shp_name)
   crs = sp::CRS("+proj=longlat +datum=WGS84")
   shp = sp::spTransform(shp_orig,crs)
