@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @examples
+#'
 create_repo_map <- function(key, dir_spatial, dir_scenario){
 
   ## load libraries quietly ----
