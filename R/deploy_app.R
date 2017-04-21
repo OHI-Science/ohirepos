@@ -104,18 +104,18 @@ deploy_app <- function(
 
   # data branch: fetch existing, or clone new
   if (!file.exists(dir_data)){
-    
+
     # clone data branch, shallowly and quietly
     run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
-    
+
   } else {
-    
+
     # git fetch & overwrite
     run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
   }
 
   # get remote branches
-  remote_branches = gh_remote_branches(dir_data)
+  remote_branches = gh_remote_branches(dir_data) # @oharac: = 'master'
 
   if (!file.exists(dir_app)){
 
