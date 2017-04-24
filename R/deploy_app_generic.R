@@ -194,7 +194,7 @@ deploy_app <- function(gh_organization = 'OHI-Science',
     #   dir_app, substr(1234, 1, 7), gh_branch_app),
     # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
     sprintf(
-      'cd %s; rsync -rq --exclude .git --exclude-from=.gitignore . %s:%s/%s',
+      'cd %s; rsync -rq --exclude .git . %s:%s/%s',
       dir_app_local, app_server, dir_server, basename(dir_app_local)),
     cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )
