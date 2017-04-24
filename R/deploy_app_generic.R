@@ -44,11 +44,11 @@
 #' @export
 
 deploy_app <- function(gh_organization = 'OHI-Science',
-                       gh_repo,
-                       gh_shiny_dir   = '',
-                       gh_branch_app  = 'app',
-                       gh_data_commit = NULL,
-                       app_url    = sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
+                       gh_repo,               # gh_repo <- 'IUCN-Aquamaps'
+                       gh_shiny_dir   = NULL, # gh_shiny_dir <- 'shiny_am_iucn'
+                       gh_branch_app  = 'master',
+                       # gh_data_commit = NULL,
+                       app_url    = NULL,
                        app_server = 'jstewart@128.111.84.76',
                        dir_server = '/srv/shiny-server',
                        run_local  = FALSE,
@@ -67,37 +67,52 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   library(yaml)
 
   ### construct locations
-  dir_branches <- file.path(dir_out, gh_repo)
-  ### base repo location, where .Rproj goes?
-  dir_app      <- file.path(dir_out, gh_repo, gh_branch_app, gh_shiny_dir)
-  ### folder for shiny app files
-  gh_slug      <- sprintf('%s/%s', gh_organization, gh_repo)
-  gh_url       <- sprintf('https://github.com/%s.git', gh_slug)
+  # dir_branches <- file.path(dir_out, gh_repo)
+    ### base repo location, where .Rproj goes?
+  dir_repo_local <- file.path(dir_out, gh_repo, gh_branch_app)
+    ### local folder to copy the repo into
+
+  dir_app_local  <- file.path(dir_repo_local, gh_shiny_dir)
+    ### local folder where the app files reside
+
+  dir_app_remote <- ifelse(is.null(gh_shiny_dir),
+                           gh_repo,
+                           basename(gh_shiny_dir))
+    ### the folder on Fitz where the shiny app will reside; if a subfolder
+    ### of a repo, uses subfolder name, otherwise use repo name.
+
+  gh_url <- sprintf('https://github.com/%s/%s.git', gh_organization, gh_repo)
+    ### url of the repo from which app will be pulled
+
+  if(is.null(app_url)) {
+    app_url <- sprintf('http://ohi-science.nceas.ucsb.edu/%s', dir_app_remote)
+  }
+
 
   # # extra bash commands
   ### NOT USED
   # rm_allnotgit <- 'find . -path ./.git -prune -o -exec rm -rf {} \\; 2> /dev/null'
 
   # ensure top level dir exists for local copy
-  dir.create(dir_branches, showWarnings = FALSE, recursive = TRUE)
+  dir.create(dir_repo_local, showWarnings = FALSE, recursive = TRUE)
 
   run_cmd <- function(cmd){
     message('running command:\n  ', cmd)
-    message('...elapsed time: ', system.time(system(cmd))[3], ' sec')
+    message('...elapsed time: ', system.time(system(cmd))[3] %>% round(3), ' sec')
   }
 
-  ### NO DATA BRANCH - ditch this stuff
-  # data branch: fetch existing, or clone new
-  if (!file.exists(dir_app)){
+  # data branch: fetch existing, or clone new if app isn't in local repo copy
+  if (!file.exists(dir_app_local)){
     # clone app branch, shallowly and quietly
-    run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_app, gh_url, dir_app))
+    run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_app, gh_url, dir_repo_local))
   } else {
     # git fetch & overwrite
-    run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
+    run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q',
+                    dir_repo_local, gh_branch_app, gh_branch_app))
   }
 
   # # get remote branches
-  # remote_branches <- gh_remote_branches(dir_data) # @oharac: = 'master'
+  # remote_branches <- ohirepos::gh_remote_branches(dir_repo_local)
 
   # if (!file.exists(dir_app)){
   #   # dir_app: copy from dir_data, if needed
@@ -111,17 +126,19 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   #     dir_app, gh_branch_app, gh_branch_app, gh_branch_app))
   # } else {
 
-  # checkout app branch and clear files
-  run_cmd(sprintf(
-    'cd %s; git fetch -q; git checkout -q %s; git reset -q --hard origin/%s; rm -rf *',
-    dir_app,                        gh_branch_app,                gh_branch_app))
-  # }
+  ### is this still necessary?
+  # # checkout app branch and clear files
+  # run_cmd(sprintf(
+  #   'cd %s; git fetch -q; git checkout -q %s; git reset -q --hard origin/%s; rm -rf *',
+  #   dir_app,                        gh_branch_app,                gh_branch_app))
+  # # }
 
-  # copy shiny app files into dir_app, excluding all files in .gitignore
-  run_cmd(sprintf(
-    'cd %s; rsync -rq --exclude=.git/ --exclude-from=.gitignore . %s',
-    system.file('app', package = 'ohirepos'),                 dir_app)
-  )
+  ### This copies ui.R and server.R from ohirepos; we don't want this any more.
+  # # copy shiny app files into dir_app, excluding all files in .gitignore
+  # run_cmd(sprintf(
+  #   'cd %s; rsync -rq --exclude=.git/ --exclude-from=.gitignore . %s',
+  #   system.file('app', package = 'ohirepos'),                 dir_app)
+  # )
 
   ### let's skip shiny app provenance
   # get commit of ohirepos for Shiny app provenance
@@ -145,37 +162,40 @@ deploy_app <- function(gh_organization = 'OHI-Science',
       app_url         = app_url,
       debug           = FALSE,
       last_updated    = Sys.Date())),
-    file.path(dir_app, 'app.yml'))
+    file.path(dir_repo_local, 'app.yml'))
 
-  # add Rstudio project file
-  message('...writing Rproj, gitignore files')
-  file.copy(system.file('templates/template.Rproj', package = 'devtools'),
-            sprintf('%s/%s.Rproj', dir_app, gh_repo))
+  ### this should already be coming from the github repo... no need to overwrite?
+  # # add Rstudio project file
+  # message('...writing Rproj, gitignore files')
+  # file.copy(system.file('templates/template.Rproj', package = 'devtools'),
+  #           sprintf('%s/%s.Rproj', dir_app, gh_repo))
 
-  # add gitignore file
-  writeLines(c(
-    '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
-    basename(dir_data_2),                                     # [repo]_[branch]/
-    sprintf('%s_%s.Rdata', gh_repo, scenario_dirs),           # [repo]_[scenario].Rdata
-    sprintf('%s_%s_remote_sha.txt', gh_repo, gh_branch_data)  # [repo]_[scenario]_remote_sha.txt
-  ), file.path(dir_app, '.gitignore'))
+  ### likewise
+  # # add gitignore file
+  # writeLines(c(
+  #   '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
+  #   basename(dir_data_2),                                     # [repo]_[branch]/
+  #   sprintf('%s_%s.Rdata', gh_repo, scenario_dirs),           # [repo]_[scenario].Rdata
+  #   sprintf('%s_%s_remote_sha.txt', gh_repo, gh_branch_data)  # [repo]_[scenario]_remote_sha.txt
+  # ), file.path(dir_app, '.gitignore'))
 
   # TODO: Travis?
   #brew::brew(system.file('app/travis.brew.yml', package = 'ohirepos'), file.path(dir_app, 'travis.yml'))
 
+  ### no need to recommit and push... overkill for this!
   commands <- c(
-    # # copy dir_data to dir_data_2
-    # sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2),
-    # prompt restart
-    sprintf('touch %s/restart.txt', dir_app),
-    # git commit and push to Github
-    sprintf(
-      "cd %s; git add --all; git commit -q -a -m 'updating app with ohirepos commit %s'; git push -q origin %s",
-      dir_app, substr(ohirepos_commit, 1, 7), gh_branch_app),
+    # # # copy dir_data to dir_data_2
+    # # sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2),
+    # # prompt restart
+    # sprintf('touch %s/restart.txt', dir_app),
+    # # git commit and push to Github
+    # sprintf(
+    #   "cd %s; git add --all; git commit -q -a -m 'updating app with ohirepos commit %s'; git push -q origin %s",
+    #   dir_app, substr(1234, 1, 7), gh_branch_app),
     # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
     sprintf(
       'cd %s; rsync -rq --exclude .git --exclude-from=.gitignore . %s:%s/%s',
-      dir_app, app_server, dir_server, gh_repo),
+      dir_app_local, app_server, dir_server, basename(dir_app_local)),
     cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )
   for (cmd in commands){ # cmd <- commands[3]
