@@ -70,9 +70,8 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   library(yaml)
 
 
-  ###############################.
-  ##### construct locations #####
-
+  ################################################.
+  ##### construct local and remote locations #####
   dir_branches <- file.path(dir_out, gh_repo)
     ### local repo location; this will get deleted at the end of the function
     ### if del_out == TRUE
@@ -97,7 +96,6 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
   ###################################################.
   ##### fetch app from GitHub location to local #####
-
   # ensure top level dir exists for local copy
   dir.create(dir_repo_local, showWarnings = FALSE, recursive = TRUE)
 
@@ -119,7 +117,6 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
   #######################################.
   ##### write app.yml configuration #####
-
   ### Determine required packages from library() or require() in any R scripts
   script_files <- list.files(dir_app_local, pattern = '\\.R$|\\.r$', full.names = TRUE)
   pkgs_rqd <- lapply(script_files, FUN = function(x) {
@@ -144,7 +141,6 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
   ######################################################.
   ##### Check that required packages are installed #####
-
   pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages\\(\\)[,1]'", app_server)
   pkgs_installed <- system(pkg_check, intern = TRUE) %>%
     stringr::str_split('[\\" ]+') %>%
@@ -160,7 +156,6 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
   #############################################.
   ##### copy app files from local to Fitz #####
-
   cmds <- c(
     sprintf('cd %s; rsync -rq --exclude .git %s:%s/%s',
             dir_app_local,                   app_server, dir_server, dir_app_remote) # ,
