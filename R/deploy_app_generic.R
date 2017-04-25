@@ -145,9 +145,17 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   ######################################################.
   ##### Check that required packages are installed #####
 
-  pkg_check <- sprintf('ssh %s', app_server)
-  # R -q -e \"is.element('$p', installed.packages()[,1])\"')
-  run_cmd(pkg_check)
+  pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages()[,1]'", app_server)
+  pkg_installed <- system(pkg_check, intern = TRUE) %>%
+    stringr::str_split('[\\" ]+') %>%
+    unlist() %>%
+    unique()
+
+  pkg_missing <- pkg_check[!pkg_check %in% pkg_installed]
+  if(length(pkg_missing) > 0) {
+    message('The following required packages are not installed on the remote server:')
+    message(paste(pkg_missing, collapse = ', '))
+  }
 
   #############################################.
   ##### copy app files from local to Fitz #####
