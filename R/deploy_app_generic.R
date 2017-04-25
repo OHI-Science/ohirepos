@@ -123,9 +123,9 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   ### Determine required packages from library() or require() in any R scripts
   script_files <- list.files(dir_app_local, pattern = '\\.R$|\\.r$', full.names = TRUE)
   pkgs_rqd <- lapply(script_files, FUN = function(x) {
-    grep("library|require", readLines(x), value = TRUE) %>%
-      stringr::str_extract('(?<=\\().*?(?=\\))')
-  }) %>%
+      grep("library|require", readLines(x), value = TRUE) %>%
+        stringr::str_extract('(?<=\\().*?(?=\\))')
+    }) %>%
     unlist() %>%
     unique()
 
@@ -145,16 +145,17 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   ######################################################.
   ##### Check that required packages are installed #####
 
-  pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages()[,1]'", app_server)
-  pkg_installed <- system(pkg_check, intern = TRUE) %>%
+  pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages\\(\\)[,1]'", app_server)
+  pkgs_installed <- system(pkg_check, intern = TRUE) %>%
     stringr::str_split('[\\" ]+') %>%
     unlist() %>%
     unique()
 
-  pkg_missing <- pkg_check[!pkg_check %in% pkg_installed]
-  if(length(pkg_missing) > 0) {
+  pkgs_missing <- pkgs_rqd[!pkgs_rqd %in% pkgs_installed]
+  if(length(pkgs_missing) > 0) {
     message('The following required packages are not installed on the remote server:')
-    message(paste(pkg_missing, collapse = ', '))
+    message('  ', paste(pkgs_missing, collapse = ', '))
+    message('Contact the remote server admin to install those packages.')
   }
 
   #############################################.
