@@ -44,54 +44,59 @@
 #' @export
 
 deploy_app <- function(gh_organization = 'OHI-Science',
-                       gh_repo,               # gh_repo <- 'IUCN-Aquamaps'
-                       gh_shiny_dir   = NULL, # gh_shiny_dir <- 'shiny_am_iucn'
-                       gh_branch_app  = 'master',
-                       # gh_data_commit = NULL,
-                       app_url    = NULL,
-                       app_server = 'jstewart@128.111.84.76',
-                       dir_server = '/srv/shiny-server',
-                       run_local  = FALSE,
-                       open_url   = TRUE,
-                       dir_out    = tempdir(),
-                       del_out    = TRUE) {
+                       gh_repo,
+                       gh_shiny_dir    = NULL,
+                       gh_branch_app   = 'master',
+                       app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
+                       app_name_remote = NULL,
+                       app_server, #      = 'jstewart@128.111.84.76',
+                       dir_server      = '/srv/shiny-server',
+                       run_local       = FALSE,
+                       open_url        = TRUE,
+                       dir_out         = tempdir(),
+                       del_out         = TRUE) {
 
-  ### QUESTIONS:
-  ### * How to make sure the app directory on Fitz matches the app directory
-  ###   in GitHub but without the intervening folders?
-  ### * the original version takes the repo name and uses that for the app name
-  ### * the new version takes the shiny_dir basename and uses that for the app name;
-  ###   if shiny_dir = '' (or NULL?) use the repo name instead.
+  # gh_organization <- 'OHI-Science'; gh_repo <- 'IUCN-Aquamaps'; gh_shiny_dir <- 'shiny_am_iucn'
+  # gh_branch_app   <- 'master'; app_base_url    <- 'http://ohi-science.nceas.ucsb.edu'; app_name_remote <- 'marine_maps'
+  # app_server <- 'ohara@fitz.nceas.ucsb.edu'; dir_server <- '/srv/shiny-server';
+  # run_local <- FALSE; open_url <- TRUE; dir_out <- tempdir(); del_out <- TRUE
+
+  ### TO DO:
+  ### * check installed packages on Fitz
+  ### * check required packages in scripts
+  ### * if required packages are missing, report back so Nick can install 'em
 
   library(tidyverse)
   library(yaml)
 
-  ### construct locations
-  # dir_branches <- file.path(dir_out, gh_repo)
-    ### base repo location, where .Rproj goes?
+
+  ###############################.
+  ##### construct locations #####
+
+  dir_branches <- file.path(dir_out, gh_repo)
+    ### local repo location; this will get deleted at the end of the function
+    ### if del_out == TRUE
   dir_repo_local <- file.path(dir_out, gh_repo, gh_branch_app)
     ### local folder to copy the repo into
-
   dir_app_local  <- file.path(dir_repo_local, gh_shiny_dir)
     ### local folder where the app files reside
-
-  dir_app_remote <- ifelse(is.null(gh_shiny_dir),
-                           gh_repo,
-                           basename(gh_shiny_dir))
-    ### the folder on Fitz where the shiny app will reside; if a subfolder
-    ### of a repo, uses subfolder name, otherwise use repo name.
-
   gh_url <- sprintf('https://github.com/%s/%s.git', gh_organization, gh_repo)
     ### url of the repo from which app will be pulled
 
-  if(is.null(app_url)) {
-    app_url <- sprintf('http://ohi-science.nceas.ucsb.edu/%s', dir_app_remote)
+  if(is.null(app_name_remote)) {
+    dir_app_remote <- file.path(gh_repo, gh_shiny_dir)
+      ### the folder on Fitz where the shiny app will reside; if no explicit
+      ### name is given, will default to the repo name/shiny folder name
+  } else {
+    dir_app_remote <- app_name_remote
   }
 
+  app_url <- file.path(app_base_url, dir_app_remote)
 
-  # # extra bash commands
-  ### NOT USED
-  # rm_allnotgit <- 'find . -path ./.git -prune -o -exec rm -rf {} \\; 2> /dev/null'
+
+
+  ###################################################.
+  ##### fetch app from GitHub location to local #####
 
   # ensure top level dir exists for local copy
   dir.create(dir_repo_local, showWarnings = FALSE, recursive = TRUE)
@@ -111,47 +116,19 @@ deploy_app <- function(gh_organization = 'OHI-Science',
                     dir_repo_local, gh_branch_app, gh_branch_app))
   }
 
-  # # get remote branches
-  # remote_branches <- ohirepos::gh_remote_branches(dir_repo_local)
 
-  # if (!file.exists(dir_app)){
-  #   # dir_app: copy from dir_data, if needed
-  #   run_cmd(sprintf('cp -rf %s %s', dir_data, dir_app))
-  # }
+  #######################################.
+  ##### write app.yml configuration #####
 
-  # if (!'app' %in% remote_branches){
-  #   # create orphan app branch, if needed
-  #   run_cmd(sprintf(
-  #     'cd %s; git checkout -q --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -q -m "initialize %s branch"; git push -q origin %s',
-  #     dir_app, gh_branch_app, gh_branch_app, gh_branch_app))
-  # } else {
+  ### Determine required packages from library() or require() in any R scripts
+  script_files <- list.files(dir_app_local, pattern = '\\.R$|\\.r$', full.names = TRUE)
+  pkgs_rqd <- lapply(script_files, FUN = function(x) {
+    grep("library|require", readLines(x), value = TRUE) %>%
+      stringr::str_extract('(?<=\\().*?(?=\\))')
+  }) %>%
+    unlist() %>%
+    unique()
 
-  ### is this still necessary?
-  # # checkout app branch and clear files
-  # run_cmd(sprintf(
-  #   'cd %s; git fetch -q; git checkout -q %s; git reset -q --hard origin/%s; rm -rf *',
-  #   dir_app,                        gh_branch_app,                gh_branch_app))
-  # # }
-
-  ### This copies ui.R and server.R from ohirepos; we don't want this any more.
-  # # copy shiny app files into dir_app, excluding all files in .gitignore
-  # run_cmd(sprintf(
-  #   'cd %s; rsync -rq --exclude=.git/ --exclude-from=.gitignore . %s',
-  #   system.file('app', package = 'ohirepos'),                 dir_app)
-  # )
-
-  ### let's skip shiny app provenance
-  # get commit of ohirepos for Shiny app provenance
-  # ohirepos_commit <- devtools:::local_sha('ohirepos')
-  # if (nchar(ohirepos_commit) != 40){
-  #   stop(sprintf(paste(
-  #     'Sorry, the ohirepos R library seems to have not been installed with:',
-  #     '  devtools::install_github("ohi-science/ohirepos")',
-  #     'based on devtools:::local_sha("ohirepos") of %s and not of normal Github commit length 40,',
-  #     'which is necessary to associate the ohirepos commit with the Shiny app deployed.', collapse = '\n'), ohirepos_commit))
-  # }
-
-  # write app.yml configuration
   message('...writing app.yml')
   write_file(
     as.yaml(list(
@@ -161,53 +138,36 @@ deploy_app <- function(gh_organization = 'OHI-Science',
       gh_branch_app   = gh_branch_app,
       app_url         = app_url,
       debug           = FALSE,
+      pkgs_required   = paste(pkgs_rqd, collapse = ', '),
       last_updated    = Sys.Date())),
     file.path(dir_repo_local, 'app.yml'))
 
-  ### this should already be coming from the github repo... no need to overwrite?
-  # # add Rstudio project file
-  # message('...writing Rproj, gitignore files')
-  # file.copy(system.file('templates/template.Rproj', package = 'devtools'),
-  #           sprintf('%s/%s.Rproj', dir_app, gh_repo))
+  ######################################################.
+  ##### Check that required packages are installed #####
 
-  ### likewise
-  # # add gitignore file
-  # writeLines(c(
-  #   '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
-  #   basename(dir_data_2),                                     # [repo]_[branch]/
-  #   sprintf('%s_%s.Rdata', gh_repo, scenario_dirs),           # [repo]_[scenario].Rdata
-  #   sprintf('%s_%s_remote_sha.txt', gh_repo, gh_branch_data)  # [repo]_[scenario]_remote_sha.txt
-  # ), file.path(dir_app, '.gitignore'))
+  pkg_check <- sprintf('ssh %s', app_server)
+  # R -q -e \"is.element('$p', installed.packages()[,1])\"')
+  run_cmd(pkg_check)
 
-  # TODO: Travis?
-  #brew::brew(system.file('app/travis.brew.yml', package = 'ohirepos'), file.path(dir_app, 'travis.yml'))
+  #############################################.
+  ##### copy app files from local to Fitz #####
 
-  ### no need to recommit and push... overkill for this!
-  commands <- c(
-    # # # copy dir_data to dir_data_2
-    # # sprintf('cd %s; rsync -rq ./ %s', dir_data, dir_data_2),
-    # # prompt restart
-    # sprintf('touch %s/restart.txt', dir_app),
-    # # git commit and push to Github
-    # sprintf(
-    #   "cd %s; git add --all; git commit -q -a -m 'updating app with ohirepos commit %s'; git push -q origin %s",
-    #   dir_app, substr(1234, 1, 7), gh_branch_app),
-    # push to server using remote sync recursively (-r), and update permissions so writable by shiny user
-    sprintf(
-      'cd %s; rsync -rq --exclude .git . %s:%s/%s',
-      dir_app_local, app_server, dir_server, basename(dir_app_local)),
-    cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
+  cmds <- c(
+    sprintf('cd %s; rsync -rq --exclude .git %s:%s/%s',
+            dir_app_local,                   app_server, dir_server, dir_app_remote) # ,
+    # cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
   )
-  for (cmd in commands){ # cmd <- commands[3]
+  for (cmd in cmds){
     run_cmd(cmd)
   }
 
+
   # run app, local and remote
   message('run app locally (run_app = TRUE) or remotely (open_url = TRUE)')
-  if (open_url) utils::browseURL(app_url)
-  if (run_app)  shiny::runApp(dir_app)
+  if (open_url)  utils::browseURL(app_url)
+  if (run_local) shiny::runApp(dir_app_local)
 
   # remove temp files
-  message('rm temp files if del_out == T')
+  message('rm temp files if del_out == TRUE')
   if (del_out) unlink(dir_branches, recursive = TRUE, force = TRUE)
 }
