@@ -54,7 +54,7 @@ deploy_app <- function(gh_organization = 'OHI-Science',
                        dir_server      = '/srv/shiny-server',
                        # run_local       = FALSE,
                        # open_url        = TRUE,
-                       dir_out         = tempdir(),
+                       dir_local       = tempdir()
                        # del_out         = TRUE
                        ) {
 
@@ -155,15 +155,30 @@ deploy_app <- function(gh_organization = 'OHI-Science',
     message('  ', paste(pkgs_missing, collapse = ', '))
 
     if(install_pkgs == TRUE) {
-      ### check whether user has permission to install packages?
-      pkg_string <- paste(pkgs_missing, collapse = '", "') %>%
-        paste('"', ., '"')
-      install_pkgs_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(\\)['", app_server)
+      ### check whether user has superuser privileges, to grant permission
+      ### to install packages?
+      suppressWarnings({
+        sudo_test <- system2(command = 'ssh', args = sprintf('%s sudo -v', app_server),
+                             stderr = TRUE)
+        sudo_priv <- !stringr::str_detect(tolower(sudo_test), 'may not run sudo')
+      })
 
+      if(sudo_priv) {
+        ### User has sudo privileges.  Try to install the packages.
+        pkg_string <- paste0('\\"', pkgs_missing, '\\"') ### put quotation marks...
+
+        for(pkg in pkg_string) {
+          message('Attempting to install ', pkg, ' on remote server.')
+          install_pkg_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(%s\\)'", app_server, pkg)
+          run_cmd(install_pkg_cmd)
+        }
+
+      } else {
+          message('To install the packages, you need superuser privileges.  ',
+                  'Unfortunately, you are not cool enough to have those privileges.  ',
+                  'Please contact remote server admin to install packages for you.')
+      }
     }
-
-    message('Contact the remote server admin to install those packages.')
-
   }
 
 
