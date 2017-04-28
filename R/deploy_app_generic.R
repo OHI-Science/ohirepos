@@ -160,7 +160,7 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
         for(pkg in pkg_string) {
           message('Attempting to install ', pkg, ' on remote server.')
-          install_pkg_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(%s\\)'", app_server, pkg)
+          install_pkg_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(%s\\)'", app_server, pkg) # may require 'sudo' before Rscript
           run_cmd(install_pkg_cmd)
         }
 
@@ -230,4 +230,23 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 #            dir_server      = '/srv/shiny-server',
 #            dir_local       = tempdir(),
 #            install_pkgs    = TRUE)
+
+## Julie test
+gh_organization = 'OHI-Science';
+gh_repo         = 'IUCN-Aquamaps';
+gh_shiny_dir    = 'shiny_am_iucn';
+gh_branch_app   = 'master';
+app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
+app_name_remote = 'plos_test';
+app_server      = 'jstewart@fitz.nceas.ucsb.edu';
+dir_server      = '/srv/shiny-server';
+dir_local       = tempdir();
+install_pkgs    = TRUE;
+
+## Julie's error
+# ssh_askpass: exec(/usr/X11R6/bin/ssh-askpass): No such file or directory
+# Host key verification failed.
+# Warning message:
+#   running command 'ssh jstewart@fitz.nceas.ucsb.edu Rscript -e 'installed.packages\(\)[,1]'' had status 255
+
 
