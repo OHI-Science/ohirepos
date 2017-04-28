@@ -8,7 +8,7 @@
 #' @param app_server the secure copy (scp) server location given by username@server:/dir/
 #' @param run_app run the Shiny app locally
 #' @param open_url open the web browser to the app_url
-#' @param dir_out top-level directory to use for populating git repo folder
+#' @param dir_local top-level directory to use for populating git repo folder
 #'   and branch subfolders within, defaults to tmpdir()
 #' @param del_out whether to delete output directory when done, defaults to TRUE
 #' @param dir_server directory on the app_server
@@ -25,10 +25,10 @@
 #'              sudo chown -R jstewart /srv/shiny-server/ohi-global
 #'              sudo chmod -R 775 .
 #'              sudo chgrp -R shiny .}
-#'  \item Copy your repo to dir_out locally. For example, if input
-#'        argument \code{dir_out = '~/Desktop/ohirepos_tmp'},
+#'  \item Copy your repo to dir_local locally. For example, if input
+#'        argument \code{dir_local = '~/Desktop/ohirepos_tmp'},
 #'        copy \code{'~/github/ohi-global'}
-#'        to \code{dir_out = '~/Desktop/ohirepos_tmp/ohi-global/draft'}.
+#'        to \code{dir_local = '~/Desktop/ohirepos_tmp/ohi-global/draft'}.
 #' }
 #'  Please also visit
 #' \link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md]{app/README.md}
@@ -52,21 +52,7 @@ deploy_app <- function(gh_organization = 'OHI-Science',
                        app_server, #      = 'jstewart@128.111.84.76',
                        install_pkgs    = FALSE,
                        dir_server      = '/srv/shiny-server',
-                       # run_local       = FALSE,
-                       # open_url        = TRUE,
-                       dir_local       = tempdir()
-                       # del_out         = TRUE
-                       ) {
-
-  # gh_organization <- 'OHI-Science'; gh_repo <- 'IUCN-Aquamaps'; gh_shiny_dir <- 'shiny_am_iucn'
-  # gh_branch_app   <- 'master'; app_base_url    <- 'http://ohi-science.nceas.ucsb.edu'; app_name_remote <- 'marine_maps'
-  # app_server <- 'ohara@fitz.nceas.ucsb.edu'; dir_server <- '/srv/shiny-server';
-  # run_local <- FALSE; open_url <- TRUE; dir_out <- tempdir(); del_out <- TRUE; install_pkgs = FALSE
-
-  ### TO DO:
-  ### * check installed packages on Fitz
-  ### * check required packages in scripts
-  ### * if required packages are missing, report back so Nick can install 'em
+                       dir_local       = tempdir()) {
 
   library(tidyverse)
   library(yaml)
@@ -82,20 +68,22 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   ##### construct local and remote filepaths #####
   ################################################.
 
-  dir_branches <- file.path(dir_out, gh_repo)
-    ### local repo location; this will get deleted at the end of the function
-    ### if del_out == TRUE
+  dir_branches <- file.path(dir_local, gh_repo)
+  ### local repo location; this will get deleted at the end of the function
+  ### if del_out == TRUE
   dir_repo_local <- file.path(dir_branches, gh_branch_app)
-    ### local folder to copy the repo into
+  ### local folder to copy the repo into
   dir_app_local  <- file.path(dir_repo_local, gh_shiny_dir)
-    ### local folder where the app files reside
+  ### local folder where the app files reside
   gh_url <- sprintf('https://github.com/%s/%s.git', gh_organization, gh_repo)
-    ### url of the repo from which app will be pulled
+  ### url of the repo from which app will be pulled
 
-  if(is.null(app_name_remote)) {
-    dir_app_remote <- file.path(gh_repo, gh_shiny_dir)
-      ### the folder on Fitz where the shiny app will reside; if no explicit
-      ### name is given, will default to the repo name/shiny folder name
+  if (is.null(app_name_remote) & !is.null(gh_shiny_dir)) {
+    dir_app_remote <- gh_shiny_dir
+    ### the folder on Fitz where the shiny app will reside; if no explicit
+    ### name is given, will default to the repo name/shiny folder name
+  } else if (is.null(gh_shiny_dir)) {
+    dir_app_remote <- gh_repo
   } else {
     dir_app_remote <- app_name_remote
   }
@@ -113,9 +101,11 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   ### fetch existing, or clone new if app isn't in local repo copy
   if (!file.exists(dir_app_local)){
     # clone app branch, shallowly and quietly
+    message('Local app directory does not exist; cloning into local directory')
     run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_app, gh_url, dir_repo_local))
   } else {
     # git fetch & overwrite
+    message('Local app directory exists; fetching updates into local directory')
     run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q',
                     dir_repo_local, gh_branch_app, gh_branch_app))
   }
@@ -137,8 +127,8 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
   ### If install_pkgs == TRUE and the user has superuser privileges, install
   ### missing packages; otherwise just report what they are.
-  pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages\\(\\)[,1]'", app_server)
-  pkgs_installed <- system(pkg_check, intern = TRUE) %>%
+  pkg_check_cmd <- sprintf("ssh %s Rscript -e 'installed.packages\\(\\)[,1]'", app_server)
+  pkgs_installed <- system(pkg_check_cmd, intern = TRUE) %>%
     stringr::str_split('[\\" ]+') %>%
     unlist() %>%
     unique()
@@ -157,10 +147,11 @@ deploy_app <- function(gh_organization = 'OHI-Science',
     if(install_pkgs == TRUE) {
       ### check whether user has superuser privileges, to grant permission
       ### to install packages?
+      message('Checking privileges on remote server...')
       suppressWarnings({
         sudo_test <- system2(command = 'ssh', args = sprintf('%s sudo -v', app_server),
                              stderr = TRUE)
-        sudo_priv <- !stringr::str_detect(tolower(sudo_test), 'may not run sudo')
+        sudo_priv <- !any(stringr::str_detect(tolower(sudo_test), 'may not run sudo|no such file or directory'))
       })
 
       if(sudo_priv) {
@@ -174,9 +165,9 @@ deploy_app <- function(gh_organization = 'OHI-Science',
         }
 
       } else {
-          message('To install the packages, you need superuser privileges.  ',
-                  'Unfortunately, you are not cool enough to have those privileges.  ',
-                  'Please contact remote server admin to install packages for you.')
+        message('To install the packages, you need superuser privileges.\n',
+                'Unfortunately, you are not cool enough to have those privileges.\n',
+                'Please contact remote server admin to install packages for you.')
       }
     }
   }
@@ -202,30 +193,41 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
   #############################################.
   ##### copy app files from local to Fitz #####
+  #############################################.
+
   cmds <- c(
-    sprintf('cd %s; rsync -rq --exclude .git %s:%s/%s',
-            dir_app_local,                   app_server, dir_server, dir_app_remote) # ,
-    # cat(sprintf('ssh %s "cd %s/%s; chmod -R 775 .; chgrp -R shiny ."', app_server, dir_server, gh_repo))
+    sprintf('ssh %s mkdir %s/%s', app_server, dir_server, dir_app_remote),
+    # sprintf('cd %s; rsync -rq --exclude .git %s:%s/%s',
+    #         dir_app_local, app_server, dir_server, dir_app_remote),
+    sprintf('scp -r %s/* %s:%s/%s',
+            dir_app_local, app_server, dir_server, dir_app_remote)
   )
-  for (cmd in cmds){
+  for (cmd in cmds){ ### cmd <- cmds[3]
     run_cmd(cmd)
   }
 
-
-
-  # run app, local and remote
-  # message('run app locally (run_app = TRUE) or remotely (open_url = TRUE)')
-  # if (open_url)  utils::browseURL(app_url)
-  # if (run_local) shiny::runApp(dir_app_local)
+  ################################.
+  ##### Wrap up and clean up #####
+  ################################.
 
   ### Run app from local URL to test it
   message('Loading app into browser from ', app_url)
   utils::browseURL(app_url)
 
   ### Remove temp files
-  # message('rm temp files if del_out == TRUE')
-  # if (del_out) unlink(dir_branches, recursive = TRUE, force = TRUE)
   message('Removing temp files from ', dir_branches)
   unlink(dir_branches, recursive = TRUE, force = TRUE)
 
 }
+
+# deploy_app(gh_organization = 'OHI-Science',
+#            gh_repo         = 'IUCN-Aquamaps',
+#            gh_shiny_dir    = 'shiny_am_iucn',
+#            gh_branch_app   = 'master',
+#            app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
+#            app_name_remote = NULL,
+#            app_server      = 'ohara@fitz.nceas.ucsb.edu',
+#            dir_server      = '/srv/shiny-server',
+#            dir_local       = tempdir(),
+#            install_pkgs    = TRUE)
+
