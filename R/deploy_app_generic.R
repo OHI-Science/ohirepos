@@ -50,16 +50,18 @@ deploy_app <- function(gh_organization = 'OHI-Science',
                        app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
                        app_name_remote = NULL,
                        app_server, #      = 'jstewart@128.111.84.76',
+                       install_pkgs    = FALSE,
                        dir_server      = '/srv/shiny-server',
-                       run_local       = FALSE,
-                       open_url        = TRUE,
+                       # run_local       = FALSE,
+                       # open_url        = TRUE,
                        dir_out         = tempdir(),
-                       del_out         = TRUE) {
+                       # del_out         = TRUE
+                       ) {
 
   # gh_organization <- 'OHI-Science'; gh_repo <- 'IUCN-Aquamaps'; gh_shiny_dir <- 'shiny_am_iucn'
   # gh_branch_app   <- 'master'; app_base_url    <- 'http://ohi-science.nceas.ucsb.edu'; app_name_remote <- 'marine_maps'
   # app_server <- 'ohara@fitz.nceas.ucsb.edu'; dir_server <- '/srv/shiny-server';
-  # run_local <- FALSE; open_url <- TRUE; dir_out <- tempdir(); del_out <- TRUE
+  # run_local <- FALSE; open_url <- TRUE; dir_out <- tempdir(); del_out <- TRUE; install_pkgs = FALSE
 
   ### TO DO:
   ### * check installed packages on Fitz
@@ -69,13 +71,21 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   library(tidyverse)
   library(yaml)
 
+  ##### create run_cmd() function for system() commands #####
+  run_cmd <- function(cmd){
+    message('running command:\n  ', cmd)
+    message('...elapsed time: ', system.time(system(cmd))[3] %>% round(3), ' sec')
+  }
+
 
   ################################################.
-  ##### construct local and remote locations #####
+  ##### construct local and remote filepaths #####
+  ################################################.
+
   dir_branches <- file.path(dir_out, gh_repo)
     ### local repo location; this will get deleted at the end of the function
     ### if del_out == TRUE
-  dir_repo_local <- file.path(dir_out, gh_repo, gh_branch_app)
+  dir_repo_local <- file.path(dir_branches, gh_branch_app)
     ### local folder to copy the repo into
   dir_app_local  <- file.path(dir_repo_local, gh_shiny_dir)
     ### local folder where the app files reside
@@ -93,18 +103,14 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   app_url <- file.path(app_base_url, dir_app_remote)
 
 
-
   ###################################################.
   ##### fetch app from GitHub location to local #####
-  # ensure top level dir exists for local copy
+  ###################################################.
+
+  ### Create local repo to store app (won't overwrite existing though)
   dir.create(dir_repo_local, showWarnings = FALSE, recursive = TRUE)
 
-  run_cmd <- function(cmd){
-    message('running command:\n  ', cmd)
-    message('...elapsed time: ', system.time(system(cmd))[3] %>% round(3), ' sec')
-  }
-
-  # data branch: fetch existing, or clone new if app isn't in local repo copy
+  ### fetch existing, or clone new if app isn't in local repo copy
   if (!file.exists(dir_app_local)){
     # clone app branch, shallowly and quietly
     run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_app, gh_url, dir_repo_local))
@@ -115,16 +121,55 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   }
 
 
-  #######################################.
-  ##### write app.yml configuration #####
+  ###########################################################.
+  ##### Check for missing packages, install if possible #####
+  ###########################################################.
+
   ### Determine required packages from library() or require() in any R scripts
   script_files <- list.files(dir_app_local, pattern = '\\.R$|\\.r$', full.names = TRUE)
   pkgs_rqd <- lapply(script_files, FUN = function(x) {
-      grep("library|require", readLines(x), value = TRUE) %>%
-        stringr::str_extract('(?<=\\().*?(?=\\))')
-    }) %>%
+    grep("library|require", readLines(x), value = TRUE) %>%
+      stringr::str_extract('(?<=\\().*?(?=\\))')
+  }) %>%
     unlist() %>%
     unique()
+
+
+  ### If install_pkgs == TRUE and the user has superuser privileges, install
+  ### missing packages; otherwise just report what they are.
+  pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages\\(\\)[,1]'", app_server)
+  pkgs_installed <- system(pkg_check, intern = TRUE) %>%
+    stringr::str_split('[\\" ]+') %>%
+    unlist() %>%
+    unique()
+
+  pkgs_missing <- pkgs_rqd[!pkgs_rqd %in% pkgs_installed]
+
+  if(length(pkgs_missing) == 0) {
+
+    message('All packages required by the app seem to be installed...')
+
+  } else {
+    ### report missing packages
+    message('The following required packages are not installed on the remote server:')
+    message('  ', paste(pkgs_missing, collapse = ', '))
+
+    if(install_pkgs == TRUE) {
+      ### check whether user has permission to install packages?
+      pkg_string <- paste(pkgs_missing, collapse = '", "') %>%
+        paste('"', ., '"')
+      install_pkgs_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(\\)['", app_server)
+
+    }
+
+    message('Contact the remote server admin to install those packages.')
+
+  }
+
+
+  #######################################.
+  ##### write app.yml configuration #####
+  #######################################.
 
   message('...writing app.yml')
   write_file(
@@ -139,20 +184,6 @@ deploy_app <- function(gh_organization = 'OHI-Science',
       last_updated    = Sys.Date())),
     file.path(dir_repo_local, 'app.yml'))
 
-  ######################################################.
-  ##### Check that required packages are installed #####
-  pkg_check <- sprintf("ssh %s Rscript -e 'installed.packages\\(\\)[,1]'", app_server)
-  pkgs_installed <- system(pkg_check, intern = TRUE) %>%
-    stringr::str_split('[\\" ]+') %>%
-    unlist() %>%
-    unique()
-
-  pkgs_missing <- pkgs_rqd[!pkgs_rqd %in% pkgs_installed]
-  if(length(pkgs_missing) > 0) {
-    message('The following required packages are not installed on the remote server:')
-    message('  ', paste(pkgs_missing, collapse = ', '))
-    message('Contact the remote server admin to install those packages.')
-  }
 
   #############################################.
   ##### copy app files from local to Fitz #####
@@ -166,12 +197,20 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   }
 
 
-  # run app, local and remote
-  message('run app locally (run_app = TRUE) or remotely (open_url = TRUE)')
-  if (open_url)  utils::browseURL(app_url)
-  if (run_local) shiny::runApp(dir_app_local)
 
-  # remove temp files
-  message('rm temp files if del_out == TRUE')
-  if (del_out) unlink(dir_branches, recursive = TRUE, force = TRUE)
+  # run app, local and remote
+  # message('run app locally (run_app = TRUE) or remotely (open_url = TRUE)')
+  # if (open_url)  utils::browseURL(app_url)
+  # if (run_local) shiny::runApp(dir_app_local)
+
+  ### Run app from local URL to test it
+  message('Loading app into browser from ', app_url)
+  utils::browseURL(app_url)
+
+  ### Remove temp files
+  # message('rm temp files if del_out == TRUE')
+  # if (del_out) unlink(dir_branches, recursive = TRUE, force = TRUE)
+  message('Removing temp files from ', dir_branches)
+  unlink(dir_branches, recursive = TRUE, force = TRUE)
+
 }
