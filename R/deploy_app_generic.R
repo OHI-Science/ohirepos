@@ -225,23 +225,23 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 #            gh_shiny_dir    = 'shiny_am_iucn',
 #            gh_branch_app   = 'master',
 #            app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
-#            app_name_remote = NULL,
+#            app_name_remote = 'plos_marine_rangemaps',
 #            app_server      = 'ohara@fitz.nceas.ucsb.edu',
 #            dir_server      = '/srv/shiny-server',
 #            dir_local       = tempdir(),
 #            install_pkgs    = TRUE)
-
-## Julie test
-gh_organization = 'OHI-Science';
-gh_repo         = 'IUCN-Aquamaps';
-gh_shiny_dir    = 'shiny_am_iucn';
-gh_branch_app   = 'master';
-app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
-app_name_remote = 'plos_test';
-app_server      = 'jstewart@fitz.nceas.ucsb.edu';
-dir_server      = '/srv/shiny-server';
-dir_local       = tempdir();
-install_pkgs    = TRUE;
+#
+# ## Julie test
+# gh_organization = 'OHI-Science';
+# gh_repo         = 'IUCN-Aquamaps';
+# gh_shiny_dir    = 'shiny_am_iucn';
+# gh_branch_app   = 'master';
+# app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
+# app_name_remote = 'plos_test';
+# app_server      = 'jstewart@fitz.nceas.ucsb.edu';
+# dir_server      = '/srv/shiny-server';
+# dir_local       = tempdir();
+# install_pkgs    = TRUE;
 
 ## Julie's error
 # ssh_askpass: exec(/usr/X11R6/bin/ssh-askpass): No such file or directory
