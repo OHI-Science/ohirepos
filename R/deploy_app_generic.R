@@ -158,9 +158,9 @@ deploy_app <- function(gh_organization = 'OHI-Science',
         ### User has sudo privileges.  Try to install the packages.
         pkg_string <- paste0('\\"', pkgs_missing, '\\"') ### put quotation marks...
 
-        for(pkg in pkg_string) {
+        for(pkg in pkg_string) { # pkg = pkg_string[1]
           message('Attempting to install ', pkg, ' on remote server.')
-          install_pkg_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(%s\\)'", app_server, pkg) # may require 'sudo' before Rscript
+          install_pkg_cmd <- sprintf("ssh %s sudo Rscript -e 'install.packages\\(%s\\)'", app_server, pkg) # may require 'sudo' before Rscript
           run_cmd(install_pkg_cmd)
         }
 
