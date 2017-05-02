@@ -145,30 +145,12 @@ deploy_app <- function(gh_organization = 'OHI-Science',
     message('  ', paste(pkgs_missing, collapse = ', '))
 
     if(install_pkgs == TRUE) {
-      ### check whether user has superuser privileges, to grant permission
-      ### to install packages?
-      message('Checking privileges on remote server...')
-      suppressWarnings({
-        sudo_test <- system2(command = 'ssh', args = sprintf('%s sudo -v', app_server),
-                             stderr = TRUE)
-        sudo_priv <- !any(stringr::str_detect(tolower(sudo_test), 'may not run sudo|no such file or directory'))
-      })
+      pkg_string <- paste0('\\"', pkgs_missing, '\\"') ### put quotation marks...
 
-      if(sudo_priv) {
-        ### User has sudo privileges.  Try to install the packages.
-        pkg_string <- paste0('\\"', pkgs_missing, '\\"') ### put quotation marks...
-
-        for(pkg in pkg_string) { # pkg = pkg_string[1]
-          message('Attempting to install ', pkg, ' on remote server.')
-          install_pkg_cmd <- sprintf("ssh %s sudo Rscript -e 'install.packages\\(%s\\)'", app_server, pkg) # may require 'sudo' before Rscript
-          run_cmd(install_pkg_cmd)
-        }
-
-      } else {
-        message('To install the packages, you need superuser privileges.\n',
-                'Unfortunately, you are not cool enough to have those privileges.\n',
-                'Please contact remote server admin to install packages for you.')
-      }
+      for(pkg in pkg_string) { # pkg = pkg_string[1]
+        message('Attempting to install ', pkg, ' on remote server.')
+        install_pkg_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(%s\\)'", app_server, pkg)
+        run_cmd(install_pkg_cmd)
     }
   }
 
@@ -231,22 +213,17 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 #            dir_local       = tempdir(),
 #            install_pkgs    = TRUE)
 #
-# ## Julie test
-# gh_organization = 'OHI-Science';
-# gh_repo         = 'IUCN-Aquamaps';
-# gh_shiny_dir    = 'shiny_am_iucn';
-# gh_branch_app   = 'master';
-# app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
-# app_name_remote = 'plos_test';
+## Julie test
+gh_organization = 'OHI-Science';
+gh_repo         = 'IUCN-Aquamaps';
+gh_shiny_dir    = 'shiny_am_iucn';
+gh_branch_app   = 'master';
+app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
+app_name_remote = 'plos_marine_rangemaps';
+app_server      = 'ohara@fitz.nceas.ucsb.edu';
 # app_server      = 'jstewart@fitz.nceas.ucsb.edu';
-# dir_server      = '/srv/shiny-server';
-# dir_local       = tempdir();
-# install_pkgs    = TRUE;
-
-## Julie's error
-# ssh_askpass: exec(/usr/X11R6/bin/ssh-askpass): No such file or directory
-# Host key verification failed.
-# Warning message:
-#   running command 'ssh jstewart@fitz.nceas.ucsb.edu Rscript -e 'installed.packages\(\)[,1]'' had status 255
+dir_server      = '/srv/shiny-server';
+dir_local       = tempdir();
+install_pkgs    = TRUE;
 
 
