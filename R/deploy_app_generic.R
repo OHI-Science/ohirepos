@@ -58,7 +58,7 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   library(yaml)
 
   ##### create run_cmd() function for system() commands #####
-  run_cmd <- function(cmd){
+  run_cmd <- function(cmd) {
     message('running command:\n  ', cmd)
     message('...elapsed time: ', system.time(system(cmd))[3] %>% round(3), ' sec')
   }
@@ -151,6 +151,7 @@ deploy_app <- function(gh_organization = 'OHI-Science',
         message('Attempting to install ', pkg, ' on remote server.')
         install_pkg_cmd <- sprintf("ssh %s Rscript -e 'install.packages\\(%s\\)'", app_server, pkg)
         run_cmd(install_pkg_cmd)
+      }
     }
   }
 
@@ -202,28 +203,28 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 
 }
 
-# deploy_app(gh_organization = 'OHI-Science',
-#            gh_repo         = 'IUCN-Aquamaps',
-#            gh_shiny_dir    = 'shiny_am_iucn',
-#            gh_branch_app   = 'master',
-#            app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
-#            app_name_remote = 'plos_marine_rangemaps',
-#            app_server      = 'ohara@fitz.nceas.ucsb.edu',
-#            dir_server      = '/srv/shiny-server',
-#            dir_local       = tempdir(),
-#            install_pkgs    = TRUE)
+deploy_app(gh_organization = 'OHI-Science',
+           gh_repo         = 'IUCN-Aquamaps',
+           gh_shiny_dir    = 'shiny_am_iucn',
+           gh_branch_app   = 'master',
+           app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
+           app_name_remote = 'plos_marine_rangemaps',
+           app_server      = 'ohara@fitz.nceas.ucsb.edu',
+           dir_server      = '/srv/shiny-server',
+           dir_local       = tempdir(),
+           install_pkgs    = TRUE)
+
 #
 ## Julie test
-gh_organization = 'OHI-Science';
-gh_repo         = 'IUCN-Aquamaps';
-gh_shiny_dir    = 'shiny_am_iucn';
-gh_branch_app   = 'master';
-app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
-app_name_remote = 'plos_marine_rangemaps';
-app_server      = 'ohara@fitz.nceas.ucsb.edu';
+# gh_organization = 'OHI-Science';
+# gh_repo         = 'IUCN-Aquamaps';
+# gh_shiny_dir    = 'shiny_am_iucn';
+# gh_branch_app   = 'master';
+# app_base_url    = 'http://ohi-science.nceas.ucsb.edu';
+# app_name_remote = 'plos_marine_rangemaps';
 # app_server      = 'jstewart@fitz.nceas.ucsb.edu';
-dir_server      = '/srv/shiny-server';
-dir_local       = tempdir();
-install_pkgs    = TRUE;
+# dir_server      = '/srv/shiny-server';
+# dir_local       = tempdir();
+# install_pkgs    = TRUE;
 
 
