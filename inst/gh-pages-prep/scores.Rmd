@@ -1,0 +1,122 @@
+---
+title: "Scores"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+#    keep_md: true
+---
+
+```{r setup, echo=F, warning=FALSE, message=F}
+source("./_site.R")
+```
+
+Scores displayed below are based on template data that were extracted from the global assessment. These scores will update when data layers are modified.
+
+```{r plot flowers}
+redo_flowers = F
+
+# vars
+png_res = 72
+scores_csv  = sprintf('%s/scores.csv', dir_scenario)
+goals_csv   = sprintf('%s/conf/goals.csv', dir_scenario)
+regions_csv = sprintf('%s/layers/%s.csv', dir_scenario, config$layer_region_labels)
+
+# data
+scores  = read_csv(scores_csv)  # View(scores)
+regions = read_csv(regions_csv) # View(regions)
+goals   = read_csv(goals_csv)   # View(goals)
+
+# prep
+dir.create('images/flowers', showWarnings = F)
+regions = bind_rows(
+  data_frame(                # order regions to start with whole study_area
+    rgn_id = 0,
+    label = study_area),
+  regions %>%
+    arrange(label)) %>%   # followed by regions within alphabetically
+  mutate(
+    flower_png = sprintf('images/flower_%s.png', gsub(' ','_', label)))
+
+# get goals for flowers, all and specific to weights
+goals.all = arrange(goals, order_color)[['goal']]
+
+# get colors for aster, based on 10 colors, but extended to all goals. subselect for goals.wts
+cols.goals.all = colorRampPalette(RColorBrewer::brewer.pal(10, 'Spectral'), space='Lab')(length(goals.all))
+names(cols.goals.all) = goals.all
+
+# get subgoals and goals, not supragoals, for doing flower plot
+goals_supra = na.omit(unique(goals$parent))
+wts = with(
+  subset(goals, !goal %in% goals_supra, c(goal, weight)), 
+  setNames(weight, goal))
+goal_labels = gsub('\\n', '\n', with(
+  goals, setNames(name_flower, goal))[names(wts)], fixed=T)
+
+# generate flower plots
+for (rid in regions$rgn_id){ # rid = regions$rgn_id[1]
+
+  # rgn
+  r = filter(regions, rgn_id==rid)
+
+  # skip if flower png exists and not redoing
+  if (file.exists(r$flower_png) & !redo_flowers) next
+
+  # scores
+  g_x = with(
+    subset(scores, dimension=='score' & region_id==rid),
+    setNames(score, goal))[names(wts)]
+  x   = scores %>%
+    filter(dimension=='score', region_id==rid & goal == 'Index') %>%
+    .$score
+  
+  # plot
+  png(r$flower_png, width=400, height=250, res=png_res)
+  par(omi=c(0,0.85,0,0.85))
+  PlotFlower(
+    lengths=ifelse(
+      is.na(g_x),
+      100,
+      g_x),
+    widths=wts,
+    fill.col=ifelse(
+      is.na(g_x),
+      'grey80',
+      cols.goals.all[names(wts)]),
+    labels = '',
+    center=round(x),
+    max.length = 100, disk=0.4, label.cex=0.9, label.offset=0.155, cex=2.2, cex.main=2.5)
+  dev.off()
+}
+```
+
+```{r print scores, results='asis'}
+for (rid in regions$rgn_id){ # r_label = sort(regions$label)[1]
+  
+  # rgn
+  r = filter(regions, rgn_id==rid)
+
+  # header, flower
+  cat(sprintf('## %s\n\n![](%s)\n\n', r$label, r$flower_png))
+  
+  # table
+  kable(
+    data_frame(
+      goal       = names(goal_labels),
+      goal_label = gsub('\\n', '', goal_labels)) %>%
+      left_join(
+        scores %>%
+        filter(
+          region_id == r$rgn_id,
+          dimension %in% c('score','status','future')) %>%
+          spread(dimension, score) %>%
+          select(-region_id),
+        by='goal') %>%
+      select(
+        goal = goal_label, score, status, future)) %>%
+    print()
+  cat('\n\n')
+}
+```
+
+

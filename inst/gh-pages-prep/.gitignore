@@ -1,0 +1,14 @@
+*.html
+!_footer.html
+.Rproj.user
+.Rhistory
+.RData
+rsconnect
+.DS_Store
+_sass/.sass-cache
+_site.R
+_site.yml
+bhi_draft
+*_files
+site_libs
+images/flower_*.png

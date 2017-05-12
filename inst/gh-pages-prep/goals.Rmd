@@ -1,0 +1,16 @@
+---
+title: "Goals"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, echo=F, warning=FALSE, message=F}
+source("./_site.R")
+```
+
+Goals are constructed from input layers based on equations represented below.
+
+```{r, child=sprintf('%s/conf/goals.Rmd', dir_scenario)}
+```

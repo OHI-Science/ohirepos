@@ -121,7 +121,7 @@ deploy_website <- function(
       --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=_other/ --exclude=.gitignore \\
       --include=_footer.html --exclude-from=.gitignore \\
       . %s',
-      system.file('gh-pages', package='ohirepos'), dir_web))
+      system.file('gh-pages-full', package='ohirepos'), dir_web))
 
   # get commit of ohirepos for website provenance
   ohirepos_commit = devtools:::local_sha('ohirepos')
@@ -134,8 +134,8 @@ deploy_website <- function(
   }
 
   # brew _site.* files
-  brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'), sprintf('%s/_site.yml', dir_web))
-  brew(system.file('gh-pages/_site.brew.R'  , package='ohirepos'), sprintf('%s/_site.R'  , dir_web))
+  brew(system.file('gh-pages-full/_site.brew.yml', package='ohirepos'), sprintf('%s/_site.yml', dir_web))
+  brew(system.file('gh-pages-full/_site.brew.R'  , package='ohirepos'), sprintf('%s/_site.R'  , dir_web))
 
   # add Rstudio project file
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_web, gh_repo))
