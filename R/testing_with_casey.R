@@ -1,7 +1,5 @@
 # testing with Casey
 
-library(ohirepos)
-
 ## current
 deploy_app(
   gh_repo = 'IUCN-AquaMaps',
