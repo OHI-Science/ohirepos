@@ -24,21 +24,18 @@
 #' @import tidyverse yaml devtools brew
 #' @export
 deploy_website <- function(
-  gh_repo, study_area, scenario_dir,
+  gh_repo, study_area, # scenario_dir,
   gh_owner='OHI-Science', gh_branch_data='master',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   open_url=FALSE,
-  dir_out=tempdir(), del_out=TRUE){
+  dir_out='~/github/clip-n-ship/tmp', del_out=TRUE){
 
-  # debug ----
-
-  # history: from ohi-webapps, create_gh_repo.r https://github.com/OHI-Science/ohirepos/blob/07110dacad98fcc0a0080ca8f5ab248ae46e7f51/R/create_gh_repo.r
+  # debug ---
 
   # library(devtools); load_all();
-  # dir_out='~/github/clip-n-ship' # dir_out='~/Desktop/ohirepos_tmp'
-  # gh_repo='bhi'       ; study_area='Baltic'; scenario_dir='baltic2015'
-  # gh_repo='ohi-global'; study_area='Global'; scenario_dir='eez2015'
-  # gh_owner='OHI-Science'; gh_branch_data='draft'; app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo); open_url=T; del_out=FALSE
+  gh_repo='arc'       ; study_area='Arctic';
+  dir_out='~/github/clip-n-ship/tmp/%s'
+  gh_owner='OHI-Science'; gh_branch_data='master'
 
   # library(ohirepos) # devtools::install_github('ohi-science/ohirepos')
   # deploy_website('ohi-global', 'Global', 'eez2015'   , dir_out='~/Desktop/ohirepos_tmp', del_out=F, open_url=T)
@@ -49,93 +46,63 @@ deploy_website <- function(
   library(tidyverse)
   library(yaml)
   library(brew)
+  library(git2r)
+  library(stringr)
 
   # construct vars
   web_url       = sprintf('http://%s.github.io/%s', gh_owner, gh_repo)
   gh_branch_web = 'gh-pages'
-  dir_branches  = file.path(dir_out, gh_repo)
-  dir_data      = file.path(dir_out, gh_repo, gh_branch_data)
-  dir_web       = file.path(dir_out, gh_repo, gh_branch_web)
-  dir_data_2    = file.path(dir_out, gh_repo, gh_branch_web, sprintf('%s_%s', gh_repo, gh_branch_data))
-  dir_scenario  = sprintf('%s_%s/%s', gh_repo, gh_branch_data, scenario_dir)
+  dir_repo      = file.path(dir_out, gh_repo)
+  # dir_data      = file.path(dir_out, gh_repo, gh_branch_data)
+  # dir_web       = file.path(dir_out, gh_repo, gh_branch_web)
+  # dir_data_2    = file.path(dir_out, gh_repo, gh_branch_web, sprintf('%s_%s', gh_repo, gh_branch_data))
   gh_slug       = sprintf('%s/%s', gh_owner, gh_repo)
   gh_url        = sprintf('https://github.com/%s.git', gh_slug)
 
-  # ensure top level dir exists
-  dir.create(dir_branches, showWarnings = F, recursive = T)
+  ## ensure top level dir exists
+  dir.create(dir_repo, showWarnings = F, recursive = T)
 
   run_cmd = function(cmd){
     cat(sprintf('running command:\n  %s\n', cmd))
     system.time(system(cmd))
   }
 
-  # data branch: fetch existing, or clone new
-  if (!file.exists(dir_data)){
 
-    # clone data branch, shallowly and quietly
-    run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
+  ## clone existing master branch
 
-    } else {
+  repo <- clone_repo(dir_repo, gh_url) ## TODO: add ohirepos::
+  branches(repo)
 
-    # git fetch & overwrite
-    run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
-  }
+  # if (!'gh-pages' %in% remote_branches){ ## JSL TODO: update this check x <- branches(repo)
+  ## create gh-pages branch
+  system(sprintf('cd %s; git branch gh-pages; git checkout gh-pages', dir_repo))
 
-  # check if web branch dir already exists
-  if (file.exists(dir_web)){
+  ## figure out how to keep the files we want
+  # files_to_keep = list.files(dir_out, pattern = c("\\.Rproj$", "\\.git$", "\\.gitignore$"), all.files=TRUE)
 
-    if (file.exists(dir_data_2) & !file.exists(dir_data)){
-
-      # copy dir_data_2 back to dir_data as sibling to gh-pages
-      run_cmd(sprintf('cp -rf %s %s', dir_data_2, dir_data))
-    }
-  }
-
-  # get remote branches
-  remote_branches = gh_remote_branches(dir_data)
-
-  if (!file.exists(dir_web)){
-
-    # dir_app: copy from dir_data, if needed
-    run_cmd(sprintf('cp -rf %s %s', dir_data, dir_web))
-  }
-
-  if (!'gh-pages' %in% remote_branches){
-
-    # create orphan gh-pages branch, if needed
-    run_cmd(sprintf(
-      'cd %s; git checkout -q --orphan %s; rm -rf *; touch README.md; git add README.md; git commit -q -m "initialize %s branch"; git push -q origin %s',
-      dir_web, gh_branch_web, gh_branch_web, gh_branch_web))
-  } else {
-
-    # checkout gh-pages branch and clear files
-    run_cmd(sprintf(
-      'cd %s; git fetch -q; git checkout -q %s; git reset -q --hard origin/%s; rm -rf *',
-      dir_web, gh_branch_web, gh_branch_web))
-  }
 
   # copy gh-pages web files into dir_web, excluding all files in .gitignore
-  run_cmd(
-    sprintf(
-      'cd %s; rsync -rq \\
-      --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=_other/ --exclude=.gitignore \\
-      --include=_footer.html --exclude-from=.gitignore \\
-      . %s',
-      system.file('gh-pages', package='ohirepos'), dir_web))
+  # run_cmd( ## NOT SURE WE NEED
+  #   sprintf(
+  #     'cd %s; rsync -rq \\
+  #     --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=_other/ --exclude=.gitignore \\
+  #     --include=_footer.html --exclude-from=.gitignore \\
+  #     . %s',
+  #     system.file('gh-pages', package='ohirepos'), dir_web))
 
   # get commit of ohirepos for website provenance
-  ohirepos_commit = devtools:::local_sha('ohirepos')
-  if (nchar(ohirepos_commit) != 40){
-    stop(sprintf(paste(
-      'Sorry, the ohirepos R library seems to have not been installed with:',
-      '  devtools::install_github("ohi-science/ohirepos")',
-      'based on devtools:::local_sha("ohirepos") of %s and not of normal Github commit length 40,',
-      'which is necessary to associate the ohirepos commit with the Shiny app deployed.', collapse='\n'), ohirepos_commit))
-  }
+  # ohirepos_commit = devtools:::local_sha('ohirepos') ## NOT SURE WE NEED
+  # if (nchar(ohirepos_commit) != 40){
+  #   stop(sprintf(paste(
+  #     'Sorry, the ohirepos R library seems to have not been installed with:',
+  #     '  devtools::install_github("ohi-science/ohirepos")',
+  #     'based on devtools:::local_sha("ohirepos") of %s and not of normal Github commit length 40,',
+  #     'which is necessary to associate the ohirepos commit with the Shiny app deployed.', collapse='\n'), ohirepos_commit))
+  # }
 
   # brew _site.* files
-  brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'), sprintf('%s/_site.yml', dir_web))
-  brew(system.file('gh-pages/_site.brew.R'  , package='ohirepos'), sprintf('%s/_site.R'  , dir_web))
+  brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'), sprintf('%s/_site.yml', dir_repo))
+  brew(system.file('gh-pages/_site.brew.R'  , package='ohirepos'), sprintf('%s/_site.R'  , dir_repo))
 
   # add Rstudio project file
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s/%s.Rproj', dir_web, gh_repo))
@@ -167,7 +134,7 @@ deploy_website <- function(
 
   # remove temp files
   if (del_out){
-    run_cmd(sprintf('rm -rf %s', dir_branches))
+    run_cmd(sprintf('rm -rf %s', dir_repo))
   }
 
   # return website
