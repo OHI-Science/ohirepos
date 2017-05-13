@@ -1,14 +1,35 @@
 ---
-title: "Frequently Asked Questions (FAQ)"
-output:
-  html_document:
-    toc: true
+title: <center>Frequently Asked Questions
+output: html_document
 ---
+----
+The Ocean Health Index was developed to measure the benefits that people recieve from the ocean now and into the future. 
+The index was originally developed to measure [global ocean health](http://ohi-science.org/ohi-global). Since then, regional assessments have been done in twenty regions to meet local needs to track sustainable ocean use. 
+<br><br>
 
-## What does "Scenario" mean?
 
-The **scenario** refers to the name of a given scenario. This starter kit begins with the "subcountry2014" data to indicate that data was extracted from the OHI global analysis at a subcountry level where possible. A new scenario could be started by a simple copy and paste of the subcountry2014 and then modification to any of the files. The name of the scenario could be any you desire. For instance, we envision alternate scenarios could be created to illustrate the effects on ocean health of various proposed policies.
+## Why is this study being done?
 
-## Is this all free?
+There is a need to assess and track the health of our natural environment and chart a path forward to increase economic opportunities and human wellbeing while sustainably managing these critical resources.
+<br><br>
 
-Yes! We are promoting the ethos of using publicly available data, whenever possible, and using freely available software. All the data to get started is wrapped up in a single Github repository. As long as the repository is maintained as a public repository the website and data are free to host there. The real investment is in customizing these files to suit the needs of your own country.
+
+## What is the purpose of this project?
+
+To develop shared metrics for measuring progress toward sustainable economic growth and ocean health through:
+
+1. Building a coalition for sustainable ocean management, 
+2. Collaborating with coastal stakeholders, natural resource managers, scientific experts, and communities, 
+3. Using objective scientific data to inform decision-making, and
+4. Monitor ocean health through time using the OHI as a repeatable tool.
+
+<br><br>
+
+
+## What is the ultimate goal of this project?
+Enable our region, including, community stakeholders, the corporate and finance sectors and non-profit organizations to prioritize investments and policy decisions that affect the sustainability of our economic and ocean health.
+<br><br>
+
+
+## How far along is this project?
+We are in the development and planning stages. Stakeholder engagement and outreach is continuing and we are working with local advisors and experts to facilitate the development of the Ocean Health Index here. 

@@ -1,25 +1,17 @@
-name: "<%=study_area%> Ocean Health Index"
+name: "The Ocean Health Index for <%=study_area%>"
 navbar:
-  title: "<%=toupper(gh_repo)%>"
+  title: "Home"
   left:
     - text: "About"
       href: about.html
-    - text: "App"
-      href: app.html
-    - text: "Regions"
-      href: regions.html
-    - text: "Layers"
-      href: layers.html
-    - text: "Goals"
-      href: goals.html
-    - text: "Scores"
-      href: scores.html
+    - text: "Frequently Asked Questions"
+      href: faq.html
+    - text: "Who we are"
+      href: who_we_are.html
 output_dir: "."
 output:
   html_document:
     theme: yeti
     highlight: textmate
-    include:
-      after_body: _footer.html
     css:
       - "_sass/main.css"

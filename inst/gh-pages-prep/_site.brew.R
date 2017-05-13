@@ -1,51 +1,18 @@
+## load any libraries needed across website pages
 suppressPackageStartupMessages({
   library(readr)
   library(dplyr)
   library(tidyr)
-  library(sp)
-  library(geojsonio)
-  library(leaflet)
-  library(htmltools)
-  library(DT)
   library(knitr)
-  library(printr)  # devtools::install_github('yihui/printr')
-  library(ohicore) # devtools::install_github('ohi-science/ohicore')
 })
 
-# brewed vars
-study_area      = "<%=study_area%>"
-gh_repo         = "<%=gh_repo%>"
-gh_branch_data  = "<%=gh_branch_data%>"
-scenario_dir    = "<%=scenario_dir%>"
-app_url         = "<%=app_url%>"
-ohirepos_commit = "<%=ohirepos_commit%>"
-map_shrink_pct  = 5
+## brewed vars
+study_area = "<%=study_area%>"
+gh_repo    = "<%=gh_repo%>"
 
-# derived vars
-dir_data        = sprintf('%s_%s', gh_repo, gh_branch_data)
-dir_scenario    = sprintf('%s/%s', dir_data, scenario_dir)
-gh_url          = sprintf('https://github.com/OHI-Science/%s.git', gh_repo)
+## derived vars
+gh_url     = sprintf('https://github.com/OHI-Science/%s.git', gh_repo)
 
-# knitr options
-knitr::opts_chunk$set(echo = F, message = F, warning = F)
-
-run_cmd = function(cmd){
-  system.time(system(cmd))
-}
-
-# data branch: fetch existing, or clone new
-if (!file.exists(dir_data)){
-
-  # clone data branch, shallowly and quietly
-  run_cmd(sprintf('git clone -q --depth 1 --branch %s %s %s', gh_branch_data, gh_url, dir_data))
-} else {
-
-  # git fetch & overwrite
-  run_cmd(sprintf('cd %s; git fetch -q; git reset -q --hard origin/%s; git checkout -q %s; git pull -q', dir_data, gh_branch_data, gh_branch_data))
-}
-
-# read config
-config = new.env()
-source(file.path(dir_scenario, 'conf/config.R'), config)
-
+## knitr options for all webpages
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
