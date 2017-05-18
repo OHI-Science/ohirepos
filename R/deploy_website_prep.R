@@ -13,22 +13,22 @@
 #'
 #' @examples
 #' \dontrun{
-#' deploy_website('arc', 'The Arctic')
+#' deploy_website_prep('arc', 'The Arctic')
 #' }
 #'
 #' @import tidyverse yaml devtools brew stringr
 #' @export
-deploy_website <- function(
+deploy_website_prep <- function(
   gh_repo, study_area,
   gh_owner='OHI-Science', gh_branch_data='master',
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   open_url=FALSE,
-  dir_out='~/github/clip-n-ship/tmp', del_out=TRUE){
+  dir_out='~/github/clip-n-ship', del_out=TRUE){
 
   ## debug ---
 
   # library(devtools); load_all();
-  # gh_repo='arc';  study_area='Arctic';
+  # gh_repo='ohibc';  study_area='British Columbia';
   # dir_out='~/github/clip-n-ship'; gh_owner='OHI-Science'
   # library(tidyverse)
   # library(yaml)
