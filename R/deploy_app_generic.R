@@ -179,13 +179,19 @@ deploy_app <- function(gh_organization = 'OHI-Science',
   #############################################.
 
   cmds <- c(
-    sprintf('ssh %s mkdir %s/%s', app_server, dir_server, dir_app_remote),
-    # sprintf('cd %s; rsync -rq --exclude .git %s:%s/%s',
-    #         dir_app_local, app_server, dir_server, dir_app_remote),
-    sprintf('scp -r %s/* %s:%s/%s',
-            dir_app_local, app_server, dir_server, dir_app_remote)
+    ### remove existing installation
+      sprintf('ssh %s rm %s/%s -rf', app_server, dir_server, dir_app_remote),
+    ### make a clean folder
+      sprintf('ssh %s mkdir %s/%s', app_server, dir_server, dir_app_remote),
+    ### copy the files over to the server
+      # sprintf('cd %s; rsync -rq --exclude .git %s:%s/%s',
+      #         dir_app_local, app_server, dir_server, dir_app_remote),
+      sprintf('scp -r %s/* %s:%s/%s',
+              dir_app_local, app_server, dir_server, dir_app_remote),
+    ### set the group to 'shiny' (just in case)
+    sprintf('ssh %s chgrp -R shiny %s/%s', app_server, dir_server, dir_app_remote)
   )
-  for (cmd in cmds){ ### cmd <- cmds[3]
+  for (cmd in cmds){ ### cmd <- cmds[4]
     run_cmd(cmd)
   }
 
@@ -204,16 +210,16 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 }
 
 ## Deploy app for O'Hara
-# deploy_app(gh_organization = 'OHI-Science',
-#            gh_repo         = 'IUCN-Aquamaps',
-#            gh_shiny_dir    = 'shiny_am_iucn',
-#            gh_branch_app   = 'master',
-#            app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
-#            app_name_remote = 'plos_marine_rangemaps',
-#            app_server      = 'ohara@fitz.nceas.ucsb.edu',
-#            dir_server      = '/srv/shiny-server',
-#            dir_local       = tempdir(),
-#            install_pkgs    = TRUE)
+deploy_app(gh_organization = 'OHI-Science',
+           gh_repo         = 'ohi-global',
+           gh_shiny_dir    = 'global2016/shiny_global2016',
+           gh_branch_app   = 'draft',
+           app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
+           app_name_remote = 'plos_change_in_global_ocean_health',
+           app_server      = 'ohara@fitz.nceas.ucsb.edu',
+           dir_server      = '/srv/shiny-server',
+           dir_local       = tempdir(),
+           install_pkgs    = TRUE)
 
 #
 ## Julie test
