@@ -210,16 +210,16 @@ deploy_app <- function(gh_organization = 'OHI-Science',
 }
 
 ## Deploy app for O'Hara
-deploy_app(gh_organization = 'OHI-Science',
-           gh_repo         = 'ohi-global',
-           gh_shiny_dir    = 'global2016/shiny_global2016',
-           gh_branch_app   = 'draft',
-           app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
-           app_name_remote = 'plos_change_in_global_ocean_health',
-           app_server      = 'ohara@fitz.nceas.ucsb.edu',
-           dir_server      = '/srv/shiny-server',
-           dir_local       = tempdir(),
-           install_pkgs    = TRUE)
+# deploy_app(gh_organization = 'OHI-Science',
+#            gh_repo         = 'ohi-global',
+#            gh_shiny_dir    = 'global2016/shiny_global2016',
+#            gh_branch_app   = 'draft',
+#            app_base_url    = 'http://ohi-science.nceas.ucsb.edu',
+#            app_name_remote = 'plos_change_in_global_ocean_health',
+#            app_server      = 'ohara@fitz.nceas.ucsb.edu',
+#            dir_server      = '/srv/shiny-server',
+#            dir_local       = tempdir(),
+#            install_pkgs    = TRUE)
 
 #
 ## Julie test

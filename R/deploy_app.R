@@ -42,7 +42,7 @@
 #' @export
 deploy_app <- function(
   gh_repo, study_area, scenario_dirs,
-  gh_owner='OHI-Science', gh_branch_data='draft', gh_branch_app='app',
+  gh_owner='OHI-Science', gh_branch_data='master', gh_branch_app='app',
   gh_data_commit=NULL,
   app_url=sprintf('http://ohi-science.nceas.ucsb.edu/%s', gh_repo),
   app_server='jstewart@128.111.84.76', dir_server='/srv/shiny-server',
@@ -115,7 +115,7 @@ deploy_app <- function(
   }
 
   # get remote branches
-  remote_branches = gh_remote_branches(dir_data) # @oharac: = 'master'
+  remote_branches = gh_remote_branches(dir_data)
 
   if (!file.exists(dir_app)){
 
