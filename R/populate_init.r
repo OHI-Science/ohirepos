@@ -13,7 +13,7 @@ populate_init <- function(key, dir_repo){
   ## clone repo
   setwd(dir_repos)
   unlink(dir_repo, recursive=T, force=T)
-  repo <- clone(git_url, normalizePath(dir_repo, mustWork=F))
+  repo <- git2r::clone(git_url, normalizePath(dir_repo, mustWork=F))
   setwd(dir_repo)
 
   ## get remote branches
