@@ -4,14 +4,14 @@
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
 #' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye/region2015`
-#' @param dir_global full path of local `ohi-global` scenario, e.g. `~/github/ohi-global/eez2016'
+#' @param dir_origin full local path of origin repo (e.g. global)
 #'
 #' @return key's repo with config folder populated
 #' @export
 #'
 #' @examples
 
-populate_conf <- function(key, dir_scenario, dir_global) {
+populate_conf <- function(key, dir_scenario, dir_origin) {
 
   ## create conf folder
   if (!dir.exists(sprintf('%s/conf', dir_scenario))) {
@@ -25,13 +25,13 @@ populate_conf <- function(key, dir_scenario, dir_global) {
 
   for (f in conf_files){ # f = conf_files[1] f = "functions.R"
 
-    f_in  = sprintf('%s/conf/%s', dir_global,   f)
+    f_in  = sprintf('%s/conf/%s', dir_origin,   f)
     f_out = sprintf('%s/conf/%s', dir_scenario, f)
 
     # read in file
     s = readLines(f_in, warn=F, encoding='UTF-8')
 
-    ## swap out custom functions
+    ## swap out custom functions ###TODO obsolete no fxn_swap
     if (f == 'functions.R'){
 
       ## TODO: delete eez2013 from functions. r --Setup()

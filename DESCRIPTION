@@ -20,7 +20,10 @@ Depends:
 Imports:
     tidyverse (>= 1.0.0),
     rgdal,
-    stringr
+    stringr,
+    git2r,
+    brew,
+    yaml
 RoxygenNote: 6.0.0
 Roxygen: list(markdown = TRUE)
 Suggests: testthat

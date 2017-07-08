@@ -5,7 +5,7 @@
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
 #' @param dir_repo full path of temporary OHI repo e.g. `~/github/clip-n-ship/gye`
 #' @param lyrs_gl list of global layers to copy
-#' @param dir_global full local path of ohi-global scenario
+#' @param dir_origin full local path of origin repo (e.g. global)
 #' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
 #' @param multi_nation T/F whether to pull information from multiple nations
 #'
@@ -15,10 +15,13 @@
 #' @examples
 #'
 #'
-populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, multi_nation = FALSE){
+populate_layers <- function(key, dir_repo,
+                            dir_origin,
+                            lyrs_gl = readr::read_csv(file.path(dir_origin, 'eez/layers.csv')),
+                            dir_scenario, multi_nation = FALSE){
 
-  ## set sfx_global based on dir_global
-  sfx_global <- paste0('gl', stringr::str_extract(dir_global, "\\d{4}"))
+  ## set sfx_global based on dir_origin
+  sfx_global <- paste0('gl', stringr::str_extract(dir_origin, "\\d{4}"))
 
   ## copy layers.csv from global to tmp/ ----
   # write.csv(lyrs_gl, sprintf('%s/tmp/layers_%s.csv', dir_scenario, sfx_global),   ### long term don't know if we need this
@@ -32,7 +35,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
       # starts_with('clip_n_ship')) %>%
     mutate(
       layer_gl = layer,
-      path_in  = file.path(dir_global, 'layers', filename),
+      path_in  = file.path(dir_origin, 'layers', filename),
       rgns_in  = 'global',                                      ## TODO long term: don't think we need this rgns_in field
       filename = sprintf('%s_%s.csv', layer, sfx_global)) %>%
     arrange(targets, layer)
@@ -70,7 +73,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
            sc_rgn_name = rgn_name) %>%
     mutate(gl_rgn_name = name) %>%
     merge(
-      gl_rgns,
+      gl_rgns, ## delete this variable, commented out from ohi-webapps@dev2 — common.r? @jules32 July 7 2017
       by='gl_rgn_name', all.x=T) %>%
     select(sc_rgn_id, sc_rgn_name, gl_rgn_id, gl_rgn_name, cntry_key = gl_rgn_key) %>%
     arrange(sc_rgn_id)
@@ -104,7 +107,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
 
       ## call copy_layer and write to layer to csv
       d <- ohirepos::copy_layer(lyr, sc_rgns,
-                      dir_global, sfx_global,
+                      dir_origin, sfx_global,
                       lyrs_sc, write_to_csv = TRUE)
 
       ## update filename (will change if placeholder)
@@ -138,7 +141,7 @@ populate_layers <- function(key, dir_repo, lyrs_gl, dir_global, dir_scenario, mu
 
       ## call copy_layer and then write to layer to csv as separate step
       d <- ohirepos::copy_layer(lyr, sc_rgns,
-                      dir_global, sfx_global,
+                      dir_origin, sfx_global,
                       lyrs_sc, write_to_csv = FALSE)
       if ('rgn_id' %in% names(d)) d = d %>% arrange(rgn_id)
 

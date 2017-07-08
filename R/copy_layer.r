@@ -2,7 +2,7 @@
 #'
 #' @param lyr OHI data layer to be copied
 #' @param sc_rgns OHI+ regions (sc = 'subcountry', vestigal)
-#' @param dir_global global OHI assessment directory
+#' @param dir_origin full local path of origin repo (e.g. global)
 #' @param sfx_global suffix to identify global source for OHI+data layers
 #' @param lyrs_sc layers.csv data object
 #' @param write_to_csv whether to write to .csv; default is TRUE
@@ -12,11 +12,11 @@
 #'
 #' @examples
 copy_layer <- function(lyr, sc_rgns,
-                       dir_global, sfx_global,
+                       dir_origin, sfx_global,
                        lyrs_sc, write_to_csv = TRUE){
 
   ## setup
-  csv_in        <- sprintf('%s/layers/%s.csv', dir_global, lyr)
+  csv_in        <- sprintf('%s/layers/%s.csv', dir_origin, lyr)
   global_rgn_id <-  unique(sc_rgns$gl_rgn_id)
 
   d = read.csv(csv_in)
@@ -117,11 +117,11 @@ copy_layer <- function(lyr, sc_rgns,
 
     ## fill global year as placeholder for year
     if ('year' %in% names(dtmp)) {
-      dtmp$year <- as.integer(stringr::str_extract(dir_global, "\\d{4}"))
+      dtmp$year <- as.integer(stringr::str_extract(dir_origin, "\\d{4}"))
     }
 
     ## fill global year as placeholder for any others
-    dtmp[is.na(dtmp)] <- as.integer(stringr::str_extract(dir_global, "\\d{4}"))
+    dtmp[is.na(dtmp)] <- as.integer(stringr::str_extract(dir_origin, "\\d{4}"))
 
     ## replace d with dtmp
     d <- dtmp

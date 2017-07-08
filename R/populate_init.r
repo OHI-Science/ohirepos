@@ -11,7 +11,7 @@
 populate_init <- function(key, dir_repo){
 
   ## clone repo
-  setwd(dir_repos)
+  # setwd(dir_sandbox) ## seems like a bad idea
   unlink(dir_repo, recursive=T, force=T)
   repo <- git2r::clone(git_url, normalizePath(dir_repo, mustWork=F))
   setwd(dir_repo)

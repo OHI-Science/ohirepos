@@ -3,7 +3,7 @@
 #' Unpopulate existing layers and conf folders and files
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_repos full path of temporary folder for OHI repos, e.g. `~/github/clip-n-ship`
+#' @param dir_sandbox full path of workspace directory, e.g. `~/github/clip-n-ship`
 #' @param dir_repo full path of temporary OHI repo e.g. `~/github/clip-n-ship/gye`
 #' @param git_url url of key's github repository
 #' @param default_scenario key's scenario folder
