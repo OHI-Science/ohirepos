@@ -11,8 +11,9 @@
 populate_init <- function(key, dir_repo, push = TRUE){
   
   ## clone repo from github.com/ohi-science to local
-  unlink(dir_repo, recursive=T, force=T)
-  repo <- git2r::clone(git_url, normalizePath(dir_repo, mustWork=F))
+  unlink(dir_repo, recursive=TRUE, force=TRUE)
+  repo <- git2r::clone(sprintf('https://github.com/OHI-Science/%s', key), 
+                       normalizePath(dir_repo, mustWork=FALSE))
   
   ## get remote branches
   remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
@@ -38,7 +39,7 @@ populate_init <- function(key, dir_repo, push = TRUE){
   writeLines(c('.Rproj.user', '.Rhistory', '.RData'), '.gitignore')
   
   ## README
-  brew::brew(file   = 'master/README.brew.md', 
+  brew::brew(file   = 'exec/README.brew.md', 
              output = file.path(dir_repo, 'README.md'))
   
   if (push) {
