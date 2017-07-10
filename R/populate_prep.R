@@ -8,12 +8,12 @@
 #' @export
 #'
 #' @examples
-populate_prep <- function(key){
+populate_prep <- function(key, dir_repo, push = TRUE){
 
   ## clone repo
   if (!file.exists(dir_repo)) system(sprintf('git clone %s %s', git_url, dir_repo))
   setwd(dir_repo)
-  repo = repository(dir_repo)
+  repo = git2r::repository(dir_repo)
 
   # pull the latest from master branch
   system('git checkout master; git pull')
@@ -32,10 +32,14 @@ populate_prep <- function(key){
   file.copy(file.path(dir_github, 'ohi-webapps/README_prep_subfolders.md'),
             file.path(sprintf('prep/%s/README.md', prep_subfolders)), overwrite=TRUE)
 
-  ## git add, commit and push
-  system(sprintf('git add -A; git commit -a -m "%s repo populated with prep folders"', key))
-  system('git push origin master')
-
+  if (push) {
+    ## cd to dir_repo, git add, commit and push
+    
+    cat("after cd'ing to repo, git add, commit, and push")
+    system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with prep folders"', dir_repo, key))
+    system(sprintf('cd %s; git push origin master', dir_repo))
+  }
+  
   ## TO ADD
   # ## create and populate prep/tutorials folder
   # dir_tutes = file.path(dir_github, 'ohimanual/tutorials/R_tutes')

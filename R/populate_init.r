@@ -8,17 +8,16 @@
 #' @export
 #'
 #' @examples
-populate_init <- function(key, dir_repo){
-
-  ## clone repo
-  # setwd(dir_sandbox) ## seems like a bad idea
+populate_init <- function(key, dir_repo, push = TRUE){
+  
+  ## clone repo from github.com/ohi-science to local
   unlink(dir_repo, recursive=T, force=T)
   repo <- git2r::clone(git_url, normalizePath(dir_repo, mustWork=F))
-  setwd(dir_repo)
-
+  # setwd(dir_repo)
+  
   ## get remote branches
-  remote_branches <- sapply(branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
-
+  remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
+  
   ## initialize repo
   if (length(remote_branches)==0){
     system('touch README.md')
@@ -29,20 +28,25 @@ populate_init <- function(key, dir_repo){
     system('git pull')
     remote_branches = sapply(branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
   }
-
+  
   ## recreate empty dir, except hidden .git
   del_except <- ''
   for (f in setdiff(list.files(dir_repo, all.files=F), del_except)) unlink(file.path(dir_repo, f), recursive=T, force=T)
-
+  
   ## add Rstudio project files. cannabalized devtools::add_rstudio_project() which only works for full R packages.
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s.Rproj', key))
   writeLines(c('.Rproj.user', '.Rhistory', '.RData'), '.gitignore')
-
+  
   ## README
-  brew(sprintf('%s/ohi-webapps/README.brew.md', dir_github), 'README.md')
-
-  ## git add, commit and push
-  system(sprintf('git add -A; git commit -a -m "%s repo populated with initial files"', key))
-  system('git push origin master')
-
+  brew::brew(file   = '~/github/ohi-webapps/README.brew.md', 
+             output = file.path(dir_repo, 'README.md'))
+  
+  if (push) {
+    ## cd to dir_repo, git add, commit and push
+    
+    cat("after cd'ing to repo, git add, commit, and push")
+    system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with initial files"', dir_repo, key))
+    system(sprintf('cd %s; git push origin master', dir_repo))
+  }
+  
 }
