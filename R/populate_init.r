@@ -13,7 +13,6 @@ populate_init <- function(key, dir_repo, push = TRUE){
   ## clone repo from github.com/ohi-science to local
   unlink(dir_repo, recursive=T, force=T)
   repo <- git2r::clone(git_url, normalizePath(dir_repo, mustWork=F))
-  # setwd(dir_repo)
   
   ## get remote branches
   remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
@@ -29,16 +28,17 @@ populate_init <- function(key, dir_repo, push = TRUE){
     remote_branches = sapply(branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
   }
   
-  ## recreate empty dir, except hidden .git
-  del_except <- ''
-  for (f in setdiff(list.files(dir_repo, all.files=F), del_except)) unlink(file.path(dir_repo, f), recursive=T, force=T)
+  ## recreate empty dir, except hidden .git (all.files=FALSE)
+  for (f in list.files(dir_repo, all.files=FALSE)) {
+    unlink(file.path(dir_repo, f), recursive=TRUE, force=TRUE)
+  }
   
   ## add Rstudio project files. cannabalized devtools::add_rstudio_project() which only works for full R packages.
   file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s.Rproj', key))
   writeLines(c('.Rproj.user', '.Rhistory', '.RData'), '.gitignore')
   
   ## README
-  brew::brew(file   = '~/github/ohi-webapps/README.brew.md', 
+  brew::brew(file   = 'master/README.brew.md', 
              output = file.path(dir_repo, 'README.md'))
   
   if (push) {
