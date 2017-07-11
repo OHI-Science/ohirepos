@@ -19,6 +19,7 @@
 deploy_website_prep <- function(key,
                                 dir_repo,
                                 gh_org = 'OHI-Science',
+                               # dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
                                 push = TRUE){
 
   run_cmd = function(cmd){
@@ -33,11 +34,20 @@ deploy_website_prep <- function(key,
                                        gh_org, key))
   ## create empty gh-pages branch
   remote_branches <- git2r::branches(repo)
-  if (!'gh-pages' %in% remote_branches){
+
+  if ('gh-pages' %in% remote_branches){
+
+    ## if gh-pages branch exists, ask if user wants to overwrite
+    cat("gh-pages branch already exists, would you like to overwrite it?")
+
+  } else {
+
+    ## if gh-pages branch does not exist
 
     system(sprintf('cd %s; git checkout --orphan gh-pages;  git rm -rf .', dir_repo))
 
-    ## copy gh-pages web files into dir_repo, excluding all files in .gitignore
+    # if (prep) {
+    ## copy gh-pages-prep web files into dir_repo, excluding all files in .gitignore
     run_cmd( ##
       sprintf(
         'cd %s; rsync -rq \\
@@ -53,6 +63,12 @@ deploy_website_prep <- function(key,
                sprintf('%s/_site.R', dir_repo))
     brew::brew(system.file('gh-pages-prep/index.brew.Rmd', package='ohirepos'),
                sprintf('%s/index.Rmd', dir_repo))
+
+    # if (full) {
+    #
+    # }
+
+    ## to finish up
 
     ## add Rstudio project file
     file.copy(system.file('templates/template.Rproj', package='devtools'),
@@ -81,7 +97,5 @@ deploy_website_prep <- function(key,
         dir_repo))
     }
 
-  } else {
-    cat("gh-pages branch and website already exists; exiting so as not to overwrite.")
   }
 }
