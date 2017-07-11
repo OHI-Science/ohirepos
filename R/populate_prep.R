@@ -1,20 +1,24 @@
 #' Populate the repo with prep folder and subfolders and README files
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary) 
-#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE. 
+#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
+#' @param gh_org github organization to place the repo. Default: ohi-science
+#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-populate_prep <- function(key, 
-                          dir_repo, 
+populate_prep <- function(key,
+                          dir_repo,
+                          gh_org = 'OHI-Science',
                           push = TRUE){
 
   ## clone repo
-  if (!file.exists(dir_repo)) system(sprintf('git clone https://github.com/OHI-Science/%s', key, dir_repo))
-  
+  if (!file.exists(dir_repo))
+    system(sprintf('cd %s; git clone https://github.com/%s/%s',
+                   dir_repo, gh_org, key))
+
   repo = git2r::repository(dir_repo)
 
   # pull the latest from master branch
@@ -36,12 +40,12 @@ populate_prep <- function(key,
 
   ## cd to dir_repo, git add, commit and push
   if (push) {
-    
+
     cat(sprintf("git add, commit, and push %s repo", key))
     system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with prep folders"', dir_repo, key))
     system(sprintf('cd %s; git push origin master', dir_repo))
   }
-  
+
   ## TO ADD
   # ## create and populate prep/tutorials folder
   # dir_tutes = file.path(dir_github, 'ohimanual/tutorials/R_tutes')
