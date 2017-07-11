@@ -1,41 +1,43 @@
-## populate_prep.r
-
-#' Title
+#' Populate the repo with prep folder and subfolders and README files
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
+#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary) 
+#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE. 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-populate_prep <- function(key, dir_repo, push = TRUE){
+populate_prep <- function(key, 
+                          dir_repo, 
+                          push = TRUE){
 
   ## clone repo
-  if (!file.exists(dir_repo)) system(sprintf('git clone %s %s', git_url, dir_repo))
-  setwd(dir_repo)
+  if (!file.exists(dir_repo)) system(sprintf('git clone https://github.com/OHI-Science/%s', key, dir_repo))
+  
   repo = git2r::repository(dir_repo)
 
   # pull the latest from master branch
-  system('git checkout master; git pull')
+  system(sprintf('cd %s; git checkout master; git pull', dir_repo))
 
   ## create prep dir
-  dir.create('prep', showWarnings=FALSE)
-  file.copy(file.path(dir_github, 'ohi-webapps/README_prep.md'),
-            file.path('prep/README.md'), overwrite=T)
+  dir.create(file.path(dir_repo, 'prep'), showWarnings=FALSE)
+  file.copy(system.file('inst/master/README_prep.md', package='ohirepos'),
+            file.path(dir_repo, 'prep/README.md'), overwrite=TRUE)
 
   ## create subfolders in prep folder
   prep_subfolders = c('FIS', 'MAR', 'AO', 'NP', 'CS', 'CP', 'LIV', 'ECO', 'TR', 'CW',
                       'ICO', 'LSP', 'SPP', 'HAB', 'pressures', 'resilience')
-  sapply(file.path(sprintf('prep/%s', prep_subfolders)), dir.create)
+  sapply(file.path(dir_repo, 'prep', prep_subfolders), dir.create)
 
   ## populate prep folder's subfolders
-  file.copy(file.path(dir_github, 'ohi-webapps/README_prep_subfolders.md'),
-            file.path(sprintf('prep/%s/README.md', prep_subfolders)), overwrite=TRUE)
+  file.copy(system.file('inst/master/README_prep_subfolders.md', package='ohirepos'),
+            file.path(dir_repo, 'prep', prep_subfolders, 'README.md'), overwrite=TRUE)
 
+  ## cd to dir_repo, git add, commit and push
   if (push) {
-    ## cd to dir_repo, git add, commit and push
     
-    cat("after cd'ing to repo, git add, commit, and push")
+    cat(sprintf("git add, commit, and push %s repo", key))
     system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with prep folders"', dir_repo, key))
     system(sprintf('cd %s; git push origin master', dir_repo))
   }

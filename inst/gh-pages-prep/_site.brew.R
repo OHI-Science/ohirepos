@@ -8,10 +8,10 @@ suppressPackageStartupMessages({
 
 ## brewed vars
 study_area = "<%=study_area%>"
-gh_repo    = "<%=gh_repo%>"
+key        = "<%=key%>"
 
 ## derived vars
-gh_url     = sprintf('https://github.com/OHI-Science/%s.git', gh_repo)
+gh_url     = sprintf('https://github.com/OHI-Science/%s.git', key)
 
 ## knitr options for all webpages
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)

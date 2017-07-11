@@ -1,8 +1,10 @@
-## populate_init.r
-
-#' Title
+#' Populate initial files including README and .Rproj
+#' 
+#' First delete any local copy in your directory and clone the repo from github.com/OHI-Science.
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
+#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary) 
+#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE. 
 #'
 #' @return
 #' @export
@@ -39,13 +41,13 @@ populate_init <- function(key, dir_repo, push = TRUE){
   writeLines(c('.Rproj.user', '.Rhistory', '.RData'), '.gitignore')
   
   ## README
-  brew::brew(file   = 'exec/README.brew.md', 
+  brew::brew(file   = system.file('inst/master/README.brew.md', package='ohirepos'),
              output = file.path(dir_repo, 'README.md'))
   
+  ## cd to dir_repo, git add, commit and push
   if (push) {
-    ## cd to dir_repo, git add, commit and push
     
-    cat("after cd'ing to repo, git add, commit, and push")
+    cat(sprintf("git add, commit, and push %s repo", key))
     system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with initial files"', dir_repo, key))
     system(sprintf('cd %s; git push origin master', dir_repo))
   }
