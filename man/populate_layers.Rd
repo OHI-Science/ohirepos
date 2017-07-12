@@ -4,17 +4,18 @@
 \alias{populate_layers}
 \title{Populate new OHI repos with layers from global assessments}
 \usage{
-populate_layers(key, dir_repo, lyrs_gl, dir_global, dir_scenario,
-  multi_nation = FALSE)
+populate_layers(key, dir_repo, dir_origin,
+  lyrs_gl = readr::read_csv(file.path(dir_origin, "eez/layers.csv")),
+  dir_scenario, multi_nation = FALSE)
 }
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
 
 \item{dir_repo}{full path of temporary OHI repo e.g. \code{~/github/clip-n-ship/gye}}
 
-\item{lyrs_gl}{list of global layers to copy}
+\item{dir_origin}{full local path of origin repo (e.g. global)}
 
-\item{dir_global}{full local path of ohi-global scenario}
+\item{lyrs_gl}{list of global layers to copy}
 
 \item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye}}
 

@@ -2,22 +2,20 @@
 % Please edit documentation in R/clone_repo.r
 \name{clone_repo}
 \alias{clone_repo}
-\title{Clone existing repo}
+\title{Clone existing repo building from git2r's clone()}
 \usage{
-clone_repo(dir_repos, dir_repo, git_url)
+clone_repo(dir_repo, git_url)
 }
 \arguments{
-\item{dir_repos}{TBD}
+\item{dir_repo}{local directory where you want to clone the repo (probably somewhere temporary)}
 
-\item{dir_repo}{TBD}
-
-\item{git_url}{TBD}
+\item{git_url}{url of repo (e.g. "https://github.com/OHI-Science/arc.git")}
 }
 \value{
 TBD
 }
 \description{
-Clone existing repo
+Clone existing repo building from git2r's clone()
 }
 \examples{
 \dontrun{# TBD}

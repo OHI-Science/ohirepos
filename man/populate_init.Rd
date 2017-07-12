@@ -2,13 +2,18 @@
 % Please edit documentation in R/populate_init.r
 \name{populate_init}
 \alias{populate_init}
-\title{Title}
+\title{Populate initial files including README and .Rproj}
 \usage{
-populate_init(key, dir_repo)
+populate_init(key, dir_repo, gh_org = "OHI-Science", push = TRUE)
 }
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
+
+\item{dir_repo}{local directory where you have cloned the repo (probably somewhere temporary)}
+
+\item{gh_org}{github organization to place the repo. Default: ohi-science
+#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
 }
 \description{
-Title
+First delete any local copy in your directory and clone the repo from github.com/OHI-Science.
 }

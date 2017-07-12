@@ -9,13 +9,13 @@ unpopulate_layers_conf(key, dir_repos, dir_repo, git_url, default_scenario)
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
 
-\item{dir_repos}{full path of temporary folder for OHI repos, e.g. \code{~/github/clip-n-ship}}
-
 \item{dir_repo}{full path of temporary OHI repo e.g. \code{~/github/clip-n-ship/gye}}
 
 \item{git_url}{url of key's github repository}
 
 \item{default_scenario}{key's scenario folder}
+
+\item{dir_sandbox}{full path of workspace directory, e.g. \code{~/github/clip-n-ship}}
 }
 \value{
 key's repo after unpopulating layers and conf information

@@ -4,14 +4,14 @@
 \alias{copy_layer}
 \title{Copy OHI Layer}
 \usage{
-copy_layer(lyr, sc_rgns, dir_global, sfx_global, lyrs_sc, write_to_csv = TRUE)
+copy_layer(lyr, sc_rgns, dir_origin, sfx_global, lyrs_sc, write_to_csv = TRUE)
 }
 \arguments{
 \item{lyr}{OHI data layer to be copied}
 
 \item{sc_rgns}{OHI+ regions (sc = 'subcountry', vestigal)}
 
-\item{dir_global}{global OHI assessment directory}
+\item{dir_origin}{full local path of origin repo (e.g. global)}
 
 \item{sfx_global}{suffix to identify global source for OHI+data layers}
 

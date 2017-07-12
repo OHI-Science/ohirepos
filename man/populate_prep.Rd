@@ -2,13 +2,19 @@
 % Please edit documentation in R/populate_prep.R
 \name{populate_prep}
 \alias{populate_prep}
-\title{Title}
+\title{Populate the repo with prep folder and subfolders and README files}
 \usage{
-populate_prep(key)
+populate_prep(key, dir_repo, gh_org = "OHI-Science", push = TRUE)
 }
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
+
+\item{dir_repo}{local directory where you have cloned the repo (probably somewhere temporary)}
+
+\item{gh_org}{github organization to place the repo. Default: ohi-science}
+
+\item{push}{TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
 }
 \description{
-Title
+Populate the repo with prep folder and subfolders and README files
 }
