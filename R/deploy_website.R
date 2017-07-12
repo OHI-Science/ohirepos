@@ -6,22 +6,18 @@
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @return Returns web_url (http://ohi-science.github.io/[key]) based on creating or
-#' updating gh-pages branch of Github repository. Please also visit
-#' \link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/gh-pages/README.md]{gh-pages/README.md} for more details.
+#' updating gh-pages branch of Github repository.
 #'
 #' @examples
-#' \dontrun{
-#' deploy_website_prep('arc', 'The Arctic')
-#' }
 #'
 #' @import tidyverse yaml devtools brew stringr
 #' @export
-deploy_website_prep <- function(key,
-                                dir_repo,
-                                gh_org = 'OHI-Science',
-                                dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
-                                study_area = repo_registry$study_area,
-                                push = TRUE){
+deploy_website <- function(key,
+                           dir_repo,
+                           gh_org = 'OHI-Science',
+                           dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
+                           study_area = repo_registry$study_area,
+                           push = TRUE){
 
   run_cmd = function(cmd){
     cat(sprintf('running command:\n  %s\n', cmd))
