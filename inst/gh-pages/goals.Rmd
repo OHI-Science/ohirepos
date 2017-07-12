@@ -6,11 +6,11 @@ output:
     toc_float: true
 ---
 
-```{r setup, echo=F, warning=FALSE, message=F}
+```{r setup, eval=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 source("./_site.R")
 ```
 
 Goals are constructed from input layers based on equations represented below.
 
-```{r, child=sprintf('%s/conf/goals.Rmd', dir_scenario)}
+```{r, eval=FALSE, child=sprintf('%s/conf/goals.Rmd', dir_scenario)}
 ```

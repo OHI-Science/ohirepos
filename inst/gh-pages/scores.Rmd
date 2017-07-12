@@ -6,7 +6,7 @@ output:
     toc_float: true
 ---
 
-```{r setup, echo=F, warning=FALSE, message=F}
+```{r setup, eval = FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 source("./_site.R")
 ```
 
@@ -16,7 +16,7 @@ Flower plots display preliminary scores, with each petal representing an individ
 
 ----
 
-```{r plot_flower Casey, results='asis'}
+```{r plot_flower Casey, results='asis', eval=FALSE}
 
 ## source from ohibc until added to ohicore, see https://github.com/OHI-Science/ohibc/blob/master/regionHoweSound/ohibc_howesound_2016.Rmd
 source('https://raw.githubusercontent.com/OHI-Science/ohibc/master/src/R/common.R')

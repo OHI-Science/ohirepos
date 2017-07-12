@@ -19,7 +19,8 @@
 deploy_website_prep <- function(key,
                                 dir_repo,
                                 gh_org = 'OHI-Science',
-                               # dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
+                                dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
+                                study_area = repo_registry$study_area,
                                 push = TRUE){
 
   run_cmd = function(cmd){
@@ -46,8 +47,7 @@ deploy_website_prep <- function(key,
 
     system(sprintf('cd %s; git checkout --orphan gh-pages;  git rm -rf .', dir_repo))
 
-    # if (prep) {
-    ## copy gh-pages-prep web files into dir_repo, excluding all files in .gitignore
+    ## copy gh-pages web files into dir_repo, excluding all files in .gitignore
     run_cmd( ##
       sprintf(
         'cd %s; rsync -rq \\
@@ -57,18 +57,13 @@ deploy_website_prep <- function(key,
         system.file('gh-pages-prep', package='ohirepos'), dir_repo))
 
     ## brew files
-    brew::brew(system.file('gh-pages-prep/_site.brew.yml', package='ohirepos'),
+    brew::brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'),
                sprintf('%s/_site.yml', dir_repo))
-    brew::brew(system.file('gh-pages-prep/_site.brew.R', package='ohirepos'),
+    brew::brew(system.file('gh-pages/_site.brew.R', package='ohirepos'),
                sprintf('%s/_site.R', dir_repo))
-    brew::brew(system.file('gh-pages-prep/index.brew.Rmd', package='ohirepos'),
+    brew::brew(system.file('gh-pages/index.brew.Rmd', package='ohirepos'),
                sprintf('%s/index.Rmd', dir_repo))
 
-    # if (full) {
-    #
-    # }
-
-    ## to finish up
 
     ## add Rstudio project file
     file.copy(system.file('templates/template.Rproj', package='devtools'),
