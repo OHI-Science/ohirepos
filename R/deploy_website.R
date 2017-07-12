@@ -50,7 +50,7 @@ deploy_website <- function(key,
       --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=index.brew.Rmd --exclude=_other/ --exclude=.gitignore \\
       --include=_footer.html --exclude-from=.gitignore \\
       . %s',
-        system.file('gh-pages-prep', package='ohirepos'), dir_repo))
+        system.file('gh-pages', package='ohirepos'), dir_repo))
 
     ## brew files
     brew::brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'),
