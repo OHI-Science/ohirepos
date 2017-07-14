@@ -3,7 +3,10 @@
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
 #' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
 #' @param gh_org github organization to place the repo. Default: ohi-science
-#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
+#' @param dir_scenario_gh web url of raw master branch scenario, e.g. 'https://raw.githubusercontent.com/OHI-Science/mhi/master/region2017'
+#' @param study_area name of entire assessment, e.g. 'Gulf of Guayaquil'
+#' @param clone T/F: do you want to add, commit, and push? Defaults to TRUE.
+#' @param push T/F: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @return Returns web_url (http://ohi-science.github.io/[key]) based on creating or
 #' updating gh-pages branch of Github repository.
@@ -19,6 +22,7 @@ deploy_website <- function(key,
                              "https://raw.githubusercontent.com/%s/%s/master/%s",
                              gh_org, key, repo_registry$scenario_name),
                            study_area = repo_registry$study_area,
+                           clone = TRUE,
                            push = TRUE){
 
   run_cmd = function(cmd){
@@ -28,9 +32,11 @@ deploy_website <- function(key,
 
 
   ## clone existing master branch
-  repo <- ohirepos::clone_repo(dir_repo,
-                               sprintf('https://github.com/%s/%s.git',
-                                       gh_org, key))
+  if (clone) {
+    repo <- ohirepos::clone_repo(dir_repo,
+                                 sprintf('https://github.com/%s/%s.git',
+                                         gh_org, key))
+  }
   ## create empty gh-pages branch
   remote_branches <- git2r::branches(repo)
 

@@ -7,7 +7,7 @@
 deploy_website(key, dir_repo, gh_org = "OHI-Science",
   dir_scenario_gh = sprintf("https://raw.githubusercontent.com/\%s/\%s/master/\%s",
   gh_org, key, repo_registry$scenario_name),
-  study_area = repo_registry$study_area, push = TRUE)
+  study_area = repo_registry$study_area, clone = TRUE, push = TRUE)
 }
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
@@ -16,7 +16,13 @@ deploy_website(key, dir_repo, gh_org = "OHI-Science",
 
 \item{gh_org}{github organization to place the repo. Default: ohi-science}
 
-\item{push}{TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
+\item{dir_scenario_gh}{web url of raw master branch scenario, e.g. 'https://raw.githubusercontent.com/OHI-Science/mhi/master/region2017'}
+
+\item{study_area}{name of entire assessment, e.g. 'Gulf of Guayaquil'}
+
+\item{clone}{T/F: do you want to add, commit, and push? Defaults to TRUE.}
+
+\item{push}{T/F: do you want to add, commit, and push? Defaults to TRUE.}
 }
 \value{
 Returns web_url (http://ohi-science.github.io/\link{key}) based on creating or
