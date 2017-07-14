@@ -3,16 +3,14 @@ suppressPackageStartupMessages({
   library(readr)
   library(dplyr)
   library(tidyr)
+  library(stringr)
   library(knitr)
 })
 
 ## brewed vars
-study_area   = "<%=study_area%>"
-key          = "<%=key%>"
-dir_scenario = "<%=dir_scenario%>"
-
-## derived vars
-gh_url     = sprintf('https://github.com/OHI-Science/%s.git', key)
+study_area      = "<%=study_area%>"
+key             = "<%=key%>"
+dir_scenario_gh = "<%=dir_scenario_gh%>"
 
 ## knitr options for all webpages
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)

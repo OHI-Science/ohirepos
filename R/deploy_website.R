@@ -15,7 +15,9 @@
 deploy_website <- function(key,
                            dir_repo,
                            gh_org = 'OHI-Science',
-                           dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
+                           dir_scenario_gh = sprintf(
+                             "https://raw.githubusercontent.com/%s/%s/master/%s",
+                             gh_org, key, repo_registry$scenario_name),
                            study_area = repo_registry$study_area,
                            push = TRUE){
 
@@ -47,7 +49,7 @@ deploy_website <- function(key,
     run_cmd( ##
       sprintf(
         'cd %s; rsync -rq \\
-      --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=index.brew.Rmd --exclude=_other/ --exclude=.gitignore \\
+      --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=index.brew.Rmd --exclude=scores.brew.Rmd --exclude=_other/ --exclude=.gitignore \\
       --include=_footer.html --exclude-from=.gitignore \\
       . %s',
         system.file('gh-pages', package='ohirepos'), dir_repo))
@@ -59,6 +61,8 @@ deploy_website <- function(key,
                sprintf('%s/_site.R', dir_repo))
     brew::brew(system.file('gh-pages/index.brew.Rmd', package='ohirepos'),
                sprintf('%s/index.Rmd', dir_repo))
+    brew::brew(system.file('gh-pages/scores.brew.Rmd', package='ohirepos'),
+               sprintf('%s/scores.Rmd', dir_repo))
 
 
     ## add Rstudio project file

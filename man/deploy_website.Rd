@@ -5,7 +5,8 @@
 \title{Deploy website to gh-pages branch in Github repository}
 \usage{
 deploy_website(key, dir_repo, gh_org = "OHI-Science",
-  dir_scenario = file.path(dir_repo, repo_registry$scenario_name),
+  dir_scenario_gh = sprintf("https://raw.githubusercontent.com/\%s/\%s/master/\%s",
+  gh_org, key, repo_registry$scenario_name),
   study_area = repo_registry$study_area, push = TRUE)
 }
 \arguments{
