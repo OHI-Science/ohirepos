@@ -9,7 +9,6 @@
 #' @return key's repo with config folder populated
 #' @export
 #'
-#' @examples
 
 populate_conf <- function(key, dir_scenario, dir_origin) {
 

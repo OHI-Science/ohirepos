@@ -7,10 +7,8 @@
 #' @param gh_org github organization to place the repo. Default: ohi-science
 #' #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
-#' @return
 #' @export
 #'
-#' @examples
 populate_init <- function(key,
                           dir_repo,
                           gh_org = 'OHI-Science',
