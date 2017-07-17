@@ -1,55 +1,60 @@
 #' Copy OHI Layer
 #'
 #' @param lyr OHI data layer to be copied
-#' @param sc_rgns OHI+ regions (sc = 'subcountry', vestigal)
-#' @param dir_origin full local path of origin repo (e.g. global)
-#' @param sfx_global suffix to identify global source for OHI+data layers
-#' @param lyrs_sc layers.csv data object
+#' @param rgns_key regions list for key
+#' @param dir_origin full local path of origin repo (e.g. ohi-global/eez)
+#' @param suffix suffix to indicate origin of data layers
+#' @param lyrs_key layers.csv data object
 #' @param write_to_csv whether to write to .csv; default is TRUE
 #'
 #' @return
 #' @export
 #'
 #' @examples
-copy_layer <- function(lyr, sc_rgns,
-                       dir_origin, sfx_global,
-                       lyrs_sc, write_to_csv = TRUE){
+copy_layer <- function(lyr = lyr, 
+                       rgns_key,
+                       dir_origin, 
+                       suffix = repo_registry$suffix_origin,
+                       lyrs_key, 
+                       write_to_csv = TRUE){
 
   ## setup
   csv_in        <- sprintf('%s/layers/%s.csv', dir_origin, lyr)
-  global_rgn_id <-  unique(sc_rgns$gl_rgn_id)
+  global_rgn_id <-  unique(rgns_key$rgn_id_origin)
 
-  d = read.csv(csv_in)
-  flds = names(d)
+  d    <- readr::read_csv(csv_in)
+  flds <- names(d)
 
   if ('rgn_id' %in% names(d)){
     d = d %>%
       filter(rgn_id %in% global_rgn_id) %>%
-      merge(sc_rgns, by.x = 'rgn_id', by.y = 'gl_rgn_id') %>%
+      merge(rgns_key, by.x = 'rgn_id', by.y = 'rgn_id_origin') %>%
       mutate(rgn_id = as.integer(sc_rgn_id)) %>%
       subset(select = flds) %>%
       arrange(rgn_id)
   }
+  
+  ## TODO: add if statement that if rgn_id_origin == NA, assign to default of US and state it? and call it rgn_id_global?
 
-  if ('cntry_key' %in% names(d)){
-    # convert cntry_key to rgn_id, drop cntry_key
-    d = d %>%
-      mutate(cntry_key = as.character(cntry_key)) %>%
-      inner_join(
-        sc_rgns %>%
-          mutate(cntry_key = as.character(cntry_key)),
-        by='cntry_key') %>%
-      dplyr::rename(rgn_id=sc_rgn_id) %>%
-      select_(.dots = as.list(c('rgn_id', setdiff(names(d), 'cntry_key')))) %>%
-      arrange(rgn_id)
-  }
+  # if ('cntry_key' %in% names(d)){ ## TODO july 2017: ohi-global still uses this in LE but maybe since swap files can get around it, and remove if statement above
+  #   # convert cntry_key to rgn_id, drop cntry_key
+  #   d = d %>%
+  #     mutate(cntry_key = as.character(cntry_key)) %>%
+  #     inner_join(
+  #       rgns_key %>%
+  #         mutate(cntry_key = as.character(cntry_key)),
+  #       by='cntry_key') %>%
+  #     dplyr::rename(rgn_id=sc_rgn_id) %>%
+  #     select_(.dots = as.list(c('rgn_id', setdiff(names(d), 'cntry_key')))) %>%
+  #     arrange(rgn_id)
+  # }
 
   ## update rgn_labels
   if (lyr =='rgn_labels'){
     csv_out = sprintf('%s/layers/rgn_labels.csv', dir_scenario)
-    lyrs_sc$filename[lyrs_sc$layer == lyr] = basename(csv_out)
+    lyrs_key$filename[lyrs_key$layer == lyr] = basename(csv_out)
     d <- d %>%
-      merge(sc_rgns, by.x='rgn_id', by.y='sc_rgn_id') %>%
+      merge(rgns_key, by.x='rgn_id', by.y='sc_rgn_id') %>%
       select(rgn_id, type, label=sc_rgn_name) %>%
       arrange(rgn_id)
   }
@@ -57,13 +62,13 @@ copy_layer <- function(lyr, sc_rgns,
   ## update rgn_global csv name
   if (lyr =='rgn_global'){
     csv_out = sprintf('%s/layers/rgn_global.csv', dir_scenario)
-    lyrs_sc$filename[lyrs_sc$layer == lyr] = basename(csv_out)
+    lyrs_key$filename[lyrs_key$layer == lyr] = basename(csv_out)
   }
 
   ## TODO: comment out for now; see if this is actually happening.
   ## downweight: area_offshore, equal, equal, population_inland25km,
   # shp = '/Volumes/data_edit/git-annex/clip-n-ship/data/Albania/rgn_inland25km_mol.shp'
-  # downweight = str_trim(lyrs_sc$clip_n_ship_disag[lyrs_sc$layer == lyr])
+  # downweight = str_trim(lyrs_key$clip_n_ship_disag[lyrs_key$layer == lyr])
   # downweightings = c('area_offshore'='area-offshore', 'population_inland25km'='popn-inland25km')
   # if (downweight %in% names(downweightings) & nrow(d) > 0){
   #
@@ -79,17 +84,17 @@ copy_layer <- function(lyr, sc_rgns,
   #   csv_out = file.path(
   #     'layers',
   #     str_replace(
-  #       lyrs_sc$filename[lyrs_sc$layer == lyr],
+  #       lyrs_key$filename[lyrs_key$layer == lyr],
   #       fixed('_gl2016.csv'),
   #       sprintf('_sc2014-%s.csv', downweightings[downweight])))
-  #   lyrs_sc$filename[lyrs_sc$layer == lyr] = basename(csv_out)
+  #   lyrs_key$filename[lyrs_key$layer == lyr] = basename(csv_out)
   # }
 
   ## fill with placeholder data if d is empty ----
   if (nrow(d) < 1) {
 
     ## create layer full of NAs
-    dtmp <- sc_rgns %>%
+    dtmp <- rgns_key %>%
       select(sc_rgn_id) %>%
       bind_rows(d) %>%
       select(-rgn_id) %>%
@@ -127,20 +132,20 @@ copy_layer <- function(lyr, sc_rgns,
     d <- dtmp
 
     ## rename layername
-    placeholder_csv <- stringr::str_replace(lyrs_sc$filename[lyrs_sc$layer == lyr], '\\.', 'placeholder.')
-    lyrs_sc$filename[lyrs_sc$layer == lyr] = placeholder_csv
+    placeholder_csv <- stringr::str_replace(lyrs_key$filename[lyrs_key$layer == lyr], '\\.', 'placeholder.')
+    lyrs_key$filename[lyrs_key$layer == lyr] = placeholder_csv
 
   }
 
   ## create csv_out (with or without placeholder added)
-  csv_out <- sprintf('%s/layers/%s', dir_scenario, lyrs_sc$filename[lyrs_sc$layer == lyr])
+  csv_out <- sprintf('%s/layers/%s', dir_scenario, lyrs_key$filename[lyrs_key$layer == lyr])
 
   d$rgn_id <- as.integer(d$rgn_id)
 
   ## write to csv if TRUE
   if (write_to_csv) {
 
-    write_csv(d, csv_out, na='')
+    readr::write_csv(d, csv_out, na='')
     return(csv_out)
 
   } else {
