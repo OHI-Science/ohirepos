@@ -17,9 +17,9 @@
 #'
 populate_layers <- function(key, 
                             dir_repo,
-                            gh_org = 'OHI-Science',
                             repo_registry,
-                            dir_scenario, multi_nation = FALSE){
+                            gh_org = 'OHI-Science',
+                            multi_nation = FALSE){
 
   ## create variables
   dir_origin    <- repo_registry$dir_origin
