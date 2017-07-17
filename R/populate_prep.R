@@ -16,8 +16,9 @@ populate_prep <- function(key,
 
   ## clone repo
   if (!file.exists(dir_repo))
-    system(sprintf('cd %s; git clone https://github.com/%s/%s',
-                   dir_repo, gh_org, key))
+    unlink(dir_repo, recursive=TRUE, force=TRUE)
+  repo <- git2r::clone(sprintf('https://github.com/%s/%s', gh_org, key),
+                       normalizePath(dir_repo, mustWork=FALSE))
 
   repo = git2r::repository(dir_repo)
 

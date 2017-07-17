@@ -33,10 +33,12 @@ deploy_website <- function(key,
 
   ## clone existing master branch
   if (clone) {
+    unlink(dir_repo, recursive=TRUE, force=TRUE)
     repo <- ohirepos::clone_repo(dir_repo,
                                  sprintf('https://github.com/%s/%s.git',
                                          gh_org, key))
   }
+  
   ## create empty gh-pages branch
   remote_branches <- git2r::branches(repo)
 
