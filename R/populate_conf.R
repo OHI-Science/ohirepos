@@ -1,34 +1,43 @@
 # populate_conf.r
-
+#'
 #' Populate OHI repo with configuration folder
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye/region2015`
-#' @param dir_origin full local path of origin repo (e.g. global)
+#' @param repo_registry 
 #'
 #' @return key's repo with config folder populated
 #' @export
 #'
 
-populate_conf <- function(key, dir_scenario, dir_origin) {
+populate_conf <- function(key, 
+                          repo_registry) {
 
+  ## create variables
+  dir_origin <- repo_registry$dir_origin
+  dir_conf   <- file.path(dir_repo, repo_registry$scenario_name, 'conf')
+   
+  
   ## create conf folder
-  if (!dir.exists(sprintf('%s/conf', dir_scenario))) {
-    dir.create(sprintf('%s/conf', dir_scenario), showWarning=FALSE)
+  
+  if (!dir.exists(dir_conf)) {
+    dir.create(dir_conf, showWarning=FALSE)
   }
 
   ## list conf files to copy
-  conf_files = c('config.R','functions.R','goals.csv',
-                 'pressures_matrix.csv','resilience_matrix.csv',
-                 'pressure_categories.csv', 'resilience_categories.csv')
+  conf_files = c('config.R', 'goals.csv',
+                 'pressures_matrix.csv',  'pressure_categories.csv',
+                 'resilience_matrix.csv', 'resilience_categories.csv',
+                 'scenario_data_years.csv') 
+  ## TODO add 'functions.R' back
+
 
   for (f in conf_files){ # f = conf_files[1] f = "functions.R"
 
-    f_in  = sprintf('%s/conf/%s', dir_origin,   f)
-    f_out = sprintf('%s/conf/%s', dir_scenario, f)
+    f_in  <- file.path(dir_origin, 'conf', f)
+    f_out <-file.path(dir_conf, f)
 
     # read in file
-    s = readLines(f_in, warn=F, encoding='UTF-8')
+    s <- readLines(f_in, warn=FALSE, encoding='UTF-8')
 
     ## swap out custom functions ###TODO obsolete no fxn_swap
     if (f == 'functions.R'){
@@ -74,28 +83,22 @@ populate_conf <- function(key, dir_scenario, dir_origin) {
     } ## end if(f == 'functions.R')
 
 
-    ## substitute old layer names with new ## JSL Aug 2016; don't think there are any global layers at this point that not needed. comment out bc not working the way we want...
-    # lyrs_sc <- read_csv(sprintf('%s/layers.csv', dir_scenario))
-    # lyrs_dif = lyrs_sc %>% filter(!layer %in% layer_gl)
-    # for (i in 1:nrow(lyrs_dif)){ # i=1
-    #   s = str_replace_all(s, fixed(lyrs_dif$layer_gl[i]), lyrs_dif$layer[i])
-    # }
-
     writeLines(s, f_out)
 
   } # end for (f in conf_files)
-
-  ## swap fields in goals.csv
-  goals = read.csv(sprintf('%s/conf/goals.csv', dir_scenario), stringsAsFactors=F)
-  for (g in names(goal_swap)){ # g = names(goal_swap)[1]
-    for (fld in names(goal_swap[[g]])){
-      goals[goals$goal==g, fld] = goal_swap[[g]][[fld]]
-    }
-  }
-  write.csv(goals, sprintf('%s/conf/goals.csv', dir_scenario), row.names=F, na='')
-
-  ## copy goals documentation ## TODO JSL revisit: necessary?
-  file.copy(sprintf('%s/ohi-webapps/inst/goals.Rmd', dir_github),
-            sprintf('%s/conf/goals.Rmd', dir_scenario), overwrite=T)
+ 
+  
+  ### TODO: come back here...should I brew each one from a list or have each individual? How did Mel do it.
+  ## create subfolders in goals folder
+  dir.create(file.path(dir_conf, 'goals'), showWarnings=FALSE)
+  goals_rmds = c('FIS', 'MAR', 'AO', 'NP', 'CS', 'CP', 'LIV', 'ECO', 'TR', 'CW',
+                      'ICO', 'LSP', 'SPP', 'HAB')
+  # sapply(file.path(dir_conf, 'goals', goals_subfolders), dir.create) don't do this...
+  
+  ## brew files  ...brew each one with a different name
+  # brew::brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'),
+  #            sprintf('%s/_site.yml', dir_repo))
+  
+  ## And don't forget the parent goals.Rmd file
 
 }

@@ -1,0 +1,35 @@
+### Goal Description
+
+The Carbon Storage goal captures the ability of the coastal habitats to remove carbon given their carbon uptake rate and health conditions. A score of 100 means all habitats that contribute to carbon removal are still intact or have been restored and they can function to their full carbon burial potential. Highly productive coastal wetland ecosystems or seagrass store substantially large amount of carbon have the highest sequestration rates of any habitats on earth. They are also threatened by under-regulated coastal development but are amenable to restoration and conservation efforts. **For the BHI we planned to use seagrass as an indicator for carbon storage. However, due to data limitions, the Carbon Storage goal was assigned as NA.**   
+
+
+### Model & Data
+
+We planned to use seagrass data (*Zostera* species) in the Baltic Sea. 
+
+- [Data were downloaded from the HELCOM Marine Spatial Planning Map Service](http://maps.helcom.fi/website/msp/index.html) > select Marine Spatial Planning - Ecology - Ecosystem Health status  
+- [Data layer - "Zostera Meadows" Metadata](http://maps.helcom.fi/website/getMetadata/htm/All/Zostera%20meadows.htm)  
+
+*Although these are saved as spatial data, observations are point data, accompanied by either "dense" or "sparse." Therefore the spatial extent of the seagrass meadows is unclear and cannot be used for the BHI goal calculation.* 
+
+Related publications: 
+
+- *[Boström et al 2014](http://onlinelibrary.wiley.com/doi/10.1002/aqc.2424/abstract).*  
+
+- *[HELCOM Red List Biotope Information Sheet](http://helcom.fi/Red%20List%20of%20biotopes%20habitats%20and%20biotope%20complexe/HELCOM%20Red%20List%20AA.H1B7,%20AA.I1B7,%20AA.J1B7,%20AA.M1B7.pdf)*  
+
+
+### Reference points
+
+*Not relevant yet.*
+
+
+### Considerations for *BHI 2.0*
+
+*Other spatial data sources are currently explored.* 
+
+### Other information
+
+
+
+*external advisors/goalkeepers: Christoffer Boström and Markku Viitasalo.*

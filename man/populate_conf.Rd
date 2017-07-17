@@ -4,14 +4,12 @@
 \alias{populate_conf}
 \title{Populate OHI repo with configuration folder}
 \usage{
-populate_conf(key, dir_scenario, dir_origin)
+populate_conf(key, repo_registry)
 }
 \arguments{
 \item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
 
-\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye/region2015}}
-
-\item{dir_origin}{full local path of origin repo (e.g. global)}
+\item{repo_registry}{}
 }
 \value{
 key's repo with config folder populated
