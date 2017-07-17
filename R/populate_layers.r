@@ -63,7 +63,7 @@ populate_layers <- function(key,
   rgns_list <- sprintf('%s/spatial/regions_list.csv', dir_scenario)
   file.copy(from =  lyrs_key$path_in[ix], to = rgns_list, overwrite=TRUE)
 
-  ## drop cntry_* layers
+  ## drop cntry_* layers ## TODO July 2017 delete?
   lyrs_key = filter(lyrs_key, !grepl('^cntry_', layer))
 
   ## drop all layers no longer being used (especially LE) ## TODO July 2017 JSL clean this up. 117 -> 102
@@ -107,7 +107,7 @@ populate_layers <- function(key,
     }
 
     ## for each layer (not multi_nation)...
-    for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global'
+    for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
 
       ## call copy_layer and write to layer to csv
       d <- ohirepos::copy_layer(lyr, 

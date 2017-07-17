@@ -3,7 +3,6 @@
 #' @param lyr OHI data layer to be copied
 #' @param rgns_key regions list for key
 #' @param dir_origin full local path of origin repo (e.g. ohi-global/eez)
-#' @param suffix suffix to indicate origin of data layers
 #' @param lyrs_key layers.csv data object
 #' @param write_to_csv whether to write to .csv; default is TRUE
 #'
@@ -14,7 +13,7 @@
 copy_layer <- function(lyr = lyr, 
                        rgns_key,
                        dir_origin, 
-                       suffix = repo_registry$suffix_origin,
+                       dir_scenario, 
                        lyrs_key, 
                        write_to_csv = TRUE){
 
@@ -22,13 +21,14 @@ copy_layer <- function(lyr = lyr,
   csv_in        <- sprintf('%s/layers/%s.csv', dir_origin, lyr)
   origin_rgn_id <-  unique(rgns_key$rgn_id_origin)
 
-  d <- readr::read_csv(csv_in) %>%
-    dplyr::rename(rgn_id_origin = rgn_id)
-    
+  ## read in layer, identify fields to keep 
+  d    <- readr::read_csv(csv_in) 
   flds <- names(d)
 
+  ## join d$rgn_id with rgns_key$rgn_id_origin, filter, select, and end with d$rgn_id
   if ('rgn_id' %in% names(d)){
-    d = d %>%
+    d <- d %>%
+      dplyr::rename(rgn_id_origin = rgn_id) %>%
       filter(rgn_id_origin %in% origin_rgn_id) %>%
       left_join(rgns_key, by = 'rgn_id_origin') %>%
       dplyr::select(flds) %>%
@@ -56,8 +56,8 @@ copy_layer <- function(lyr = lyr,
     csv_out = sprintf('%s/layers/rgn_labels.csv', dir_scenario)
     lyrs_key$filename[lyrs_key$layer == lyr] = basename(csv_out)
     d <- d %>%
-      merge(rgns_key, by.x='rgn_id', by.y='sc_rgn_id') %>%
-      select(rgn_id, type, label=sc_rgn_name) %>%
+      merge(rgns_key, by='rgn_id') %>%
+      select(rgn_id, type, label=rgn_name) %>%
       arrange(rgn_id)
   }
 
@@ -97,10 +97,8 @@ copy_layer <- function(lyr = lyr,
 
     ## create layer full of NAs
     dtmp <- rgns_key %>%
-      select(sc_rgn_id) %>%
-      bind_rows(d) %>%
-      select(-rgn_id) %>%
-      rename(rgn_id = sc_rgn_id)
+      select(rgn_id) %>%
+      bind_rows(d)
 
     ## fill 0 as placeholder for pressures and resilience
     if (any(names(dtmp) %in% c('pressures.score', 'pressure_score', 'resilience.score'))) {
