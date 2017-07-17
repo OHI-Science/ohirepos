@@ -99,7 +99,11 @@ copy_layer <- function(lyr,
 
     ## fill 'seagrass' as placeholder for HAB
     if ('habitat' %in% names(dtmp)) {
-      dtmp$habitat[is.na(dtmp$habitat)] <- 'seagrass'
+      
+      hab_type <- stringr::str_split(lyr, '_') %>%
+        purrr::flatten_chr()
+      
+      dtmp$habitat[is.na(dtmp$habitat)] <- hab_type[2]
     }
 
     ## fill global year as placeholder for year

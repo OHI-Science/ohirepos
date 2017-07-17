@@ -193,8 +193,6 @@ populate_layers <- function(key,
       units,
       name,
       description,
-     # clip_n_ship_disag,
-    #  clip_n_ship_disag_description,
       layer_gl,
       path_in)
 
@@ -202,7 +200,7 @@ populate_layers <- function(key,
   layers_csv <- sprintf('%s/layers.csv', dir_scenario)
   readr::write_csv(lyrs_reg, layers_csv, na='')
 
-  ## check for empty layers
+  ## check for empty layers ## TODO July 2017 check this, swapping global mean
   ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
               flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
   lyrs = read.csv(layers_csv, na='')
@@ -214,6 +212,7 @@ populate_layers <- function(key,
 
 
   ## populate empty layers with global averages. ## TODO see if a better way...
+  ## Currently 0 of these
   for (lyr in lyrs_empty$layer){ # lyr = lyrs_empty$layer[1]
 
     message(' for empty layer ', lyr, ', getting global mean with ', repo_registry$suffix_origin, 'suffix')
@@ -280,7 +279,7 @@ populate_layers <- function(key,
 
     write.csv(b, csv_out, row.names=F, na='')
 
-  } # end for (lyr in subset(lyrs, data_na, layer, drop=T))
+  } # end for (lyr in lyrs_empty$layer)
 
 
   ## check again now empty layers now populated by global averages
