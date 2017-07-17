@@ -68,11 +68,29 @@ populate_layers <- function(key,
 
   ## drop all layers no longer being used (especially LE) ## TODO July 2017 JSL clean this up. 117 -> 102
   lyrs_le_rm = c(
-    'le_gdp_pc_ppp','le_jobs_cur_adj_value','le_jobs_cur_base_value','le_jobs_ref_adj_value','le_jobs_ref_base_value',
-    'le_rev_cur_adj_value','le_rev_cur_base_value','le_rev_cur_base_value','le_rev_ref_adj_value','le_rev_ref_base_value',
-    'le_rev_sector_year','le_revenue_adj','le_wage_cur_adj_value','le_wage_cur_base_value','le_wage_ref_adj_value',
-    'le_wage_ref_base_value','liveco_status','liveco_trend',
-    'cntry_rgn', 'cntry_georegions')
+    'le_gdp_pc_ppp',
+    'le_jobs_cur_adj_value',
+    'le_jobs_cur_base_value',
+    'le_jobs_ref_adj_value',
+    'le_jobs_ref_base_value',
+    'le_rev_cur_adj_value',
+    'le_rev_cur_base_value',
+    'le_rev_cur_base_value',
+    'le_rev_ref_adj_value',
+    'le_rev_ref_base_value',
+    'le_rev_sector_year',
+    'le_revenue_adj',
+    'le_wage_cur_adj_value',
+    'le_wage_cur_base_value',
+    'le_wage_ref_adj_value',
+    'le_wage_ref_base_value',
+    'liveco_status',
+    'liveco_trend',
+    'cntry_rgn', 
+    'cntry_georegions', 
+    'element_wts_cp_km2_x_protection', ## TODO: discuss with Mel; added 7/17/2017
+    'element_wts_cs_km2_x_storage', 
+    'element_wts_hab_pres_abs')
   lyrs_key = filter(lyrs_key, !layer %in% lyrs_le_rm)
 
 

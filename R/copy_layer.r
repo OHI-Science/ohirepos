@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-copy_layer <- function(lyr = lyr, 
+copy_layer <- function(lyr, 
                        rgns_key,
                        dir_origin, 
                        dir_scenario, 
@@ -38,18 +38,24 @@ copy_layer <- function(lyr = lyr,
   ## TODO: add if statement that if rgn_id_origin == NA, assign to default of US and state it? and call it rgn_id_global?
 
   
-  # if ('cntry_key' %in% names(d)){ ## TODO july 2017: ohi-global still uses this in LE but maybe since swap files can get around it, and remove if statement above
-  #   # convert cntry_key to rgn_id, drop cntry_key
-  #   d = d %>%
-  #     mutate(cntry_key = as.character(cntry_key)) %>%
-  #     inner_join(
-  #       rgns_key %>%
-  #         mutate(cntry_key = as.character(cntry_key)),
-  #       by='cntry_key') %>%
-  #     dplyr::rename(rgn_id=sc_rgn_id) %>%
-  #     select_(.dots = as.list(c('rgn_id', setdiff(names(d), 'cntry_key')))) %>%
-  #     arrange(rgn_id)
-  # }
+  ## convert cntry_key to rgn_id, drop cntry_key ## must keep 2017, revisit when fix LE
+  if ('cntry_key' %in% names(d)){ 
+    
+    global_lookup <- readr::read_csv(
+      system.file('global_rgn_lookup_v2014.csv', package='ohirepos')) %>%
+      filter(rgn_id == unique(rgns_key$rgn_id_origin))
+    
+    rgns_key <- rgns_key %>%
+      mutate(cntry_key = global_lookup$cntry_key)
+        
+    d <- d %>%
+      mutate(cntry_key = as.character(cntry_key)) %>%
+      inner_join(
+        rgns_key,
+        by='cntry_key') %>%
+      select_(.dots = as.list(c('rgn_id', setdiff(names(d), 'cntry_key')))) %>%
+      arrange(rgn_id)
+  }
 
   ## update rgn_labels
   if (lyr =='rgn_labels'){
@@ -67,31 +73,7 @@ copy_layer <- function(lyr = lyr,
     lyrs_key$filename[lyrs_key$layer == lyr] = basename(csv_out)
   }
 
-  ## TODO: comment out for now; see if this is actually happening.
-  ## downweight: area_offshore, equal, equal, population_inland25km,
-  # shp = '/Volumes/data_edit/git-annex/clip-n-ship/data/Albania/rgn_inland25km_mol.shp'
-  # downweight = str_trim(lyrs_key$clip_n_ship_disag[lyrs_key$layer == lyr])
-  # downweightings = c('area_offshore'='area-offshore', 'population_inland25km'='popn-inland25km')
-  # if (downweight %in% names(downweightings) & nrow(d) > 0){
-  #
-  #   ## update data frame with downweighting
-  #   i.v  = ncol(d) # assume value in right most column
-  #   #if (downweight=='population_inland25km') browser()
-  #   d = inner_join(d, get(downweight), by='rgn_id')
-  #   i.dw = ncol(d) # assume downweight in right most column after join
-  #   d[i.v] = d[i.v] * d[i.dw]
-  #   d = d[,-i.dw]
-  #
-  #   ## update layer filename to reflect downweighting
-  #   csv_out = file.path(
-  #     'layers',
-  #     str_replace(
-  #       lyrs_key$filename[lyrs_key$layer == lyr],
-  #       fixed('_gl2016.csv'),
-  #       sprintf('_sc2014-%s.csv', downweightings[downweight])))
-  #   lyrs_key$filename[lyrs_key$layer == lyr] = basename(csv_out)
-  # }
-
+  
   ## fill with placeholder data if d is empty ----
   if (nrow(d) < 1) {
 
