@@ -113,7 +113,7 @@ populate_layers <- function(key,
       d <- ohirepos::copy_layer(lyr, 
                                 rgns_key,
                                 dir_origin, 
-                                suffix = repo_registry$suffix_origin,
+                                dir_scenario,
                                 lyrs_key, 
                                 write_to_csv = TRUE)
 
