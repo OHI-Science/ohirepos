@@ -20,22 +20,24 @@ copy_layer <- function(lyr = lyr,
 
   ## setup
   csv_in        <- sprintf('%s/layers/%s.csv', dir_origin, lyr)
-  global_rgn_id <-  unique(rgns_key$rgn_id_origin)
+  origin_rgn_id <-  unique(rgns_key$rgn_id_origin)
 
-  d    <- readr::read_csv(csv_in)
+  d <- readr::read_csv(csv_in) %>%
+    dplyr::rename(rgn_id_origin = rgn_id)
+    
   flds <- names(d)
 
   if ('rgn_id' %in% names(d)){
     d = d %>%
-      filter(rgn_id %in% global_rgn_id) %>%
-      merge(rgns_key, by.x = 'rgn_id', by.y = 'rgn_id_origin') %>%
-      mutate(rgn_id = as.integer(sc_rgn_id)) %>%
-      subset(select = flds) %>%
+      filter(rgn_id_origin %in% origin_rgn_id) %>%
+      left_join(rgns_key, by = 'rgn_id_origin') %>%
+      dplyr::select(flds) %>%
       arrange(rgn_id)
   }
   
   ## TODO: add if statement that if rgn_id_origin == NA, assign to default of US and state it? and call it rgn_id_global?
 
+  
   # if ('cntry_key' %in% names(d)){ ## TODO july 2017: ohi-global still uses this in LE but maybe since swap files can get around it, and remove if statement above
   #   # convert cntry_key to rgn_id, drop cntry_key
   #   d = d %>%
