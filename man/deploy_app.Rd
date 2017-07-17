@@ -86,11 +86,7 @@ Suggestions to update Shiny app:
  sudo chown -R jstewart /srv/shiny-server/ohi-global
  sudo chmod -R 775 .
  sudo chgrp -R shiny .}
-\item Copy your repo to dir_out locally. For example, if input argument \code{dir_out='~/Desktop/ohirepos_tmp'},
-copy \code{'~/github/ohi-global'} to \code{dir_out='~/Desktop/ohirepos_tmp/ohi-global/draft'}.
 }
-Please also visit
-\link\link{=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md}{app/README.md} for more details.
 
 Returns URL of Shiny app if successfully deployed, otherwise errors
 out. Requires git credentials to push to Github repository,

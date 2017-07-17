@@ -27,11 +27,7 @@
 #'  sudo chown -R jstewart /srv/shiny-server/ohi-global
 #'  sudo chmod -R 775 .
 #'  sudo chgrp -R shiny .}
-#'  \item Copy your repo to dir_out locally. For example, if input argument \code{dir_out='~/Desktop/ohirepos_tmp'},
-#'        copy \code{'~/github/ohi-global'} to \code{dir_out='~/Desktop/ohirepos_tmp/ohi-global/draft'}.
 #' }
-#'  Please also visit
-#' \link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md]{app/README.md} for more details.
 #'
 #' @examples
 #' \dontrun{

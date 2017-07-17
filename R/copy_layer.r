@@ -2,7 +2,8 @@
 #'
 #' @param lyr OHI data layer to be copied
 #' @param rgns_key regions list for key
-#' @param dir_origin full local path of origin repo (e.g. ohi-global/eez)
+#' @param dir_origin full local path of origin repo (e.g. 'ohi-global/eez')
+#' @param dir_scenario full local path of repo scenario (e.g. 'test/region2017')
 #' @param lyrs_key layers.csv data object
 #' @param write_to_csv whether to write to .csv; default is TRUE
 #'
@@ -87,7 +88,7 @@ copy_layer <- function(lyr,
       dtmp[is.na(dtmp)] <- as.integer(0)
     }
 
-    ## handle hd_subtidal_hb --TODO CHECK THIS FIX
+    ## handle hd_subtidal_hb 
     if (lyr =='hd_subtidal_hb'){
       dtmp[is.na(dtmp)] <- as.integer(0)
     }

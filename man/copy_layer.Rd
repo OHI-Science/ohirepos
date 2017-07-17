@@ -4,7 +4,7 @@
 \alias{copy_layer}
 \title{Copy OHI Layer}
 \usage{
-copy_layer(lyr = lyr, rgns_key, dir_origin, dir_scenario, lyrs_key,
+copy_layer(lyr, rgns_key, dir_origin, dir_scenario, lyrs_key,
   write_to_csv = TRUE)
 }
 \arguments{
@@ -12,7 +12,9 @@ copy_layer(lyr = lyr, rgns_key, dir_origin, dir_scenario, lyrs_key,
 
 \item{rgns_key}{regions list for key}
 
-\item{dir_origin}{full local path of origin repo (e.g. ohi-global/eez)}
+\item{dir_origin}{full local path of origin repo (e.g. 'ohi-global/eez')}
+
+\item{dir_scenario}{full local path of repo scenario (e.g. 'test/region2017')}
 
 \item{lyrs_key}{layers.csv data object}
 

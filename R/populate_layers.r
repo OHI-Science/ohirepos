@@ -4,10 +4,9 @@
 #'
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
 #' @param dir_repo full path of temporary OHI repo e.g. `~/github/clip-n-ship/gye`
-#' @param lyrs_origin list of global layers to copy
-#' @param dir_origin full local path of origin repo (e.g. global)
-#' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
-#' @param multi_nation T/F whether to pull information from multiple nations
+#' @param repo_registry data frame with information about the repo 
+#' @param gh_org GitHub organization, defaults to 'OHI-Science'
+#' @param multi_nation T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)
 #'
 #' @return populates OHI repo with layers from global assessments
 #' @export
@@ -182,7 +181,6 @@ populate_layers <- function(key,
   } ## end if (!multi_nation)
 
 
-
   ## create layers.csv registry ----
   lyrs_reg = lyrs_key %>%
     select(
@@ -200,89 +198,7 @@ populate_layers <- function(key,
   layers_csv <- sprintf('%s/layers.csv', dir_scenario)
   readr::write_csv(lyrs_reg, layers_csv, na='')
 
-  ## check for empty layers ## TODO July 2017 check this, swapping global mean
-  ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
-              flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
-  lyrs = read.csv(layers_csv, na='')
-  lyrs_empty = filter(lyrs, data_na==T)
-  if (nrow(lyrs_empty) > 0){
-    dir.create('tmp/layers-empty_global-values', showWarnings=F)
-    write.csv(lyrs_empty, 'layers-empty_swapping-global-mean.csv', row.names=F, na='')
-  }
-
-
-  ## populate empty layers with global averages. ## TODO see if a better way...
-  ## Currently 0 of these
-  for (lyr in lyrs_empty$layer){ # lyr = lyrs_empty$layer[1]
-
-    message(' for empty layer ', lyr, ', getting global mean with ', repo_registry$suffix_origin, 'suffix')
-
-    ## get all global data for layer
-    l = subset(lyrs, layer==lyr)
-    l$filename <- paste0(str_split_fixed(l$filename, '\\.', 2)[1], 'mean.', str_split_fixed(l$filename, '\\.', 2)[2])
-    csv_gl  = as.character(l$path_in)
-    csv_tmp = sprintf('%s/tmp/layers-empty_global-values/%s', dir_scenario,l$filename)
-    csv_out = sprintf('%s/layers/%s', dir_scenario, l$filename)
-    file.copy(csv_gl, csv_tmp, overwrite=T)
-    a = read.csv(csv_tmp)
-
-    ## calculate global categorical means using non-standard evaluation, ie dplyr::*_()
-    fld_key         = names(a)[1]
-    fld_value       = names(a)[ncol(a)]
-    flds_other = setdiff(names(a), c(fld_key, fld_value))
-
-    if (class(a[[fld_value]]) %in% c('factor','character') & l$fld_val_num == fld_value){
-      cat(sprintf('  DOH! For empty layer "%s" field "%s" is factor/character but registered as [fld_val_num] not [fld_val_chr].\n', lyr, fld_value))
-    }
-
-    ## exceptions
-    if (lyr == 'mar_trend_years'){
-      rgns_key %>%
-        mutate(trend_yrs = '5_yr') %>%
-        select(rgn_id = rgn_id, trend_yrs) %>%
-        arrange(rgn_id) %>%
-        write.csv(csv_out, row.names=F, na='')
-
-      next
-    }
-
-    if (class(a[[fld_value]]) %in% c('factor','character')){
-      cat(sprintf('  DOH! For empty layer "%s" field "%s" is factor/character but continuing with presumption of numeric.\n', lyr, fld_value))
-    }
-
-    ## get mean, presuming numeric...
-    if (length(flds_other) > 0){
-      b = a %>%
-        group_by_(.dots=flds_other) %>%
-        summarize_(
-          .dots = setNames(
-            sprintf('mean(%s, na.rm=T)', fld_value),
-            fld_value))
-    } else {
-      b = a %>%
-        summarize_(
-          .dots = setNames(
-            sprintf('mean(%s, na.rm=T)', fld_value),
-            fld_value))
-    }
-
-    ## bind many rgn_ids
-    if ('rgn_id' %in% names(a) | 'cntry_key' %in% names(a)){
-      b = b %>%
-        merge(
-          rgns_key %>%
-            select(rgn_id = rgn_id),
-          all=T) %>%
-        select(one_of('rgn_id', flds_other, fld_value)) %>%
-        arrange(rgn_id)
-    }
-
-    write.csv(b, csv_out, row.names=F, na='')
-
-  } # end for (lyr in lyrs_empty$layer)
-
-
-  ## check again now empty layers now populated by global averages
+  ## check for empty layers
   ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
               flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
 
