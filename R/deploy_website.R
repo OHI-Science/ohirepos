@@ -17,13 +17,13 @@
 #' @export
 deploy_website <- function(key,
                            dir_repo,
-                           gh_org = 'OHI-Science',
+                           gh_org          = 'OHI-Science',
                            dir_scenario_gh = sprintf(
                              "https://raw.githubusercontent.com/%s/%s/master/%s",
                              gh_org, key, repo_registry$scenario_name),
-                           study_area = repo_registry$study_area,
-                           clone = TRUE,
-                           push = TRUE){
+                           study_area      = repo_registry$study_area,
+                           clone           = TRUE,
+                           push            = TRUE){
 
   run_cmd = function(cmd){
     cat(sprintf('running command:\n  %s\n', cmd))
