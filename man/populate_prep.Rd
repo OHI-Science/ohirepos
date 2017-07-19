@@ -4,12 +4,10 @@
 \alias{populate_prep}
 \title{Populate the repo with prep folder and subfolders and README files}
 \usage{
-populate_prep(key, dir_repo, gh_org = "OHI-Science", push = TRUE)
+populate_prep(repo_registry, gh_org = "OHI-Science", push = TRUE)
 }
 \arguments{
-\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
-
-\item{dir_repo}{local directory where you have cloned the repo (probably somewhere temporary)}
+\item{repo_registry}{data frame with information about the repo}
 
 \item{gh_org}{github organization to place the repo. Default: ohi-science}
 
@@ -17,4 +15,7 @@ populate_prep(key, dir_repo, gh_org = "OHI-Science", push = TRUE)
 }
 \description{
 Populate the repo with prep folder and subfolders and README files
+}
+\examples{
+
 }

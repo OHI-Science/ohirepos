@@ -15,8 +15,8 @@ commit_and_push <- function(key,
                             branch = 'master'){
   
   ## let us know what's going on
-  cat(sprintf("git add, commit, and push rendered website for %s repo\n", key))
-  cat(sprintf("with commit message '%s'", commit_message))
+  cat(sprintf("git add, commit, and push rendered website for %s repo, ", key))
+  cat(sprintf("with commit message '%s'\n", commit_message))
   
   ## cd to dir_repo, git add, commit and push rendered website
   system.time(system(sprintf(

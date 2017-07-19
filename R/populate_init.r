@@ -3,20 +3,19 @@
 #' First delete any local copy in your directory and clone the repo from github.com/OHI-Science.
 #'
 #' @param repo_registry data frame with information about the repo 
-#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
 #' @param gh_org github organization to place the repo. Default: ohi-science
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @export
 #'
 populate_init <- function(repo_registry,
-                          dir_repo,
                           gh_org = 'OHI-Science',
                           push = TRUE){
 
   ## create variables
   key        <- repo_registry$study_key
   study_area <- repo_registry$study_area
+  dir_repo   <- repo_registry$dir_repo
   
   ## clone repo from github.com/ohi-science to local
   unlink(dir_repo, recursive=TRUE, force=TRUE)

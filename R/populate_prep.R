@@ -1,7 +1,6 @@
 #' Populate the repo with prep folder and subfolders and README files
 #'
-#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
+#' @param repo_registry data frame with information about the repo 
 #' @param gh_org github organization to place the repo. Default: ohi-science
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
@@ -9,22 +8,21 @@
 #' @export
 #'
 #' @examples
-populate_prep <- function(key,
-                          dir_repo,
+#' 
+populate_prep <- function(repo_registry,
                           gh_org = 'OHI-Science',
-                          push = TRUE){
-
-  ## clone repo
-  if (!file.exists(dir_repo))
+                          push   = TRUE){
+  
+  ## create variables
+  key      <- repo_registry$study_key
+  dir_repo <- repo_registry$dir_repo
+  
+  ## clone existing master branch
     unlink(dir_repo, recursive=TRUE, force=TRUE)
-  repo <- git2r::clone(sprintf('https://github.com/%s/%s', gh_org, key),
-                       normalizePath(dir_repo, mustWork=FALSE))
-
-  repo = git2r::repository(dir_repo)
-
-  # pull the latest from master branch
-  system(sprintf('cd %s; git checkout master; git pull', dir_repo))
-
+    repo <- ohirepos::clone_repo(dir_repo,
+                                 sprintf('https://github.com/%s/%s.git',
+                                         gh_org, key))
+  
   ## create prep dir
   dir.create(file.path(dir_repo, 'prep'), showWarnings=FALSE)
   file.copy(system.file('inst/master/README_prep.md', package='ohirepos'),
@@ -39,25 +37,18 @@ populate_prep <- function(key,
   file.copy(system.file('inst/master/README_prep_subfolders.md', package='ohirepos'),
             file.path(dir_repo, 'prep', prep_subfolders, 'README.md'), overwrite=TRUE)
 
+  
   ## cd to dir_repo, git add, commit and push
   if (push) {
 
-    cat(sprintf("git add, commit, and push %s repo", key))
-    system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with prep folders"', dir_repo, key))
-    system(sprintf('cd %s; git push origin master', dir_repo))
+    ohirepos::commit_and_push(
+      key, 
+      dir_repo, 
+      commit_message = sprintf("%s repo populated with prep folders", key), 
+      branch = 'master')
   }
 
-  ## TO ADD
-  # ## create and populate prep/tutorials folder
-  # dir_tutes = file.path(dir_github, 'ohimanual/tutorials/R_tutes')
-  #
-  # dir.create(file.path(dir_repo, default_scenario, 'prep/tutorials'))
-  # file.copy(file.path(dir_tutes, 'R_tutes_all.md'),
-  #           file.path(default_scenario, 'prep/tutorials', 'R_intro.md'), overwrite=T)
-  # readLines(file.path(dir_tutes, 'R_tutes.r')) %>%
-  #   str_replace("setwd.*",
-  #               paste0("setwd('", file.path(dir_github, key, default_scenario, 'prep/tutorials'), "')")) %>%
-  #   writeLines(file.path(default_scenario, 'prep/tutorials', 'R_tutorial.r'))
-  #
+  ## only return if created repo variable
+  return(repo)
 
 }

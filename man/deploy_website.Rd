@@ -4,21 +4,13 @@
 \alias{deploy_website}
 \title{Deploy website to gh-pages branch in Github repository}
 \usage{
-deploy_website(key, dir_repo, gh_org = "OHI-Science",
-  dir_scenario_gh = sprintf("https://raw.githubusercontent.com/\%s/\%s/master/\%s",
-  gh_org, key, repo_registry$scenario_name),
-  study_area = repo_registry$study_area, clone = TRUE, push = TRUE)
+deploy_website(repo_registry, gh_org = "OHI-Science", clone = TRUE,
+  push = TRUE)
 }
 \arguments{
-\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
-
-\item{dir_repo}{local directory where you have cloned the repo (probably somewhere temporary)}
+\item{repo_registry}{data frame with information about the repo}
 
 \item{gh_org}{github organization to place the repo. Default: ohi-science}
-
-\item{dir_scenario_gh}{web url of raw master branch scenario, e.g. 'https://raw.githubusercontent.com/OHI-Science/mhi/master/region2017'}
-
-\item{study_area}{name of entire assessment, e.g. 'Gulf of Guayaquil'}
 
 \item{clone}{T/F: do you want to add, commit, and push? Defaults to TRUE.}
 
