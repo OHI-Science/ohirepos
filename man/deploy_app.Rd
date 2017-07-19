@@ -85,7 +85,8 @@ Suggestions to update Shiny app:
  ssh jstewart@fitz
  sudo chown -R jstewart /srv/shiny-server/ohi-global
  sudo chmod -R 775 .
- sudo chgrp -R shiny .}
+ sudo chgrp -R shiny .
+ }
 }
 
 Returns URL of Shiny app if successfully deployed, otherwise errors

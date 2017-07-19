@@ -26,8 +26,9 @@
 #'  ssh jstewart@fitz
 #'  sudo chown -R jstewart /srv/shiny-server/ohi-global
 #'  sudo chmod -R 775 .
-#'  sudo chgrp -R shiny .}
-#' }
+#'  sudo chgrp -R shiny .
+#'  }
+#'}
 #'
 #' @examples
 #' \dontrun{
