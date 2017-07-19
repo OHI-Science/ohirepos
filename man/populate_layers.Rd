@@ -19,7 +19,7 @@ populate_layers(key, dir_repo, repo_registry, gh_org = "OHI-Science",
 \item{multi_nation}{T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)}
 }
 \value{
-populates OHI repo with layers from global assessments
+repo
 }
 \description{
 Populate new OHI repos with layers from global assessments

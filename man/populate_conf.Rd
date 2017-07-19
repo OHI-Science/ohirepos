@@ -4,12 +4,10 @@
 \alias{populate_conf}
 \title{Populate OHI repo with configuration folder}
 \usage{
-populate_conf(key, repo_registry)
+populate_conf(repo_registry)
 }
 \arguments{
-\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
-
-\item{repo_registry}{}
+\item{repo_registry}{data frame with information about the repo}
 }
 \value{
 key's repo with config folder populated

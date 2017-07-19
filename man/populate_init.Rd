@@ -11,8 +11,9 @@ populate_init(key, dir_repo, gh_org = "OHI-Science", push = TRUE)
 
 \item{dir_repo}{local directory where you have cloned the repo (probably somewhere temporary)}
 
-\item{gh_org}{github organization to place the repo. Default: ohi-science
-#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
+\item{gh_org}{github organization to place the repo. Default: ohi-science}
+
+\item{push}{TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
 }
 \description{
 First delete any local copy in your directory and clone the repo from github.com/OHI-Science.

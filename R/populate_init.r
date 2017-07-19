@@ -2,23 +2,31 @@
 #'
 #' First delete any local copy in your directory and clone the repo from github.com/OHI-Science.
 #'
-#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
+#' @param repo_registry data frame with information about the repo 
 #' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
 #' @param gh_org github organization to place the repo. Default: ohi-science
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @export
 #'
-populate_init <- function(key,
+populate_init <- function(repo_registry,
                           dir_repo,
                           gh_org = 'OHI-Science',
                           push = TRUE){
 
+  ## create variables
+  key        <- repo_registry$study_key
+  study_area <- repo_registry$study_area
+  
   ## clone repo from github.com/ohi-science to local
   unlink(dir_repo, recursive=TRUE, force=TRUE)
-  repo <- git2r::clone(sprintf('https://github.com/%s/%s', gh_org, key),
-                       normalizePath(dir_repo, mustWork=FALSE))
-
+  repo <- ohirepos::clone_repo(dir_repo,
+                               sprintf('https://github.com/%s/%s.git',
+                                       gh_org, key))
+  ## if this error, make sure you created the repo online!
+  # Error in git2r::clone(git_url, normalizePath(dir_repo, mustWork = FALSE)) : 
+  # Error in 'git2r_clone': Unable to authenticate with supplied credentials 
+  
   ## get remote branches
   remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
 

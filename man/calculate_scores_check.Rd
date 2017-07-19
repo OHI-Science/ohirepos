@@ -4,10 +4,12 @@
 \alias{calculate_scores_check}
 \title{Calculate scores for OHI repository}
 \usage{
-calculate_scores_check(dir_scenario)
+calculate_scores_check(repo_registry, push = FALSE)
 }
 \arguments{
-\item{dir_scenario}{full path of temporary OHI repo and scenario, e.g. \code{~/github/clip-n-ship/gye}}
+\item{repo_registry}{data frame with information about the repo}
+
+\item{push}{T/F: do you want to add, commit, and push? Defaults to FALSE.}
 }
 \value{
 TBD
