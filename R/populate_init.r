@@ -5,7 +5,7 @@
 #' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
 #' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
 #' @param gh_org github organization to place the repo. Default: ohi-science
-#' #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
+#' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @export
 #'
@@ -54,4 +54,6 @@ populate_init <- function(key,
     system(sprintf('cd %s; git push origin master', dir_repo))
   }
 
+  return(repo)
+  
 }

@@ -8,7 +8,7 @@
 #' @param gh_org GitHub organization, defaults to 'OHI-Science'
 #' @param multi_nation T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)
 #'
-#' @return populates OHI repo with layers from global assessments
+#' @return repo
 #' @export
 #'
 #' @examples
@@ -202,4 +202,6 @@ populate_layers <- function(key,
   ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
               flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
 
+  return(repo)
+  
 }
