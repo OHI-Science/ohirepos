@@ -4,14 +4,9 @@
 \alias{populate_layers}
 \title{Populate new OHI repos with layers from global assessments}
 \usage{
-populate_layers(key, dir_repo, repo_registry, gh_org = "OHI-Science",
-  multi_nation = FALSE)
+populate_layers(repo_registry, gh_org = "OHI-Science", multi_nation = FALSE)
 }
 \arguments{
-\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
-
-\item{dir_repo}{full path of temporary OHI repo e.g. \code{~/github/clip-n-ship/gye}}
-
 \item{repo_registry}{data frame with information about the repo}
 
 \item{gh_org}{GitHub organization, defaults to 'OHI-Science'}

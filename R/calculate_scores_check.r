@@ -13,7 +13,13 @@
 calculate_scores_check <- function(repo_registry, push = FALSE){
 
   ## create variables
-  dir_scenario <- file.path(dir_repo, repo_registry$scenario_name )
+  dir_repo     <- repo_registry$dir_repo
+  dir_scenario <- file.path(dir_repo, repo_registry$scenario_name)
+  dir_temp     <- file.path(dir_scenario, 'temp')
+  wd           <- getwd()
+  
+  ## create a temp folder for reference point stuff
+  if(!file.exists(dir_temp)) dir.create(dir_temp)
   
   ## TODO this is just temp until Mel merges dev to regular
   remove.packages("ohicore")
@@ -63,5 +69,8 @@ calculate_scores_check <- function(repo_registry, push = FALSE){
       branch = 'gh-pages')
     
   }
+  
+  ## reset working directory
+  setwd(wd)
   
 }

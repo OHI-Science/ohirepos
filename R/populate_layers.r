@@ -2,8 +2,6 @@
 
 #' Populate new OHI repos with layers from global assessments
 #'
-#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_repo full path of temporary OHI repo e.g. `~/github/clip-n-ship/gye`
 #' @param repo_registry data frame with information about the repo 
 #' @param gh_org GitHub organization, defaults to 'OHI-Science'
 #' @param multi_nation T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)
@@ -14,17 +12,19 @@
 #' @examples
 #'
 #'
-populate_layers <- function(key, 
-                            dir_repo,
-                            repo_registry,
+populate_layers <- function(repo_registry,
                             gh_org = 'OHI-Science',
                             multi_nation = FALSE){
 
   ## create variables
+  key           <- repo_registry$study_key
+  study_area    <- repo_registry$study_area
+  dir_repo      <- repo_registry$dir_repo
   dir_origin    <- repo_registry$dir_origin
   lyrs_origin   <- readr::read_csv(file.path(dir_origin, 'layers.csv'))
   dir_scenario  <- file.path(dir_repo, repo_registry$scenario_name)
   dir_shp_files <- repo_registry$dir_shp_files
+  
   
   ## clone repo master branch
   unlink(dir_repo, recursive=TRUE, force=TRUE)

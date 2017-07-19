@@ -1,7 +1,6 @@
 #' commit_and_push
 #'
-#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_repo local directory where you have cloned the repo (probably somewhere temporary)
+#' @param repo_registry data frame with information about the repo 
 #' @param commit_message short message in quotes to accompany commit
 #' @param branch GitHub branch to push, defaults to 'master'
 #'
@@ -9,10 +8,14 @@
 #' @export
 #'
 #' @examples
-commit_and_push <- function(key, 
-                            dir_repo, 
+#' 
+commit_and_push <- function(repo_registry, 
                             commit_message, 
                             branch = 'master'){
+  
+  ## create variables
+  key      <- repo_registry$study_key
+  dir_repo <- repo_registry$dir_repo
   
   ## let us know what's going on
   cat(sprintf("git add, commit, and push rendered website for %s repo, ", key))

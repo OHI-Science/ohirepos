@@ -12,6 +12,7 @@
 populate_etc <- function(repo_registry) {
 
   ## create variables, some used for brewing below
+  dir_repo     <- repo_registry$dir_repo
   study_area   <- repo_registry$study_area
   scenario     <- repo_registry$scenario_name 
   dir_scenario <- file.path(dir_repo, scenario)

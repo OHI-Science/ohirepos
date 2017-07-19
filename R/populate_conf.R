@@ -11,6 +11,7 @@
 populate_conf <- function(repo_registry) {
 
   ## create variables
+  dir_repo   <- repo_registry$dir_repo
   dir_origin <- repo_registry$dir_origin
   dir_conf   <- file.path(dir_repo, repo_registry$scenario_name, 'conf')
    

@@ -4,12 +4,10 @@
 \alias{commit_and_push}
 \title{commit_and_push}
 \usage{
-commit_and_push(key, dir_repo, commit_message, branch = "master")
+commit_and_push(repo_registry, commit_message, branch = "master")
 }
 \arguments{
-\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
-
-\item{dir_repo}{local directory where you have cloned the repo (probably somewhere temporary)}
+\item{repo_registry}{data frame with information about the repo}
 
 \item{commit_message}{short message in quotes to accompany commit}
 
@@ -17,4 +15,7 @@ commit_and_push(key, dir_repo, commit_message, branch = "master")
 }
 \description{
 commit_and_push
+}
+\examples{
+
 }
