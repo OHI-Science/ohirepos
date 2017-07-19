@@ -25,12 +25,7 @@ deploy_website <- function(key,
                            clone           = TRUE,
                            push            = TRUE){
 
-  run_cmd = function(cmd){
-    cat(sprintf('running command:\n  %s\n', cmd))
-    system.time(system(cmd))
-  }
-
-
+  
   ## clone existing master branch
   if (clone) {
     unlink(dir_repo, recursive=TRUE, force=TRUE)
@@ -41,27 +36,27 @@ deploy_website <- function(key,
   
   ## create empty gh-pages branch
   remote_branches <- git2r::branches(repo)
-
+  
   if ('gh-pages' %in% remote_branches){
-
+    
     ## if gh-pages branch exists, ask if user wants to overwrite
     cat("gh-pages branch already exists, would you like to overwrite it?")
-
+    
   } else {
-
+    
     ## if gh-pages branch does not exist
-
+    
     system(sprintf('cd %s; git checkout --orphan gh-pages;  git rm -rf .', dir_repo))
-
+    
     ## copy gh-pages web files into dir_repo, excluding all files in .gitignore
-    run_cmd( ##
+    system.time(system(
       sprintf(
         'cd %s; rsync -rq \\
       --exclude=_site.brew.R --exclude=_site.brew.yml --exclude=index.brew.Rmd --exclude=scores.brew.Rmd --exclude=_other/ --exclude=.gitignore \\
       --include=_footer.html --exclude-from=.gitignore \\
       . %s',
-        system.file('gh-pages', package='ohirepos'), dir_repo))
-
+        system.file('gh-pages', package='ohirepos'), dir_repo)))
+    
     ## brew files
     brew::brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'),
                sprintf('%s/_site.yml', dir_repo))
@@ -71,34 +66,39 @@ deploy_website <- function(key,
                sprintf('%s/index.Rmd', dir_repo))
     brew::brew(system.file('gh-pages/scores.brew.Rmd', package='ohirepos'),
                sprintf('%s/scores.Rmd', dir_repo))
-
-
+    
+    
     ## add Rstudio project file
     file.copy(system.file('templates/template.Rproj', package='devtools'),
               sprintf('%s/%s.Rproj', dir_repo, key))
-
+    
     ## .nojekyll file rmarkdown.rstudio.com/rmarkdown_websites.html#publishing_websites
     system(sprintf('touch %s/.nojekyll', dir_repo))
-
+    
     ## add gitignore file
     writeLines(c(
       '.Rproj.user', '.Rhistory', '.RData', 'rsconnect', '.DS_Store',
       basename(dir_repo)
     ), file.path(dir_repo, '.gitignore'))
-
+    
     ## render website
     rmarkdown::render_site(dir_repo)
-
+    
     ## cd to dir_repo, git add, commit and push rendered website
     if (push) {
-
-      cat(sprintf("git add, commit, and push rendered website for %s repo", key))
-      run_cmd(sprintf(
-        "cd %s; git add --all; git add .gitignore .nojekyll;
-    git commit -m 'creating prep website with ohirepos';
-    git push origin gh-pages",
-        dir_repo))
+      
+      ## make sure .gitignore and .nojekyll get added
+      system(sprintf(
+        "cd %s; git add --all; git add .gitignore .nojekyll"))
+      
+      ## commit and push
+      ohirepos::commit_and_push(
+        key, 
+        dir_repo,
+        commit_message = sprintf("push %s rendered website", key), 
+        branch = 'gh-pages')
+      
     }
-
+    
   }
 }

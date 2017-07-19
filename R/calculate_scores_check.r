@@ -3,13 +3,14 @@
 #' Calculate scores for OHI repository
 #'
 #' @param repo_registry data frame with information about the repo 
+#' @param push T/F: do you want to add, commit, and push? Defaults to FALSE.
 #'
 #' @return TBD
 #' @export
 #'
 #' @examples
 #' \dontrun{# TBD}
-calculate_scores_check <- function(repo_registry){
+calculate_scores_check <- function(repo_registry, push = FALSE){
 
   ## create variables
   dir_scenario <- file.path(dir_repo, repo_registry$scenario_name )
@@ -23,7 +24,7 @@ calculate_scores_check <- function(repo_registry){
   #git2r::checkout(repo, 'master')
 
   # iterate through all scenarios (by finding layers.csv)
-  dirs_scenario = normalizePath(dirname(
+  dirs_scenario <- normalizePath(dirname(
     list.files(dir_scenario, '^layers.csv$', recursive=TRUE, full.names=TRUE)))
   
   for (dir_scen in dirs_scenario){ # dir_scen=dirs_scenario[1]
@@ -43,7 +44,7 @@ calculate_scores_check <- function(repo_registry){
 
     # calculate scenario scores
     scores = ohicore::CalculateAll(conf, layers)
-    write.csv(scores, 'scores.csv', na='', row.names=FALSE)
+    readr::write_csv(scores, 'scores.csv', na='')
 
     # document versions of packages and specifics of ohicore
     cat(
@@ -52,4 +53,15 @@ calculate_scores_check <- function(repo_registry){
       file='session.txt', sep='\n')
   }
 
+  if (push) {
+    
+    ## commit and push
+    ohirepos::commit_and_push(
+      key, 
+      dir_repo,
+      commit_message = sprintf("push calculated scores, etc", key), 
+      branch = 'gh-pages')
+    
+  }
+  
 }

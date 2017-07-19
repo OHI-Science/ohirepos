@@ -2,15 +2,13 @@
 #'
 #' Populate OHI repo with configuration folder
 #'
-#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param repo_registry 
+#' @param repo_registry data frame with information about the repo 
 #'
 #' @return key's repo with config folder populated
 #' @export
 #'
 
-populate_conf <- function(key, 
-                          repo_registry) {
+populate_conf <- function(repo_registry) {
 
   ## create variables
   dir_origin <- repo_registry$dir_origin
@@ -35,6 +33,7 @@ populate_conf <- function(key,
               file.path(dir_conf, f), 
               overwrite=TRUE)
   }
+  
   
   ## copy functions.R from local curated version
   file.copy(system.file('inst/master/functions_ohi-webapps_dev_eez2016.R', 
