@@ -2,48 +2,42 @@
 
 #' Populate other items in OHI repos
 #'
-#' @param key OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'
-#' @param dir_scenario full path of temporary OHI repo and scenario, e.g. `~/github/clip-n-ship/gye`
+#' @param repo_registry data frame with information about the repo 
 #'
 #' @return TBD
 #' @export
 #'
 #' @examples
 #' \dontrun{# TBD}
-populate_etc <- function(key, dir_scenario) {
+populate_etc <- function(repo_registry) {
 
-  ## calculate_scores.r:: copy ## TODO: make this a template. ----
-  fn <- 'calculate_scores.r'
-  file.copy(file.path('~/github/ohi-webapps/inst', fn),
-            file.path(dir_scenario, fn), overwrite=TRUE)
+  ## create variables, some used for brewing below
+  study_area   <- repo_registry$study_area
+  scenario     <- repo_registry$scenario_name 
+  dir_scenario <- file.path(dir_repo, scenario)
+  
+  ## brew R filenames, not extensions
+  brew_files = c("calculate_scores", "configure_toolbox") 
+  
+  for (f in brew_files){ # f = "config.R"
+    
+    brew::brew(
+      file   = system.file(sprintf("inst/master/%s.brew.R", f), package="ohirepos"),
+      output = sprintf("%s/%s.R", dir_scenario, f))
+    
+  }
 
-  ## calculate_scores.r:: update source()
-  readLines(file.path(dir_scenario, fn)) %>%
-     str_replace("ohi-global/eez[0-9]{4}", file.path(key, default_scenario)) %>%
-    writeLines(file.path(dir_scenario, fn))
-
-  ## configure_toolbox.r:: copy ## TODO: make this a template. ----
-  fn <- 'configure_toolbox.r'
-  file.copy(file.path('~/github/ohi-webapps/inst', fn),
-            file.path(dir_scenario, fn), overwrite=TRUE)
-
-  ## configure_toolbox.r:: update setwd()
-  readLines(file.path(dir_scenario, fn)) %>%
-    str_replace("ohi-global/eez[0-9]{4}", file.path(key, default_scenario)) %>%
-    writeLines(file.path(dir_scenario, fn))
-
-
-  ## copy install_ohicore.r
-  fn <- 'install_ohicore.r'
-  file.copy(file.path('~/github/ohi-webapps/inst', fn),
+  ## copy install_ohicore.R
+  fn <- 'install_ohicore.R'
+  file.copy(system.file(file.path('inst/master', fn), package="ohirepos"),
             file.path(dir_repo, fn), overwrite=TRUE)
 
-
-  ## copy temp/referencePoints.csv
-  fn <- 'referencePoints.csv'
-  dir_temp = file.path(dir_scenario, 'temp')
-  dir.create(dir_temp)
-  file.copy(file.path('~/github/ohi-webapps/inst', fn),
-            file.path(dir_temp, fn), overwrite=TRUE)
+  ## TODO decide whether keep this and how it works
+  # ## copy temp/referencePoints.csv
+  # fn <- 'referencePoints.csv'
+  # dir_temp = file.path(dir_scenario, 'temp')
+  # dir.create(dir_temp)
+  # file.copy(file.path('~/github/ohi-webapps/inst', fn),
+  #           file.path(dir_temp, fn), overwrite=TRUE)
 
 }
