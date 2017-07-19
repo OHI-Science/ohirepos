@@ -964,119 +964,99 @@ CP <- function(layers){
   
 }
 
-
-TR = function(layers, pct_ref = 90) {
-
-  status_year <- 2014
+TR = function(layers) {
   
   ## formula:
   ##  E   = Ep                         # Ep: % of direct tourism jobs. tr_jobs_pct_tourism.csv
   ##  S   = (S_score - 1) / (7 - 1)    # S_score: raw TTCI score, not normalized (1-7). tr_sustainability.csv
   ##  Xtr = E * S
-
+  
+  pct_ref = 90
+  
+  scen_year <- 2014 ## TODO Mel this one toolayers$data$scenario_year
+  
+  
   ## read in layers
-  tr_data  <- full_join(
-    layers$data[['tr_jobs_pct_tourism']] %>%
-      select(-layer),
-    layers$data[['tr_sustainability']] %>%
-      select(-layer),
-    by = c('rgn_id')) %>%
-    filter(year <= status_year)
-
+  tourism  <- layers$data[['tr_jobs_pct_tourism']] %>%
+      select(-layer)
+  sustain <- layers$data[['tr_sustainability']] %>%
+      select(-layer)
+  
+  tr_data  <- full_join(tourism, sustain, by = c('rgn_id', 'year'))
+  
   tr_model <- tr_data %>%
     mutate(
       E   = Ep,
       S   = (S_score - 1) / (7 - 1), # scale score from 1 to 7.
-      Xtr = E * S ) %>%
-    filter(year <= status_year & year > status_year - 5)
-  # five data years for trend calcs
-
-  # regions with Travel Warnings
-  ### adjust the travel warning years...these always reflect the current year
-  ### but the other datasets will lag
-  if (exists('scenarios')) { ## if global scenarios
-    scenario_year <- as.numeric(substring(scenario, 4,7))
-    offset_years <- scenario_year - status_year
-
-    ## read in layers for regions with Travel Warnings
-    rgn_travel_warnings <- layers$data[['tr_travelwarnings']] %>%
-      select(rgn_id, year, multiplier) %>%
-      mutate(year = year - offset_years)
-
-    ## incorporate Travel Warnings
-    tr_model <- tr_model %>%
-      left_join(rgn_travel_warnings, by = c('rgn_id', 'year')) %>%
-      mutate(Xtr = ifelse(!is.na(multiplier), multiplier * Xtr, Xtr)) %>%
-      select(-multiplier)
-
-  } ## end if (exists('scenarios'))
-
+      Xtr = E * S )
+  
+  
   ### Calculate status based on quantile reference (see function call for pct_ref)
   tr_model <- tr_model %>%
-    select(rgn_id, year, Xtr) %>%
-    left_join(tr_model %>%
-                group_by(year) %>%
-                summarize(Xtr_q = quantile(Xtr, probs = pct_ref/100, na.rm = TRUE)),
-              by = 'year') %>%
-    mutate(
-      Xtr_rq  = ifelse(Xtr / Xtr_q > 1, 1, Xtr / Xtr_q)) # rescale to qth percentile, cap at 1
-
+    group_by(year) %>%
+    mutate(Xtr_q = quantile(Xtr, probs = pct_ref/100, na.rm = TRUE)) %>%
+    mutate(status  = ifelse(Xtr / Xtr_q > 1, 1, Xtr / Xtr_q)) %>% # rescale to qth percentile, cap at 1
+    ungroup()
+  
+  
   ## reference points
   ref_point <- tr_model %>%
-    filter(year == status_year) %>%
+    filter(year == scen_year) %>%
     select(Xtr_q) %>%
-    unique()
-  rp <- read.csv('temp/referencePoints.csv', stringsAsFactors=FALSE) %>%
-    rbind(data.frame(goal = "TR", method = paste0('spatial: ', pct_ref, "th quantile"),
-                     reference_point = ref_point$Xtr_q))
-  write.csv(rp, 'temp/referencePoints.csv', row.names=FALSE)
-
-
-  adj_trend_year <- min(tr_model$year)
-
-
-  # calculate trend
-  tr_trend <- tr_model %>%
-    filter(!is.na(Xtr_rq)) %>%
-    arrange(year, rgn_id) %>%
-    group_by(rgn_id) %>%
-    do(mdl = lm(Xtr_rq ~ year, data=.),
-       adjust_trend = .$Xtr_rq[.$year == adj_trend_year]) %>%
-    summarize(rgn_id, trend = ifelse(coef(mdl)['year']==0, 0, coef(mdl)['year']/adjust_trend * 5)) %>%
-    ungroup() %>%
-    mutate(trend = ifelse(trend>1, 1, trend)) %>%
-    mutate(trend = ifelse(trend<(-1), (-1), trend)) %>%
-    mutate(trend = round(trend, 4)) %>%
-    select(rgn_id, score = trend) %>%
-    mutate(dimension = "trend")
-
-  # get status (as last year's value)
+    unique() %>%
+    data.frame() %>%
+    .$Xtr_q
+  
+  # write_ref_pts(goal = "TR",
+  #               method= paste0('spatial: ', as.character(pct_ref), "th quantile"),
+  #               ref_pt = as.character(ref_point))
+  # 
+  # get status
   tr_status <- tr_model %>%
-    arrange(year, rgn_id) %>%
+    filter(year == scen_year) %>%
+    select(region_id = rgn_id, score = status) %>%
+    mutate(score = score*100) %>%
+    mutate(dimension = 'status')
+  
+  
+  # calculate trend (rooted in jobs data)
+  data_year <- conf$scenario_data_years %>%
+    filter(scenario_year == scen_year) %>%
+    filter(layer_name == "tr_jobs_pct_tourism") %>%
+    .$data_year
+  
+  
+  trend_data <- tr_model %>%
+    filter(!is.na(status))
+  
+  trend_years <- (data_year-4):(data_year)
+  
+  adj_trend_year <- min(trend_years)
+  
+  tr_trend = trend_data %>%
     group_by(rgn_id) %>%
-    summarize(
-      dimension = 'status',
-      score     = last(Xtr_rq) * 100)
-
+    do(mdl = lm(status ~ year, data=.),
+       adjust_trend = .$status[.$year == adj_trend_year]) %>%
+    summarize(rgn_id, score = ifelse(coef(mdl)['year']==0, 0, coef(mdl)['year']/adjust_trend * 5)) %>%
+    ungroup() %>%
+    mutate(score = ifelse(score>1, 1, score)) %>%
+    mutate(score = ifelse(score<(-1), (-1), score)) %>%
+    mutate(score = round(score, 4)) %>%
+    mutate(dimension = "trend") %>%
+    select(region_id=rgn_id, score, dimension)
+  
   # bind status and trend by rows
   tr_score <- bind_rows(tr_status, tr_trend) %>%
     mutate(goal = 'TR')
-
-  if (conf$config$layer_region_labels=='rgn_global'){
-    # assign NA for uninhabitated islands
-    unpopulated = layers$data[['le_popn']] %>%
-      group_by(rgn_id) %>%
-      filter(count==0) %>%
-      select(rgn_id)
-    tr_score$score = ifelse(tr_score$rgn_id %in% unpopulated$rgn_id, NA, tr_score$score)
-  }
-
+  
+  
   # return final scores
   scores = tr_score %>%
-    select(region_id=rgn_id, goal, dimension, score)
-
+    select(region_id, goal, dimension, score)
+  
   return(scores)
 }
+
 
 LIV_ECO = function(layers, subgoal){
 
@@ -1571,68 +1551,97 @@ CW = function(layers){
 
 
 HAB = function(layers){
-
-  ## get the data:
-  health <-  layers$data[['hab_health']] %>%
-    select(rgn_id, habitat, health) %>%
+  
+  scen_year <- 2014 ## TODO Mel this one too layers$data$scenario_year
+  
+  
+  extent_lyrs <- c('hab_mangrove_extent', 'hab_seagrass_extent', 'hab_saltmarsh_extent', 'hab_coral_extent', 'hab_seaice_extent',
+                   'hab_softbottom_extent')
+  health_lyrs <- c('hab_mangrove_health', 'hab_seagrass_health', 'hab_saltmarsh_health', 'hab_coral_health', 'hab_seaice_health',
+                   'hab_softbottom_health')
+  trend_lyrs <- c('hab_mangrove_trend', 'hab_seagrass_trend', 'hab_saltmarsh_trend', 'hab_coral_trend', 'hab_seaice_trend',
+                  'hab_softbottom_trend')
+  
+  # get data together:  
+  extent <- SelectData2(extent_lyrs) %>%
+    filter(scenario_year == scen_year) %>%
+    select(region_id = rgn_id, habitat, extent=km2) %>%
     mutate(habitat = as.character(habitat))
-
-  trend <-  layers$data[['hab_trend']] %>%
-    select(rgn_id, habitat, trend) %>%
+  
+  health <- SelectData2(health_lyrs) %>%
+    filter(scenario_year == scen_year) %>%
+    select(region_id = rgn_id, habitat, health) %>%
     mutate(habitat = as.character(habitat))
-
-  extent <- layers$data[['hab_extent']] %>%
-    select(rgn_id, habitat, extent=km2) %>%
+  
+  trend <- SelectData2(trend_lyrs) %>%
+    filter(scenario_year == scen_year) %>%
+    select(region_id = rgn_id, habitat, trend) %>%
     mutate(habitat = as.character(habitat))
-
+  
+  
   # join and limit to HAB habitats
   d <- health %>%
-    full_join(trend, by = c('rgn_id', 'habitat')) %>%
-    full_join(extent, by = c('rgn_id', 'habitat')) %>%
-    filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%
+    full_join(trend, by = c('region_id', 'habitat')) %>%
+    full_join(extent, by = c('region_id', 'habitat')) %>%
+    filter(habitat %in% c('coral','mangrove','saltmarsh','seaice_edge','seagrass','soft_bottom')) %>%    
     mutate(w  = ifelse(!is.na(extent) & extent > 0, 1, NA)) %>%
     filter(!is.na(w))
-
+  
   if(sum(d$w %in% 1 & is.na(d$trend)) > 0){
     warning("Some regions/habitats have extent data, but no trend data.  Consider estimating these values.")
   }
-
+  
   if(sum(d$w %in% 1 & is.na(d$health)) > 0){
     warning("Some regions/habitats have extent data, but no health data.  Consider estimating these values.")
-  }
-
-
-  ## calculate scores
+  }  
+  
+  
+  ## calculate scores 
   status <- d %>%
-    group_by(rgn_id) %>%
+    group_by(region_id) %>%
     filter(!is.na(health)) %>%
-    summarize(
+    summarize(      
       score = pmin(1, sum(health) / sum(w)) * 100,
       dimension = 'status') %>%
     ungroup()
-
+  
   trend <- d %>%
-    group_by(rgn_id) %>%
-    filter(!is.na(trend)) %>%
-    summarize(
+    group_by(region_id) %>%
+    filter(!is.na(trend)) %>%      
+    summarize(      
       score =  sum(trend) / sum(w),
       dimension = 'trend')  %>%
     ungroup()
-
+  
   scores_HAB <- rbind(status, trend) %>%
     mutate(goal = "HAB") %>%
-    select(region_id=rgn_id, goal, dimension, score)
-
-  ## reference points
-  rp <- read.csv('temp/referencePoints.csv', stringsAsFactors=FALSE) %>%
-    rbind(data.frame(goal = "HAB", method = "Health/condition variable based on current vs. historic extent",
-                     reference_point = "varies for each region/habitat"))
-  write.csv(rp, 'temp/referencePoints.csv', row.names=FALSE)
-
+    select(region_id, goal, dimension, score)
+  
+  # ## reference points
+  # write_ref_pts(goal = "HAB", 
+  #               method= "Health/condition variable based on current vs. historic extent", 
+  #               ref_pt = "varies for each region/habitat")
+  
+  ## create weights file for pressures/resilience calculations  
+  
+  weights<- extent %>%
+    filter(habitat %in% c('seagrass',
+                          'saltmarsh',
+                          'mangrove',
+                          'coral',
+                          'seaice_edge',
+                          'soft_bottom')) %>%
+    filter(extent > 0) %>%
+    mutate(boolean = 1) %>%
+    mutate(layer = "element_wts_hab_pres_abs") %>%
+    select(rgn_id=region_id, habitat, boolean, layer)
+  
+  layers$data$element_wts_hab_pres_abs <- weights
+  
+  
   # return scores
-  return(scores_HAB)
+  return(scores_HAB)  
 }
-
 
 SPP = function(layers){
   scores <-   SelectLayersData(layers, layers=c('spp_status'='status','spp_trend'='trend'), narrow = TRUE) %>%
