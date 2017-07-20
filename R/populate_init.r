@@ -46,8 +46,13 @@ populate_init <- function(repo_registry,
   }
 
   ## add Rstudio project files. cannabalized devtools::add_rstudio_project() which only works for full R packages.
-  file.copy(system.file('templates/template.Rproj', package='devtools'), sprintf('%s.Rproj', key))
-  writeLines(c('.Rproj.user', '.Rhistory', '.RData'), '.gitignore')
+  file.copy(system.file('templates/template.Rproj', package='devtools'), 
+            sprintf('%s/%s.Rproj', dir_repo, key))
+  writeLines(c(
+    sprintf('%s/.Rproj.user', dir_repo), 
+    sprintf('%s/.Rhistory',   dir_repo), 
+    sprintf('%s/.RData',      dir_repo), 
+    sprintf('%s/.gitignore',  dir_repo)))
 
   ## README
   brew::brew(file   = system.file('inst/master/README.brew.md', package='ohirepos'),

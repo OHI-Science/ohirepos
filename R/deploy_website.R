@@ -93,8 +93,7 @@ deploy_website <- function(repo_registry,
       
       ## commit and push
       ohirepos::commit_and_push(
-        key, 
-        dir_repo,
+        repo_registry,
         commit_message = sprintf("push %s rendered website", key), 
         branch = 'gh-pages')
       

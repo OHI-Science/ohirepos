@@ -42,8 +42,7 @@ populate_prep <- function(repo_registry,
   if (push) {
 
     ohirepos::commit_and_push(
-      key, 
-      dir_repo, 
+      repo_registry,
       commit_message = sprintf("%s repo populated with prep folders", key), 
       branch = 'master')
   }
