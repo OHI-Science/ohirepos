@@ -10,7 +10,9 @@ output:
 source("./_site.R")
 ```
 
-Ocean Health Index scores are calculated for each region for each goal before being combined into an overall Index score for <%=study_area%>. <!---Add more text for your assessment here--->
+Ocean Health Index scores are calculated for each region for each goal before being combined into an overall Index score for <%=study_area%>. 
+
+Scores for each goal represent the present status for each goal measured against a set reference point (50% of the score) and the likely future status of the goal (50% of the score). Likely future status is calculated with the status, the trend (status score over the last 5 years), resilience actions (policies, initiatives, habitat protection, enforcement, local stewardship, etc), and cumulative pressures (human impacts to ocean habitats, pollution, social pressures, economic indicators, etc).
 
 Flower plots display preliminary scores, with each petal representing an individual goal. Petal lengths convey the score of the goal, thus longer petals are closer to achieving their target. Only goals that are relevant to a region are scored, otherwise they are set to NA with grey petals. All scores are on a scale from 0-100, and the center number is the region's Index score.
 

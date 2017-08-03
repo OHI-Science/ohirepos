@@ -1,0 +1,25 @@
+---
+title: <center>About
+author: 
+date: 
+output: html_document
+---
+
+<!--- please edit as needed!--->
+
+## How healthy are our oceans?
+
+Determining ocean health requires an approach that integrates social, economic, and environmental information. The Ocean Health Index (OHI) does this by measuring progress towards widely held goals that represent key benefits and services provided by marine ecosystems. By analyzing these goals together we obtain a comprehensive picture of the state of the ecosystem. 
+
+## Assessing ocean health in <%=study_area%>
+ 
+We are building a scientifically robust assessment of ocean health for <%=study_area%>. The OHI framework facilitates transparent and repeatable assessments of ocean health over time, and can be integrated into ongoing policy initiatives to support sustainable ocean management. We will build from previous OHI assessments and tailor the OHI framework to represent the cultural, social, and ecological characteristics and priorities of <%=study_area%> using the best available information and knowledge.
+
+This website will serve as a communication platform as we work so that we can share the process as well as final results. 
+
+
+## The Ocean Health Index project
+
+The Ocean Health Index is a way to combine social, economic, and environmental data to measure progress towards a suite of benefits people expect healthy oceans to provide – including seafood, protection from storms, and employment. Every year since 2012, the Ocean Health Index team has tracked change in global ocean health for 220 coastal nations and territories. The team has also helped foster a growing network of independent groups around the world that are using our science to measure how healthy their own oceans are.  
+
+Learn more at [ohi-science.org](http://ohi-science.org) and read our publications about [best practices for assessing ocean health](https://peerj.com/articles/1503/) and [how OHI assessments are transparent and repeatable](https://www.nature.com/articles/s41559-017-0160).
