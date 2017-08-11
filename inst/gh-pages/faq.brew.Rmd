@@ -5,9 +5,7 @@ output: html_document
 
 <!--- please edit as needed!--->
 
-
-<br><br>
-
+----
 
 ## Why is this study being done in <%=study_area%>?
 
@@ -25,13 +23,13 @@ We will develop a repeatable, transparent method for measuring progress toward h
 
 ## What year does this OHI assessment represent?  
 
-The assessment will be completed in [*year to be completed*]. It will represent the ocean health in this year using the best available information. The most recent data available will be incorporated into the assessment for each goal, so years may vary depending on the data available. This first assessment will serve as our baseline for future assessments. 
+The assessment will be completed in [*year to be completed*]. It will represent the ocean health in this year using the best available information *that will continue to be updated in the future*. The most recent data available will be incorporated into the assessment for each goal, so years may vary depending on the data set. This first assessment will serve as our baseline for future assessments. 
 
 <br>
 
 ## Will there be future assessments?
 
-OHI assessments can be updated annually or on other management time frames with less effort than its initial development. This is because all analysis is done with open source collaborative software and can be updated with the most recent data. <%=study_area%> OHI assessments will continue as long as there is ongoing interest and support from ocean management agencies and stakeholders. 
+OHI assessments can be updated annually or on other management time frames with less effort than its initial development. This is because all analysis is done with open source collaborative software (R, RStudio, Git, GitHub) and can be updated with the most recent data. <%=study_area%> OHI assessments will continue as long as there is ongoing interest and support from ocean management agencies and stakeholders. 
 
 <br>
 
@@ -71,7 +69,7 @@ The OHI is very adaptable and can incorporate new management targets, policies, 
 
 <br>
 
-## How can we have a large impact and create meaningful change using this index?
+## How can we have a large impact and create meaningful change using the OHI?
 
 The OHI incorporates diverse stakeholders to create a coalition for ocean health. The index will work to incorporate management and local stewardship actions to incentivize actions across private partners, agencies, managers, and policy makers to increase sustainable ocean use and ultimately ocean health. 
 

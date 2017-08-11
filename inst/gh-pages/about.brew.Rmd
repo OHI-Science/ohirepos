@@ -4,7 +4,7 @@ output: html_document
 
 <!--- please edit as needed!--->
 
-<br><br>
+----
 
 ## How healthy are our oceans?
 

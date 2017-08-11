@@ -6,6 +6,8 @@ output:
     fig_width: 1
 ---
 
+----
+
 The Ocean Health Index measures and tracks the benefits and services that the ocean provides for people now and into the future. This index is being developed with the support of local stakeholders to better understand how to sustainably balance current and future ocean use.
 
 
