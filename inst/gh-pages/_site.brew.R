@@ -21,3 +21,7 @@ layers <- readr::read_csv(file.path(dir_scenario, 'layers.csv'))
 weight <- readr::read_csv(file.path(dir_scenario, 'conf/goals.csv')) %>%
   select(goal, weight)
 
+## save local copy of conf/goals.Rmd
+conf_goals <- readr::read_lines(file.path(dir_scenario_gh, 'conf/goals.Rmd'))
+readr::write_lines(conf_goals, path = 'conf_goals.Rmd', append = FALSE)
+

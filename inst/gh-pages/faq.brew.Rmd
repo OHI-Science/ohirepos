@@ -59,7 +59,7 @@ Goal scores will respond to management targets through interactions with resilie
 
 ## How does the OHI relate to ongoing ocean management efforts?
 
-Management strategies can be tested with the OHI to understand cross sector impacts and benefits. The OHI is designed to provide context for management decisions and explore actions (in part through setting SMART reference points) that support sustainable ocean use. This assessment can be used to communicate how achieving these targets will support ocean health in <%=study_area%> 
+Management strategies can be tested with the OHI to understand cross sector impacts and benefits. The OHI is designed to provide context for management decisions and explore actions (in part through setting SMART reference points) that support sustainable ocean use. This assessment can be used to communicate how achieving these targets will support ocean health in <%=study_area%>. 
 
 <br>
 
