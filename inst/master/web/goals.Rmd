@@ -3,12 +3,11 @@ output: html_document
 ---
 
 ```{r set up, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 
 # data with information
-layers <- read.csv("../../../eez_layers_meta_data/layers_eez_base.csv")
-targets <- read.csv("../../../eez_layers_meta_data/layers_eez_targets.csv")
+layers  <- readr::read_csv("../../../eez_layers_meta_data/layers_eez_base.csv")
+targets <- read::csv("../../../eez_layers_meta_data/layers_eez_targets.csv")
 layers_web <- "http://ohi-science.org/ohi-global/layers.html"
 # setwd('eez2016/conf/')
 ```
@@ -16,7 +15,7 @@ layers_web <- "http://ohi-science.org/ohi-global/layers.html"
 
 ## Food Provision: Fisheries
 
-```{r, child='../../../global_supplement/goal_descriptions_short/FIS.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/FIS.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -80,7 +79,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Food Provision: Mariculture
 
-```{r, child='../../../global_supplement/goal_descriptions_short/MAR.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/MAR.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -145,7 +144,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Artisanal Fishing Opportunity 
 
-```{r, child='../../../global_supplement/goal_descriptions_short/AO.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/AO.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -209,7 +208,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Natural Products
 
-```{r, child='../../../global_supplement/goal_descriptions_short/NP.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/NP.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -274,7 +273,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Carbon Storage
 
-```{r, child='../../../global_supplement/goal_descriptions_short/CS.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/CS.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -339,7 +338,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Coastal Protection
 
-```{r, child='../../../global_supplement/goal_descriptions_short/CP.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/CP.Rmd', results='asis', echo=FALSE}
 ```
 
 
@@ -405,7 +404,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Tourism & Recreation
 
-```{r, child='../../../global_supplement/goal_descriptions_short/TR.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/TR.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -470,7 +469,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Livelihoods & Economies: Livelihoods
 
-```{r, child='../../../global_supplement/goal_descriptions_short/LIV.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/LIV.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -534,7 +533,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Livelihoods & Economies: Economies
 
-```{r, child='../../../global_supplement/goal_descriptions_short/ECO.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/ECO.Rmd', results='asis', echo=FALSE}
 ```
 
 
@@ -599,7 +598,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Sense of Place: Iconic Species
 
-```{r, child='../../../global_supplement/goal_descriptions_short/ICO.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/ICO.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model
@@ -663,7 +662,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Sense of Place: Lasting Special Places
 
-```{r, child='../../../global_supplement/goal_descriptions_short/LSP.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/LSP.Rmd', results='asis', echo=FALSE}
 ```
 
 
@@ -729,7 +728,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Clean Waters
 
-```{r, child='../../../global_supplement/goal_descriptions_short/CW.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/CW.Rmd', results='asis', echo=FALSE}
 ```
 
 
@@ -795,7 +794,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Biodiversity: Species
 
-```{r, child='../../../global_supplement/goal_descriptions_short/SPP.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/SPP.Rmd', results='asis', echo=FALSE}
 ```
 
 
@@ -860,7 +859,7 @@ cat(paste(st_layers$info, collapse="\n\n"))
 
 ## Biodiversity: Habitats
 
-```{r, child='../../../global_supplement/goal_descriptions_short/HAB.Rmd', results='asis', echo=FALSE}
+```{r, child='goals/HAB.Rmd', results='asis', echo=FALSE}
 ```
 
 ### Data used in model

@@ -11,10 +11,15 @@
 populate_conf <- function(repo_registry) {
 
   ## create variables
-  dir_repo   <- repo_registry$dir_repo
-  dir_origin <- repo_registry$dir_origin
-  dir_conf   <- file.path(dir_repo, repo_registry$scenario_name, 'conf')
-   
+  key             <- repo_registry$study_key
+  dir_repo        <- repo_registry$dir_repo
+  dir_origin      <- repo_registry$dir_origin
+  dir_conf        <- file.path(dir_repo, repo_registry$scenario_name, 'conf')
+  gh_org          <- 'OHI-Science'
+  dir_scenario_gh <- sprintf(
+    "https://raw.githubusercontent.com/%s/%s/master/%s",
+    gh_org, key, repo_registry$scenario_name)
+  
   
   ## create conf folder
   
@@ -48,17 +53,27 @@ populate_conf <- function(repo_registry) {
     #     str_replace('^.*sprintf\\(\'temp\\/.*', '')
     # 
 
-  ### TODO: come back here...should I brew each one from a list or have each individual? How did Mel do it.
-  ## create subfolders in goals folder
-  dir.create(file.path(dir_conf, 'goals'), showWarnings=FALSE)
-  goals_rmds = c('FIS', 'MAR', 'AO', 'NP', 'CS', 'CP', 'LIV', 'ECO', 'TR', 'CW',
-                      'ICO', 'LSP', 'SPP', 'HAB')
-  # sapply(file.path(dir_conf, 'goals', goals_subfolders), dir.create) don't do this...
+
+  ## copy subfolders in goals folder ----
+  goal_subfolders <- list.files(system.file('master/web/goals', package='ohirepos'))
+  dir_web         <- file.path(dir_conf, 'web')
+  dir_goals       <- file.path(dir_conf, 'web/goals')
   
-  ## brew files  ...brew each one with a different name
-  # brew::brew(system.file('gh-pages/_site.brew.yml', package='ohirepos'),
-  #            sprintf('%s/_site.yml', dir_repo))
+  ## create goals dir if it doesn't already exist
+  if(!file.exists(dir_web)) dir.create(dir_web)
+  if(!file.exists(goal_folder)) dir.create(goal_folder)
   
-  ## And don't forget the parent goals.Rmd file
+  for (g in goal_subfolders){ # f = f_geojson
+   
+    file.copy(system.file(sprintf('master/web/goals/%s', g), 
+                          package='ohirepos'),
+              file.path(goal_folder, g), overwrite=TRUE)
+    
+  }
+ 
+  ## brew the parent goals.Rmd file
+  brew::brew(system.file(sprintf('master/web/goals.brew.Rmd'), package='ohirepos'),
+             file.path(dir_web, 'goals.Rmd'))
+  
 
 }
