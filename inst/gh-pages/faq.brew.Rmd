@@ -23,7 +23,7 @@ We will develop a repeatable, transparent method for measuring progress toward h
 
 ## What year does this OHI assessment represent?  
 
-The assessment will be completed in [*year to be completed*]. It will represent the ocean health in this year using the best available information *that will continue to be updated in the future*. The most recent data available will be incorporated into the assessment for each goal, so years may vary depending on the data set. This first assessment will serve as our baseline for future assessments. 
+The assessment will be completed in [*year to be completed*]. It will represent the ocean health in this year using the best available information that will continue to be updated in the future. The most recent data available will be incorporated into the assessment for each goal, so years may vary depending on the data set. This first assessment will serve as our baseline for future assessments. 
 
 <br>
 
