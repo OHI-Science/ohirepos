@@ -4,10 +4,13 @@
 \alias{calculate_scores_check}
 \title{Calculate scores for OHI repository}
 \usage{
-calculate_scores_check(repo_registry, push = FALSE)
+calculate_scores_check(repo_registry, ohicore_version = "ohicore",
+  push = FALSE)
 }
 \arguments{
 \item{repo_registry}{data frame with information about the repo}
+
+\item{ohicore_version}{string with version written as 'ohicore' (default) or 'ohicore@branch_name'}
 
 \item{push}{T/F: do you want to add, commit, and push? Defaults to FALSE.}
 }

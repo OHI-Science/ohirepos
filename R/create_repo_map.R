@@ -22,6 +22,8 @@ create_repo_map <- function(repo_registry,
   dir_scenario_sp <- file.path(dir_scenario, 'spatial')
   dir_conf        <- file.path(dir_scenario, 'conf')
   dir_web         <- file.path(dir_conf, 'web')
+  dir_shp_in      <- file.path(repo_registry$dir_shp_in)
+  dir_shp_out     <- file.path(repo_registry$dir_shp_out)
   shp_name        <- repo_registry$name_shp_files
   
   
@@ -37,31 +39,6 @@ create_repo_map <- function(repo_registry,
   if (!file.exists(dir_scenario_sp)) dir.create(dir_scenario_sp)
   if (!file.exists(dir_conf))        dir.create(dir_conf)
   if (!file.exists(dir_web))         dir.create(dir_web)
-
-  
-  ## create filepaths for shapefiles ----
-  if (stringr::str_detect(repo_registry$dir_shp_in, 'git-annex')) {
-  
-    dir_M <- c('Windows' = '//mazu.nceas.ucsb.edu/ohi',
-               'Darwin'  = '/Volumes/ohi',    ### connect (cmd-K) to smb://mazu/ohi
-               'Linux'   = '/home/shares/ohi')[[ Sys.info()[['sysname']] ]]
-    
-    ## in
-    d_in  <- file.path(repo_registry$dir_shp_in) %>% 
-      stringr::str_split(pattern = '/git-annex/') 
-    dir_shp_in <- sprintf('%s/git-annex/%s', dir_M, d_in[[1]][2])
-    
-    ## out
-    d_out <- file.path(repo_registry$dir_shp_out) %>% 
-      stringr::str_split(pattern = '/git-annex/') 
-    dir_shp_out <- sprintf('%s/git-annex/%s', dir_M, d_out[[1]][2])
-  
-  } else {
-    
-    dir_shp_in  <- file.path(repo_registry$dir_shp_in)
-    dir_shp_out <- file.path(repo_registry$dir_shp_out)
-    
-  }
   
   
   ## process shapefiles; ensure projection and rename ----
@@ -74,14 +51,16 @@ create_repo_map <- function(repo_registry,
                       pattern = stringr::str_to_lower('label'))
   names(shp)[d] <- 'rgn_name'
   
-  ## check column names present
-  if (!all(c('rgn_id', 'rgn_name') %in% names(shp) )) {
-    stop('Please ensure the shp@data columns names include "rgn_id" and "rgn_name"')
+  
+  ## final check that all column names present
+  if (!all(c('rgn_id', 'rgn_name', 'area_km2') %in% names(shp) )) {
+    stop('Please ensure the shp@data columns names include "rgn_id", "rgn_name", and "area_km2"')
   }
+  
   
   ## drop other column names, arrange
   shp@data <- shp@data %>%
-    dplyr::select(rgn_id, rgn_name) %>%
+    dplyr::select(rgn_id, rgn_name, area_km2) %>%
     dplyr::arrange(rgn_id)
   
   

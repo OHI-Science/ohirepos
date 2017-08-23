@@ -61,13 +61,13 @@ populate_conf <- function(repo_registry) {
   
   ## create goals dir if it doesn't already exist
   if(!file.exists(dir_web)) dir.create(dir_web)
-  if(!file.exists(goal_folder)) dir.create(goal_folder)
+  if(!file.exists(dir_goals)) dir.create(dir_goals)
   
   for (g in goal_subfolders){ # f = f_geojson
    
     file.copy(system.file(sprintf('master/web/goals/%s', g), 
                           package='ohirepos'),
-              file.path(goal_folder, g), overwrite=TRUE)
+              file.path(dir_goals, g), overwrite=TRUE)
     
   }
  

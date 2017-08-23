@@ -22,6 +22,7 @@ Imports:
     geojsonio,
     git2r,
     rgdal,
+    rgeos,
     sp,
     stringr,
     tidyverse (>= 1.0.0),
