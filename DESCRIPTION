@@ -18,11 +18,14 @@ BugReports: https://github.com/OHI-Science/ohirepos/issues
 Depends:
     R (>= 3.1.0)
 Imports:
-    tidyverse (>= 1.0.0),
-    rgdal,
-    stringr,
-    git2r,
     brew,
+    geojsonio,
+    git2r,
+    rgdal,
+    sp,
+    stringr,
+    tidyverse (>= 1.0.0),
+    tools,
     yaml
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)

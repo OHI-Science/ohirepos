@@ -23,7 +23,7 @@ populate_layers <- function(repo_registry,
   dir_origin    <- repo_registry$dir_origin
   lyrs_origin   <- readr::read_csv(file.path(dir_origin, 'layers.csv'))
   dir_scenario  <- file.path(dir_repo, repo_registry$scenario_name)
-  dir_shp_files <- repo_registry$dir_shp_files
+  dir_shp_out <- repo_registry$dir_shp_out
   
   
   ## clone repo master branch
@@ -53,7 +53,7 @@ populate_layers <- function(repo_registry,
   csv      <- 'rgn_offshore_data.csv'
   ix       <- which(lyrs_key$layer == lyr_area)
   lyrs_key$rgns_in[ix]  <-  'subcountry'
-  lyrs_key$path_in[ix]  <-  file.path(dir_shp_files, csv) ## JSL 7/14 deleted: file.path(dir_shp_files, 'spatial', csv)
+  lyrs_key$path_in[ix]  <-  file.path(dir_shp_out, csv) 
   lyrs_key$filename[ix] <-  sprintf('%s.csv', lyr_area)
 
   ## save a copy of rgn_area TODO: maybe move this to create_repo_map.r?
@@ -90,11 +90,11 @@ populate_layers <- function(repo_registry,
     'element_wts_cp_km2_x_protection', ## TODO: discuss with Mel; added 7/17/2017
     'element_wts_cs_km2_x_storage', 
     'element_wts_hab_pres_abs')
-  lyrs_key = filter(lyrs_key, !layer %in% lyrs_le_rm)
+  lyrs_key <- filter(lyrs_key, !layer %in% lyrs_le_rm)
 
 
   ## match OHI+ regions to global regions ---- ## TODO do i want to rename
-  rgns_key = read.csv(file.path(dir_shp_files, 'rgn_offshore_data.csv')) %>%
+  rgns_key <- read_csv(file.path(dir_shp_out, 'rgn_offshore_data.csv')) %>%
     select(rgn_id, rgn_name) %>%
     mutate(rgn_id_origin   = repo_registry$rgn_id_global, 
            rgn_name_origin = repo_registry$rgn_name_global)

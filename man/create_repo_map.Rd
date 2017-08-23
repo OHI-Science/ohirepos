@@ -4,14 +4,17 @@
 \alias{create_repo_map}
 \title{Title}
 \usage{
-create_repo_map(key, dir_spatial, dir_scenario)
+create_repo_map(repo_registry, gh_org = "OHI-Science", push = TRUE)
 }
 \arguments{
-\item{key}{OHI assessment identifier, e.g. 'gye' for 'Gulf of Guayaquil'}
+\item{repo_registry}{data frame with information about the repo}
 
-\item{dir_spatial}{directory of shapefiles on git-annex}
+\item{gh_org}{GitHub organization, defaults to 'OHI-Science'}
 
-\item{dir_scenario}{OHI scenario directory}
+\item{push}{TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
+}
+\value{
+repo
 }
 \description{
 Title
