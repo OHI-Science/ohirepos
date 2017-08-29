@@ -23,7 +23,7 @@ populate_layers <- function(repo_registry,
   dir_origin    <- repo_registry$dir_origin
   lyrs_origin   <- readr::read_csv(file.path(dir_origin, 'layers.csv'))
   dir_scenario  <- file.path(dir_repo, repo_registry$scenario_name)
-  dir_shp_out <- repo_registry$dir_shp_out
+  dir_shp_out   <- repo_registry$dir_shp_out
   
   
   ## clone repo master branch

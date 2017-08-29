@@ -805,6 +805,17 @@ CS <- function(layers){
       dimension = 'status') %>%
     ungroup()
 
+  ## in case no habitat data, set to NA
+  if (nrow(status) == 0) {
+
+    status <- data_frame(
+      dimension = 'status',
+      region_id = extent$region_id,
+      score     = NA) %>%
+      filter(!is.na(region_id))
+
+  }
+
   # trend
 
   trend <- d %>%
@@ -815,6 +826,15 @@ CS <- function(layers){
       dimension = 'trend') %>%
     ungroup()
 
+  ## in case no habitat data, set to NA
+  if (nrow(trend) == 0) {
+
+    trend <- data_frame(
+      dimension = 'trend',
+      region_id = extent$region_id,
+      score     = NA) %>%
+      filter(!is.na(region_id))
+  }
 
   scores_CS <- rbind(status, trend)  %>%
     mutate(goal = 'CS') %>%
