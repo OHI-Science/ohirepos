@@ -37,10 +37,10 @@ deploy_website <- function(repo_registry,
   ## create empty gh-pages branch
   remote_branches <- git2r::branches(repo)
 
-  if ('gh-pages' %in% remote_branches){
+  if ('gh-pages' %in% names(remote_branches)){
 
-    ## if gh-pages branch exists, ask if user wants to overwrite
-    cat("gh-pages branch already exists, would you like to overwrite it?")
+    ## if gh-pages branch exists, ask if user wants to overwrite <-  this is not working at the moment, 
+    stop("gh-pages branch already exists, delete branch first to overwrite")
 
   } else {
 

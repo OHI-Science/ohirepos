@@ -240,7 +240,7 @@ MAR = function(layers){
 
   # fill in gaps with no data
   rky <- spread(rky, year, tonnes)
-  rky <- gather(rky, "year", "tonnes", 4:ncol(rky))
+  rky <- gather(rky, "year", "tonnes", -c(1:3))
 
 
   # 4-year rolling mean of data
