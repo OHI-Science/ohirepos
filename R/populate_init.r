@@ -2,7 +2,7 @@
 #'
 #' First delete any local copy in your directory and clone the repo from github.com/OHI-Science.
 #'
-#' @param repo_registry data frame with information about the repo 
+#' @param repo_registry data frame with information about the repo
 #' @param gh_org github organization to place the repo. Default: ohi-science
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
@@ -16,16 +16,22 @@ populate_init <- function(repo_registry,
   key        <- repo_registry$study_key
   study_area <- repo_registry$study_area
   dir_repo   <- repo_registry$dir_repo
-  
+  url_repo   <- sprintf('https://github.com/%s/%s.git', gh_org, key)
+
   ## clone repo from github.com/ohi-science to local
   unlink(dir_repo, recursive=TRUE, force=TRUE)
-  repo <- ohirepos::clone_repo(dir_repo,
-                               sprintf('https://github.com/%s/%s.git',
-                                       gh_org, key))
+
+  if (RCurl::url.exists(url_repo)) {
+
+  repo <- ohirepos::clone_repo(dir_repo, url_repo)
+
+  } else {
+    message(sprintf("%s not found...did you remember to make this repo?", url_repo))
   ## if this error, make sure you created the repo online!
-  # Error in git2r::clone(git_url, normalizePath(dir_repo, mustWork = FALSE)) : 
-  # Error in 'git2r_clone': Unable to authenticate with supplied credentials 
-  
+  # Error in git2r::clone(git_url, normalizePath(dir_repo, mustWork = FALSE)) :
+  # Error in 'git2r_clone': Unable to authenticate with supplied credentials
+  }
+
   ## get remote branches
   remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
 
@@ -46,12 +52,12 @@ populate_init <- function(repo_registry,
   }
 
   ## add Rstudio project files. cannabalized devtools::add_rstudio_project() which only works for full R packages.
-  file.copy(system.file('templates/template.Rproj', package='devtools'), 
+  file.copy(system.file('templates/template.Rproj', package='devtools'),
             sprintf('%s/%s.Rproj', dir_repo, key))
   writeLines(c(
-    sprintf('%s/.Rproj.user', dir_repo), 
-    sprintf('%s/.Rhistory',   dir_repo), 
-    sprintf('%s/.RData',      dir_repo), 
+    sprintf('%s/.Rproj.user', dir_repo),
+    sprintf('%s/.Rhistory',   dir_repo),
+    sprintf('%s/.RData',      dir_repo),
     sprintf('%s/.gitignore',  dir_repo)))
 
   ## README
@@ -67,5 +73,5 @@ populate_init <- function(repo_registry,
   }
 
   return(repo)
-  
+
 }
