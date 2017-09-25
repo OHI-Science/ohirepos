@@ -1,6 +1,6 @@
 # populate_etc.r
 
-#' Populate other items in OHI repos
+#' Populate other items in OHI repos.
 #'
 #' @param repo_registry data frame with information about the repo 
 #'
@@ -20,10 +20,11 @@ populate_etc <- function(repo_registry) {
   ## brew R filenames, not extensions
   brew_files = c("calculate_scores", "configure_toolbox") 
   
-  for (f in brew_files){ # f = "config.R"
+  for (f in brew_files){ # f = ""configure_toolbox""
     
     brew::brew(
-      file   = system.file(sprintf("inst/master/%s.brew.R", f), package="ohirepos"),
+      file   = system.file(sprintf("inst/master/%s.brew.R", f), 
+                           package="ohirepos"),
       output = sprintf("%s/%s.R", dir_scenario, f))
     
   }

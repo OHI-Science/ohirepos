@@ -2,7 +2,7 @@
 % Please edit documentation in R/populate_etc.r
 \name{populate_etc}
 \alias{populate_etc}
-\title{Populate other items in OHI repos}
+\title{Populate other items in OHI repos.}
 \usage{
 populate_etc(repo_registry)
 }
@@ -13,7 +13,7 @@ populate_etc(repo_registry)
 TBD
 }
 \description{
-Populate other items in OHI repos
+Populate other items in OHI repos.
 }
 \examples{
 \dontrun{# TBD}
