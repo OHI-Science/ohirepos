@@ -42,7 +42,7 @@ populate_conf <- function(repo_registry) {
   
   
   ## copy functions.R from local curated version
-  file.copy(system.file('inst/master/functions_ohi-webapps_dev_eez2016.R', 
+  file.copy(system.file('inst/master/functions_tmp_eez2017.R', 
                         package='ohirepos'),
             file.path(dir_conf, 'functions.R'), overwrite=TRUE)
   
@@ -63,7 +63,7 @@ populate_conf <- function(repo_registry) {
   if(!file.exists(dir_web)) dir.create(dir_web)
   if(!file.exists(dir_goals)) dir.create(dir_goals)
   
-  for (g in goal_subfolders){ # f = f_geojson
+  for (g in goal_subfolders){ # g <- "AO.Rmd"
    
     file.copy(system.file(sprintf('master/web/goals/%s', g), 
                           package='ohirepos'),

@@ -32,7 +32,7 @@ FIS <- function(layers){
   # separate out the stock_id and taxonkey:
   c <- c %>%
     mutate(stock_id_taxonkey = as.character(stock_id_taxonkey)) %>%
-    mutate(taxon_key = str_sub(stock_id_taxonkey, -6, -1)) %>%
+    mutate(taxon_key = stringr::str_sub(stock_id_taxonkey, -6, -1)) %>%
     mutate(stock_id = substr(stock_id_taxonkey, 1, nchar(stock_id_taxonkey)-7)) %>%
     mutate(catch = as.numeric(catch)) %>%
     mutate(year = as.numeric(as.character(year))) %>%
@@ -192,7 +192,7 @@ MAR <- function(layers){
     mutate(popsum = popsum + 1)  # so 0 values do not cause errors when logged
 
   ## set data year for assessment
-  data_year <- max(harvest_tonnes$year)
+  data_year <- 2014
 
   ## combine layers
   rky <-  harvest_tonnes %>%
@@ -376,13 +376,6 @@ AO = function(layers){
     mutate(trend = ifelse(trend>1, 1, trend)) %>%
     mutate(trend = ifelse(trend<(-1), (-1), trend)) %>%
     mutate(trend = round(trend, 4))
-
-  ## reference points
-  rp <- read.csv('temp/referencePoints.csv', stringsAsFactors=FALSE) %>%
-    rbind(data.frame(goal = "AO", method = "??",
-                     reference_point = NA))
-  write.csv(rp, 'temp/referencePoints.csv', row.names=FALSE)
-
 
   # return scores
   scores = r.status %>%

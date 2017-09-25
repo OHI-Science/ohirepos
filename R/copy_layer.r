@@ -109,11 +109,11 @@ copy_layer <- function(lyr,
 
     ## fill global year as placeholder for year
     if ('year' %in% names(dtmp)) {
-      dtmp$year <- as.integer(stringr::str_extract(dir_origin, "\\d{4}"))
+      dtmp$year <- as.integer(repo_registry$scenario_year)
     }
 
     ## fill global year as placeholder for any others
-    dtmp[is.na(dtmp)] <- as.integer(stringr::str_extract(dir_origin, "\\d{4}"))
+    dtmp[is.na(dtmp)] <- as.integer(repo_registry$scenario_year)
 
     ## replace d with dtmp
     d <- dtmp
