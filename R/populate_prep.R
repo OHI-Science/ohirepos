@@ -30,7 +30,7 @@ populate_prep <- function(repo_registry,
 
   ## create subfolders in prep folder
   prep_subfolders = c('FIS', 'MAR', 'AO', 'NP', 'CS_CP_HAB', 'LIV', 'ECO', 'TR',
-                      'CW', 'ICO', 'LSP', 'SPP', 'pressures', 'resilience')
+                      'CW', 'LSP', 'SPP_ICO', '_pressures', '_resilience')
   sapply(file.path(dir_repo, 'prep', prep_subfolders), dir.create)
 
   ## populate prep folder's subfolders
