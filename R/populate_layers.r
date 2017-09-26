@@ -2,7 +2,7 @@
 
 #' Populate new OHI repos with layers from global assessments
 #'
-#' @param repo_registry data frame with information about the repo 
+#' @param repo_registry data frame with information about the repo
 #' @param gh_org GitHub organization, defaults to 'OHI-Science'
 #' @param multi_nation T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)
 #'
@@ -24,14 +24,14 @@ populate_layers <- function(repo_registry,
   lyrs_origin   <- readr::read_csv(file.path(dir_origin, 'layers.csv'))
   dir_scenario  <- file.path(dir_repo, repo_registry$scenario_name)
   dir_shp_out   <- repo_registry$dir_shp_out
-  
-  
+
+
   ## clone repo master branch
   unlink(dir_repo, recursive=TRUE, force=TRUE)
   repo <- ohirepos::clone_repo(dir_repo,
                                sprintf('https://github.com/%s/%s.git',
                                        gh_org, key))
-  
+
   ## copy layers.csv from global to tmp/ ----
   # write.csv(lyrs_origin, sprintf('%s/tmp/layers_%s.csv', dir_scenario, repo_registry$suffix_origin),   ### long term don't know if we need this
   #           na='', row.names=F)
@@ -40,7 +40,7 @@ populate_layers <- function(repo_registry,
   lyrs_key = lyrs_origin %>%
     select(
       targets, layer, filename, fld_value, units,
-      name, description) %>% 
+      name, description) %>%
     mutate(
       layer_gl = layer,
       path_in  = file.path(dir_origin, 'layers', filename),
@@ -53,7 +53,7 @@ populate_layers <- function(repo_registry,
   csv      <- 'rgn_offshore_data.csv'
   ix       <- which(lyrs_key$layer == lyr_area)
   lyrs_key$rgns_in[ix]  <-  'subcountry'
-  lyrs_key$path_in[ix]  <-  file.path(dir_shp_out, csv) 
+  lyrs_key$path_in[ix]  <-  file.path(dir_shp_out, csv)
   lyrs_key$filename[ix] <-  sprintf('%s.csv', lyr_area)
 
   ## save a copy of rgn_area TODO: maybe move this to create_repo_map.r?
@@ -85,18 +85,15 @@ populate_layers <- function(repo_registry,
     'le_wage_ref_base_value',
     'liveco_status',
     'liveco_trend',
-    'cntry_rgn', 
-    'cntry_georegions', 
-    'element_wts_cp_km2_x_protection', ## TODO: discuss with Mel; added 7/17/2017
-    'element_wts_cs_km2_x_storage', 
-    'element_wts_hab_pres_abs')
+    'cntry_rgn',
+    'cntry_georegions')
   lyrs_key <- filter(lyrs_key, !layer %in% lyrs_le_rm)
 
 
   ## match OHI+ regions to global regions ---- ## TODO do i want to rename
   rgns_key <- read_csv(file.path(dir_shp_out, 'rgn_offshore_data.csv')) %>%
     select(rgn_id, rgn_name) %>%
-    mutate(rgn_id_origin   = repo_registry$rgn_id_global, 
+    mutate(rgn_id_origin   = repo_registry$rgn_id_global,
            rgn_name_origin = repo_registry$rgn_name_global)
 
   ## if OHI+ match not possible... ## TODO July 17 not sure this necessary now, what did it do? Did you need to indicate some country?
@@ -110,34 +107,49 @@ populate_layers <- function(repo_registry,
 
   ## setup for copying layers over
   dir.create(sprintf('%s/layers', dir_scenario), showWarnings=FALSE)
-  rlist <- readr::read_csv(rgns_list) ## TODO do I need this
+    # rlist <- readr::read_csv(rgns_list) ## TODO do I need this
+    #
+    #
+    # ## copy layers one by one, saving differently if multi_nation
+   if (!multi_nation) {
 
+    #   ## old global to new custom countries
+    #   if (dim(rlist)[1] != dim(rgns_key)[1]) { # make sure Guayaquil doesn't match to both ECU and Galapagos
+    #     sc_cntries = subset(sc_studies, sc_key == key, gl_rgn_key, drop=T)
+    #     rgns_key <- rgns_key %>%
+    #       filter(cntry_key %in% sc_cntries)
+    #   }
 
-  ## copy layers one by one, saving differently if multi_nation
-  if (!multi_nation) {
-
-    ## old global to new custom countries
-    if (dim(rlist)[1] != dim(rgns_key)[1]) { # make sure Guayaquil doesn't match to both ECU and Galapagos
-      sc_cntries = subset(sc_studies, sc_key == key, gl_rgn_key, drop=T)
-      rgns_key <- rgns_key %>%
-        filter(cntry_key %in% sc_cntries)
-    }
+     ## element layers
+     elements <- c('element_wts_cp_km2_x_protection',
+                   'element_wts_cs_km2_x_storage',
+                   'element_wts_hab_pres_abs')
 
     ## for each layer (not multi_nation)...
-    for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
+     for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
 
-      ## call copy_layer and write to layer to csv
-      d <- ohirepos::copy_layer(lyr, 
-                                rgns_key,
-                                dir_origin, 
-                                dir_scenario,
-                                lyrs_key, 
-                                write_to_csv = TRUE)
+       if (lyr %in% elements) {
 
-      ## update filename (will change if placeholder)
-      lyrs_key$filename[lyrs_key$layer == lyr] <- basename(d)
+         ## copy elements files directly
+         readr::read_csv(sprintf('%s/layers/%s.csv', dir_origin, lyr)) %>%
+           readr::write_csv(sprintf('%s/layers/%s', dir_scenario,
+                                    lyrs_key$filename[lyrs_key$layer == lyr]), na="")
 
-    }
+       } else {
+
+         ## call copy_layer and write to layer to csv
+         d <- ohirepos::copy_layer(lyr,
+                                   rgns_key,
+                                   dir_origin,
+                                   dir_scenario,
+                                   lyrs_key,
+                                   write_to_csv = TRUE)
+
+         ## update filename (will change if placeholder)
+         lyrs_key$filename[lyrs_key$layer == lyr] <- basename(d)
+
+
+       }
 
   } else { # multi_nation == TRUE
 
@@ -167,7 +179,9 @@ populate_layers <- function(repo_registry,
       d <- ohirepos::copy_layer(lyr, rgns_key,
                       dir_origin, repo_registry$suffix_origin,
                       lyrs_key, write_to_csv = FALSE)
-      if ('rgn_id' %in% names(d)) d = d %>% arrange(rgn_id)
+
+      if ('rgn_id' %in% names(d))    d <- d %>% arrange(rgn_id)
+      if ('region_id' %in% names(d)) d <- d %>% arrange(region_id)
 
       ## update filename (will change if placeholder)
       lyrs_key$filename[lyrs_key$layer == lyr] <- basename(d)
@@ -203,5 +217,5 @@ populate_layers <- function(repo_registry,
               flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
 
   return(repo)
-  
+
 }
