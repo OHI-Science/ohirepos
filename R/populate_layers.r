@@ -107,11 +107,11 @@ populate_layers <- function(repo_registry,
 
   ## setup for copying layers over
   dir.create(sprintf('%s/layers', dir_scenario), showWarnings=FALSE)
-    # rlist <- readr::read_csv(rgns_list) ## TODO do I need this
-    #
-    #
-    # ## copy layers one by one, saving differently if multi_nation
-   if (!multi_nation) {
+  # rlist <- readr::read_csv(rgns_list) ## TODO do I need this
+  #
+  #
+  # ## copy layers one by one, saving differently if multi_nation
+  if (!multi_nation) {
 
     #   ## old global to new custom countries
     #   if (dim(rlist)[1] != dim(rgns_key)[1]) { # make sure Guayaquil doesn't match to both ECU and Galapagos
@@ -120,36 +120,37 @@ populate_layers <- function(repo_registry,
     #       filter(cntry_key %in% sc_cntries)
     #   }
 
-     ## element layers
-     elements <- c('element_wts_cp_km2_x_protection',
-                   'element_wts_cs_km2_x_storage',
-                   'element_wts_hab_pres_abs')
+    ## element layers
+    elements <- c('element_wts_cp_km2_x_protection',
+                  'element_wts_cs_km2_x_storage',
+                  'element_wts_hab_pres_abs')
 
     ## for each layer (not multi_nation)...
-     for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
+    for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
 
-       if (lyr %in% elements) {
+      if (lyr %in% elements) {
 
-         ## copy elements files directly
-         readr::read_csv(sprintf('%s/layers/%s.csv', dir_origin, lyr)) %>%
-           readr::write_csv(sprintf('%s/layers/%s', dir_scenario,
-                                    lyrs_key$filename[lyrs_key$layer == lyr]), na="")
+        ## copy elements files directly
+        readr::read_csv(sprintf('%s/layers/%s.csv', dir_origin, lyr)) %>%
+          readr::write_csv(sprintf('%s/layers/%s', dir_scenario,
+                                   lyrs_key$filename[lyrs_key$layer == lyr]), na="")
 
-       } else {
+      } else {
 
-         ## call copy_layer and write to layer to csv
-         d <- ohirepos::copy_layer(lyr,
-                                   rgns_key,
-                                   dir_origin,
-                                   dir_scenario,
-                                   lyrs_key,
-                                   write_to_csv = TRUE)
+        ## call copy_layer and write to layer to csv
+        d <- ohirepos::copy_layer(lyr,
+                                  rgns_key,
+                                  dir_origin,
+                                  dir_scenario,
+                                  lyrs_key,
+                                  write_to_csv = TRUE)
 
-         ## update filename (will change if placeholder)
-         lyrs_key$filename[lyrs_key$layer == lyr] <- basename(d)
+        ## update filename (will change if placeholder)
+        lyrs_key$filename[lyrs_key$layer == lyr] <- basename(d)
 
+      }
 
-       }
+    }
 
   } else { # multi_nation == TRUE
 
@@ -177,8 +178,8 @@ populate_layers <- function(repo_registry,
 
       ## call copy_layer and then write to layer to csv as separate step
       d <- ohirepos::copy_layer(lyr, rgns_key,
-                      dir_origin, repo_registry$suffix_origin,
-                      lyrs_key, write_to_csv = FALSE)
+                                dir_origin, repo_registry$suffix_origin,
+                                lyrs_key, write_to_csv = FALSE)
 
       if ('rgn_id' %in% names(d))    d <- d %>% arrange(rgn_id)
       if ('region_id' %in% names(d)) d <- d %>% arrange(region_id)
@@ -214,7 +215,7 @@ populate_layers <- function(repo_registry,
 
   ## check for empty layers
   ohicore::CheckLayers(layers_csv, file.path(dir_scenario, 'layers'),
-              flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
+                       flds_id=c('rgn_id','country_id','saup_id','fao_id','fao_saup_id'))
 
   return(repo)
 
