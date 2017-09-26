@@ -14,4 +14,4 @@ source("configure_toolbox.r")
 scores <- ohicore::CalculateAll(conf, layers)
 
 ## save scores as scores.csv
-write.csv(scores, 'scores.csv', na='', row.names=FALSE)
+readr::write_csv(scores, 'scores.csv', na='')
