@@ -384,7 +384,8 @@ AO = function(layers){
       r.trend %>%
         select(region_id, score=trend) %>%
         mutate(dimension='trend')) %>%
-    mutate(goal='AO') # dlply(scores, .(dimension), summary)
+    mutate(goal='AO')
+
   return(scores)
 }
 
@@ -707,9 +708,6 @@ NP <- function(scores, layers){
   np_sust    <- np_calc_sustainability(np_exp, np_risk)
   np_scores  <- np_calc_scores(np_sust, data_year)
 
-  # ## reference points
-  # write_ref_pts(goal = "NP", method = "Harvest peak within region times 0.65 buffer",
-  #               ref_pt = "varies for each region")
 
   return(np_scores)
 }
@@ -806,11 +804,6 @@ CS <- function(layers){
     mutate(goal = 'CS') %>%
     select(goal, dimension, region_id, score)
 
-  ## reference points
-  # write_ref_pts(goal = "CS",
-  #               method= "Health/condition variable based on current vs. historic extent",
-  #               ref_pt = "varies for each region/habitat")
-
   ## create weights file for pressures/resilience calculations
   weights <- extent %>%
     filter(extent > 0) %>%
@@ -819,6 +812,18 @@ CS <- function(layers){
     mutate(layer = "element_wts_cs_km2_x_storage") %>%
     select(rgn_id=region_id, habitat, extent_rank, layer)
 
+  ## if no weights, assign placeholder
+  if ( nrow(weights) == 0 ){
+    weights <- dplyr::bind_rows(
+      weights,
+      d %>%
+        group_by(region_id, habitat) %>%
+        summarize(
+          extent_rank = 1)) %>%
+      mutate(layer = "element_wts_cs_km2_x_storage")
+  }
+
+  ## overwrite this layer with the calculated weights
   layers$data$element_wts_cs_km2_x_storage <- weights
 
 
@@ -946,6 +951,17 @@ CP <- function(layers){
     mutate(layer = "element_wts_cp_km2_x_protection") %>%
     select(rgn_id=region_id, habitat, extent_rank, layer)
 
+  ## if no weights, assign placeholder
+  if ( nrow(weights) == 0 ){
+    weights <- dplyr::bind_rows(
+      weights,
+      d %>%
+        group_by(region_id, habitat) %>%
+        summarize(
+          extent_rank = 1))
+  }
+
+  ## overwrite this layer with the calculated weights
   layers$data$element_wts_cp_km2_x_protection <- weights
 
   # return scores
@@ -974,7 +990,7 @@ TR <- function(layers) {
   tr_data  <- full_join(tourism, sustain, by = c('region_id', 'year'))
 
   ## set data year for assessment
-  data_year <- max(tr_data$year)
+  data_year <- 2017
 
   tr_model <- tr_data %>%
     mutate(
@@ -1617,13 +1633,7 @@ HAB = function(layers){
     mutate(goal = "HAB") %>%
     select(region_id, goal, dimension, score)
 
-  # ## reference points
-  # write_ref_pts(goal = "HAB",
-  #               method= "Health/condition variable based on current vs. historic extent",
-  #               ref_pt = "varies for each region/habitat")
-
   ## create weights file for pressures/resilience calculations
-
   weights<- extent %>%
     filter(habitat %in% c('seagrass',
                           'saltmarsh',
