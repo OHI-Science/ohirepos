@@ -56,11 +56,10 @@ populate_layers <- function(repo_registry,
   lyrs_key$path_in[ix]  <-  file.path(dir_shp_out, csv)
   lyrs_key$filename[ix] <-  sprintf('%s.csv', lyr_area)
 
-  ## save a copy of rgn_area TODO: maybe move this to create_repo_map.r?
-  dir.create(dir_scenario, showWarning=FALSE)
-  dir.create(sprintf('%s/spatial', dir_scenario), showWarning=FALSE)
-  rgns_list <- sprintf('%s/spatial/regions_list.csv', dir_scenario)
-  file.copy(from =  lyrs_key$path_in[ix], to = rgns_list, overwrite=TRUE)
+  ## save a copy of rgn_area TODO: maybe move this to create_repo_map.r? Oct 2017: commented out for now and moved to create_repo_map.r; test and confirm then delete!
+  # dir.create(sprintf('%s/spatial', dir_scenario), showWarning=FALSE)
+  # rgns_list <- sprintf('%s/spatial/regions_list.csv', dir_scenario)
+  # file.copy(from =  lyrs_key$path_in[ix], to = rgns_list, overwrite=TRUE)
 
   ## drop cntry_* layers ## TODO July 2017 delete?
   lyrs_key = filter(lyrs_key, !grepl('^cntry_', layer))
@@ -106,6 +105,7 @@ populate_layers <- function(repo_registry,
   # }
 
   ## setup for copying layers over
+  # dir.create(dir_scenario, showWarning=FALSE)
   dir.create(sprintf('%s/layers', dir_scenario), showWarnings=FALSE)
   # rlist <- readr::read_csv(rgns_list) ## TODO do I need this
   #
