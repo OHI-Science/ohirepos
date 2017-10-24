@@ -1076,9 +1076,7 @@ LIV_ECO <- function(layers, subgoal){
 
   # multipliers from Table S10 (Halpern et al 2012 SOM)
   multipliers_jobs = data.frame('sector' = c('tour','cf', 'mmw', 'wte','mar'),
-                                'multiplier' = c(1, 1.582, 1.915, 1.88, 2.7)) # no multiplers for tour (=1)
-  # multipliers_rev  = data.frame('sector' = c('mar', 'tour'), 'multiplier' = c(1.59, 1)) # not used because GDP data is not by sector
-
+                                'multiplier' = c(1, 1.582, 1.915, 1.88, 2.7))
 
   # calculate employment counts
   le_employed = le_workforce_size %>%
@@ -1109,7 +1107,7 @@ LIV_ECO <- function(layers, subgoal){
   # LIV status
   liv_status = liv %>%
     filter(!is.na(jobs_adj) & !is.na(wage_usd))
-  # aia/subcountry2014 crashing b/c no concurrent wage data, so adding this check
+  # check if no concurrent wage data
   if (nrow(liv_status)==0){
     liv_status = liv %>%
       dplyr::select(region_id) %>%
@@ -1140,10 +1138,10 @@ LIV_ECO <- function(layers, subgoal){
       arrange(region_id, year) %>%
       mutate(
         # reference for jobs [j]: value in the current year (or most recent year) [c], relative to the value in a recent moving reference period [r] defined as 5 years prior to [c]
-        jobs_sum_first  = first(jobs_sum),                     # note:  `first(jobs_sum, order_by=year)` caused segfault crash on Linux with dplyr 0.3.0.2, so using arrange above instead
+        jobs_sum_first  = first(jobs_sum),
         # original reference for wages [w]: target value for average annual wages is the highest value observed across all reporting units
         # new reference for wages [w]: value in the current year (or most recent year) [c], relative to the value in a recent moving reference period [r] defined as 5 years prior to [c]
-        wages_avg_first = first(wages_avg)) %>% # note:  `first(jobs_sum, order_by=year)` caused segfault crash on Linux with dplyr 0.3.0.2, so using arrange above instead
+        wages_avg_first = first(wages_avg)) %>%
       # calculate final scores
       ungroup() %>%
       mutate(
@@ -1167,7 +1165,6 @@ LIV_ECO <- function(layers, subgoal){
     # get trend across years as slope of individual sectors for jobs and wages
     liv_trend = liv %>%
       filter(!is.na(jobs_adj) & !is.na(wage_usd)) %>%
-      # TODO: consider "5 year time spans" as having 5 [(max(year)-4):max(year)] or 6 [(max(year)-5):max(year)] member years
       filter(year >= max(year, na.rm=T) - 4) %>% # reference point is 5 years ago
       # get sector weight as total jobs across years for given region
       arrange(region_id, year, sector) %>%
@@ -1187,7 +1184,6 @@ LIV_ECO <- function(layers, subgoal){
         weight = weight,
         region_id = region_id,
         sector = sector,
-        # TODO: consider how the units affect trend; should these be normalized? cap per sector or later?
         sector_trend = pmax(-1, pmin(1, coef(mdl)[['year']] * 5))) %>%
       arrange(region_id, metric, sector) %>%
       # get weighted mean across sectors per region-metric
@@ -1261,7 +1257,6 @@ LIV_ECO <- function(layers, subgoal){
       weight = weight,
       region_id = region_id,
       sector = sector,
-      # TODO: consider how the units affect trend; should these be normalized? cap per sector or later?
       sector_trend = pmax(-1, pmin(1, coef(mdl)[['year']] * 5))) %>%
     # get weighted mean across sectors per region
     group_by(region_id) %>%
