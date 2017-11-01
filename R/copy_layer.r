@@ -19,7 +19,7 @@ copy_layer <- function(lyr,
                        write_to_csv = TRUE){
 
   ## setup
-  csv_in        <- sprintf('%s/layers/%s.csv', dir_origin, lyr)
+  csv_in        <- sprintf('%s/layers/%s', dir_origin, lyrs_key$filename[lyrs_key$layer == lyr])
   origin_rgn_id <-  unique(rgns_key$rgn_id_origin)
 
   ## read in layer, identify fields to keep 

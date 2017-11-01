@@ -57,9 +57,9 @@ populate_layers <- function(repo_registry,
   lyrs_key$filename[ix] <-  sprintf('%s.csv', lyr_area)
 
   ## save a copy of rgn_area TODO: maybe move this to create_repo_map.r? Oct 2017: commented out for now and moved to create_repo_map.r; test and confirm then delete!
-  # dir.create(sprintf('%s/spatial', dir_scenario), showWarning=FALSE)
-  # rgns_list <- sprintf('%s/spatial/regions_list.csv', dir_scenario)
-  # file.copy(from =  lyrs_key$path_in[ix], to = rgns_list, overwrite=TRUE)
+  dir.create(sprintf('%s/spatial', dir_scenario), showWarning=FALSE)
+  rgns_list <- sprintf('%s/spatial/regions_list.csv', dir_scenario)
+  file.copy(from =  lyrs_key$path_in[ix], to = rgns_list, overwrite=TRUE)
 
   ## drop cntry_* layers ## TODO July 2017 delete?
   lyrs_key = filter(lyrs_key, !grepl('^cntry_', layer))
@@ -90,7 +90,7 @@ populate_layers <- function(repo_registry,
 
 
   ## match OHI+ regions to global regions ---- ## TODO do i want to rename
-  rgns_key <- read_csv(file.path(dir_shp_out, 'rgn_offshore_data.csv')) %>%
+  rgns_key <- read_csv(file.path(dir_scenario, 'spatial/rgn_offshore_data.csv')) %>%
     select(rgn_id, rgn_name) %>%
     mutate(rgn_id_origin   = repo_registry$rgn_id_global,
            rgn_name_origin = repo_registry$rgn_name_global)
@@ -128,7 +128,7 @@ populate_layers <- function(repo_registry,
     ## for each layer (not multi_nation)...
     for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
 
-      if (lyr %in% elements) {
+      if ( lyr %in% elements ) {
 
         ## copy elements files directly
         readr::read_csv(sprintf('%s/layers/%s.csv', dir_origin, lyr)) %>%
