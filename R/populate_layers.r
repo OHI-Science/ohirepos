@@ -32,10 +32,6 @@ populate_layers <- function(repo_registry,
                                sprintf('https://github.com/%s/%s.git',
                                        gh_org, key))
 
-  ## copy layers.csv from global to tmp/ ----
-  # write.csv(lyrs_origin, sprintf('%s/tmp/layers_%s.csv', dir_scenario, repo_registry$suffix_origin),   ### long term don't know if we need this
-  #           na='', row.names=F)
-
   ## modify layers dataframe
   lyrs_key = lyrs_origin %>%
     select(
@@ -53,13 +49,8 @@ populate_layers <- function(repo_registry,
   csv      <- 'rgn_offshore_data.csv'
   ix       <- which(lyrs_key$layer == lyr_area)
   lyrs_key$rgns_in[ix]  <-  'subcountry'
-  lyrs_key$path_in[ix]  <-  file.path(dir_shp_out, csv)
+  # lyrs_key$path_in[ix]  <-  file.path(dir_shp_out, csv)
   lyrs_key$filename[ix] <-  sprintf('%s.csv', lyr_area)
-
-  ## save a copy of rgn_area TODO: maybe move this to create_repo_map.r? Oct 2017: commented out for now and moved to create_repo_map.r; test and confirm then delete!
-  dir.create(sprintf('%s/spatial', dir_scenario), showWarning=FALSE)
-  rgns_list <- sprintf('%s/spatial/regions_list.csv', dir_scenario)
-  file.copy(from =  lyrs_key$path_in[ix], to = rgns_list, overwrite=TRUE)
 
   ## drop cntry_* layers ## TODO July 2017 delete?
   lyrs_key = filter(lyrs_key, !grepl('^cntry_', layer))
@@ -85,31 +76,23 @@ populate_layers <- function(repo_registry,
     'liveco_status',
     'liveco_trend',
     'cntry_rgn',
-    'cntry_georegions')
+    'cntry_georegions', 
+    
+    "t_average_visitors", 
+    "t_visitor_gdp")
   lyrs_key <- filter(lyrs_key, !layer %in% lyrs_le_rm)
 
 
-  ## match OHI+ regions to global regions ---- ## TODO do i want to rename
-  rgns_key <- read_csv(file.path(dir_scenario, 'spatial/rgn_offshore_data.csv')) %>%
+  ## match OHI+ regions to global regions ---- 
+  rgns_key <- read_csv(file.path(dir_scenario, 'spatial/regions_list.csv')) %>%
     select(rgn_id, rgn_name) %>%
     mutate(rgn_id_origin   = repo_registry$rgn_id_global,
            rgn_name_origin = repo_registry$rgn_name_global)
 
-  ## if OHI+ match not possible... ## TODO July 17 not sure this necessary now, what did it do? Did you need to indicate some country?
-  # if (all(is.na(rgns_key$rgn_id_origin))){
-  #   rgns_key = rgns_key %>%
-  #     select(-rgn_id_global) %>%
-  #     left_join(sc_studies %>%
-  #                 select(gl_rgn_name = sc_name, rgn_id_global),
-  #               by= 'gl_rgn_name')
-  # }
 
   ## setup for copying layers over
-  # dir.create(dir_scenario, showWarning=FALSE)
   dir.create(sprintf('%s/layers', dir_scenario), showWarnings=FALSE)
-  # rlist <- readr::read_csv(rgns_list) ## TODO do I need this
-  #
-  #
+ 
   # ## copy layers one by one, saving differently if multi_nation
   if (!multi_nation) {
 
@@ -126,12 +109,12 @@ populate_layers <- function(repo_registry,
                   'element_wts_hab_pres_abs')
 
     ## for each layer (not multi_nation)...
-    for (lyr in lyrs_key$layer){ # lyr = "ao_access"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
+    for (lyr in lyrs_key$layer){ # lyr = "ao_access_mhi2017"   lyr = 'hd_subtidal_hb'  lyr = 'rgn_global' lyr = 'rgn_labels'
 
       if ( lyr %in% elements ) {
 
         ## copy elements files directly
-        readr::read_csv(sprintf('%s/layers/%s.csv', dir_origin, lyr)) %>%
+        readr::read_csv(lyrs_key$path_in[lyrs_key$layer == lyr]) %>%
           readr::write_csv(sprintf('%s/layers/%s', dir_scenario,
                                    lyrs_key$filename[lyrs_key$layer == lyr]), na="")
 

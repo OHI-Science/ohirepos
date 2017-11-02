@@ -19,7 +19,7 @@ copy_layer <- function(lyr,
                        write_to_csv = TRUE){
 
   ## setup
-  csv_in        <- sprintf('%s/layers/%s', dir_origin, lyrs_key$filename[lyrs_key$layer == lyr])
+  csv_in        <- lyrs_key$path_in[lyrs_key$layer == lyr]
   origin_rgn_id <-  unique(rgns_key$rgn_id_origin)
 
   ## read in layer, identify fields to keep 
@@ -76,7 +76,7 @@ copy_layer <- function(lyr,
 
   
   ## fill with placeholder data if d is empty ----
-  if (nrow(d) < 1) {
+  if ( nrow(d) < 1 ) {
 
     ## create layer full of NAs
     dtmp <- rgns_key %>%

@@ -69,27 +69,29 @@ create_repo_map <- function(repo_registry,
     dplyr::arrange(rgn_id)
 
 
-  ## write shapefile----
+  ## write shapefile to git-annex ----
   rgdal::writeOGR(shp, dsn=dir_shp_out,
                   'rgn_offshore_gcs', driver='ESRI Shapefile', overwrite=TRUE)
 
 
-  ## write geojson ----
+  ## write geojson to git-annex and copy it to repo/spatial ----
   f_geojson <- file.path(dir_shp_out, 'regions_gcs.geojson')
   geojsonio::geojson_json(shp) %>%
     geojsonio::geojson_write(file = f_geojson)
 
-
-  ## write .csv file to repo and git-annex ----
-  readr::write_csv(shp@data, file.path(dir_scenario_sp, 'rgn_offshore_data.csv'))
-  ## TODO <-  needs km2 as well readr::write_csv(shp@data, file.path(dir_shp_out, 'rgn_offshore_data.csv'))
-
-
-  ## copy geojson files to repo/spatial ----
-  file.copy(from = f_geojson,
-            to   = file.path(dir_scenario, 'spatial', basename(f_geojson)),
+   file.copy(from = f_geojson,
+            to   = file.path(dir_scenario_sp, basename(f_geojson)),
             overwrite=TRUE)
 
+   ## write .csv file to repo and git-annex and copy/rename it to repo/spatial----
+   f_data <- file.path(dir_shp_out, 'rgn_offshore_data.csv')
+   readr::write_csv(shp@data, f_data)
+   
+   file.copy(from = f_data,
+            to   = file.path(dir_scenario_sp, "regions_list.csv"),
+            overwrite=TRUE)
+
+ 
   ## brew viz_config.r with map centroid and zoom level ----
 
   shp_bb    <- data.frame(shp@bbox) # max of 2.25
