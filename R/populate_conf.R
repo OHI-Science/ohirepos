@@ -40,19 +40,28 @@ populate_conf <- function(repo_registry) {
               overwrite=TRUE)
   }
 
-
-  ## copy functions.R from local curated version
-  file.copy(base::system.file('inst/master/functions_tmp_eez2017.R',
-                        package='ohirepos'),
-            file.path(dir_conf, 'functions.R'), overwrite=TRUE)
-
+  
+  ## copy functions.R from local curated version if from global
+  if (dir_origin == "~/github/ohi-global/eez" ) {
+    
+    file.copy(base::system.file('inst/master/functions_tmp_eez2017.R',
+                                package='ohirepos'),
+              file.path(dir_conf, 'functions.R'), overwrite=TRUE)
+    
     #   rethink ref points stuff to be useful?
     #   ## write.csv(d_check, sprintf('temp/cs_data_%s.csv', scenario), row.names=FALSE)
     #   s <-  s %>%
     #     str_replace("write.csv\\(tmp, 'temp/.*", '') %>%
     #     str_replace('^.*sprintf\\(\'temp\\/.*', '')
     #
-
+    
+    ## if not from global, copy directly
+  } else {
+    
+    file.copy(file.path(dir_origin, 'conf/functions.r'),
+              file.path(dir_conf, 'functions.r'),
+              overwrite=TRUE)
+  }
 
   ## copy subfolders in goals folder ----
   goal_subfolders <- list.files(system.file('master/web/goals', package='ohirepos'))

@@ -27,7 +27,7 @@ copy_layer <- function(lyr,
   flds <- names(d)
 
   ## join d$rgn_id with rgns_key$rgn_id_origin, filter, select, and end with d$rgn_id
-  if ('rgn_id' %in% names(d)){
+  if ( 'rgn_id' %in% names(d) ){
     d <- d %>%
       dplyr::rename(rgn_id_origin = rgn_id) %>%
       filter(rgn_id_origin %in% origin_rgn_id) %>%
