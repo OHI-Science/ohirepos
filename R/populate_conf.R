@@ -63,7 +63,7 @@ populate_conf <- function(repo_registry) {
               overwrite=TRUE)
   }
 
-  ## copy subfolders in goals folder ----
+  ## copy subfolders in goals folder for website ----
   goal_subfolders <- list.files(system.file('master/web/goals', package='ohirepos'))
   dir_web         <- file.path(dir_conf, 'web')
   dir_goals       <- file.path(dir_conf, 'web/goals')
