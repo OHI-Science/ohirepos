@@ -49,7 +49,7 @@ create_repo_map <- function(repo_registry,
   # crs = sp::CRS("+proj=longlat +datum=WGS84")
   # shp_orig = sf::st_read(dsn=path.expand(dir_shp_in), layer=shp_name) %>%
   #   sf::st_transform(crs)
-  #
+
 
   ## try to rename columns
   d <- stringr::str_detect(names(shp),
@@ -65,8 +65,7 @@ create_repo_map <- function(repo_registry,
 
   ## drop other column names, arrange
   shp@data <- shp@data %>%
-    dplyr::select(rgn_id, rgn_name, area_km2) %>%
-    dplyr::arrange(rgn_id)
+    dplyr::select(rgn_id, rgn_name, area_km2) # don't arrange by rgn_id unless using sf
 
 
   ## write shapefile to git-annex ----
@@ -86,12 +85,12 @@ create_repo_map <- function(repo_registry,
    ## write .csv file to repo and git-annex and copy/rename it to repo/spatial----
    f_data <- file.path(dir_shp_out, 'rgn_offshore_data.csv')
    readr::write_csv(shp@data, f_data)
-   
+
    file.copy(from = f_data,
             to   = file.path(dir_scenario_sp, "regions_list.csv"),
             overwrite=TRUE)
 
- 
+
   ## brew viz_config.r with map centroid and zoom level ----
 
   shp_bb    <- data.frame(shp@bbox) # max of 2.25
