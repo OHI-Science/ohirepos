@@ -11,11 +11,11 @@
 #' @examples
 #' \dontrun{# TBD}
 
-clone_repo <- function(dir_repo, git_url) {
+clone_repo <- function(dir_repo, url_repo) {
 
   ## clone repo
   unlink(dir_repo, recursive=TRUE, force=TRUE)
-  repo = git2r::clone(git_url, normalizePath(dir_repo, mustWork=FALSE))
+  repo = git2r::clone(url_repo, normalizePath(dir_repo, mustWork=FALSE))
 
   ## get remote branches # JSL commented out 05/12 to test something
   # remote_branches = sapply(git2r::branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
