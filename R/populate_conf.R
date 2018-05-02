@@ -46,6 +46,7 @@ populate_conf <- function(repo_registry) {
   # ## Reference Point Accounting
   # ## Reference Point End
   #
+  # can probably delete the one below when I figure this out
   # s <- readLines(file.path(dir_conf, "functions.R"), warn=FALSE, encoding='UTF-8')
   #
   # # x <- broom::tidy(s)
@@ -66,7 +67,7 @@ populate_conf <- function(repo_registry) {
     'LIV_ECO' = system.file('master/functions_LIV_ECO.R', package='ohirepos'),
     'ICO' = system.file('master/functions_ICO.R', package='ohirepos'))
 
-
+  s <- readLines(file.path(dir_conf, "functions.R"), warn=FALSE, encoding='UTF-8')
 
   ## iterate over goals with functions to swap
   for (g in names(fxn_swap)){ # g = names(fxn_swap)[1]
