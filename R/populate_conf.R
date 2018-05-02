@@ -41,16 +41,35 @@ populate_conf <- function(repo_registry) {
               overwrite=TRUE)
   }
 
-  ## swap out custom functions ----
+  # ## functions.R: remove WriteRefPoint calls ----
+  #
+  # ## Reference Point Accounting
+  # ## Reference Point End
+  #
+  # s <- readLines(file.path(dir_conf, "functions.R"), warn=FALSE, encoding='UTF-8')
+  #
+  # # x <- broom::tidy(s)
+  # # writeLines(as.character(x), file.path(dir_conf, "test.R"))
+  #
+  # ## get indicies of beginning. grep(value=TRUE) returns indices
+  # ref_idx_beg = setNames(
+  #   grep('## Reference Point Accounting', s),
+  #   str_trim(str_replace(grep('## Reference Point Accounting', s, value=TRUE), '## Reference Point Accounting', '')))
+  #
+  # ref_idx_end = setNames(
+  #   grep('## Reference Point End', s),
+  #   str_trim(str_replace(grep('## Reference Point End', s, value=TRUE), '## Reference Point End', '')))
+
+  ## functions.R: swap out custom functions ----
   fxn_swap    <- c(
     'LE'  = system.file('master/functions_LE.R', package='ohirepos'),
     'LIV_ECO' = system.file('master/functions_LIV_ECO.R', package='ohirepos'),
     'ICO' = system.file('master/functions_ICO.R', package='ohirepos'))
 
-  s <- readLines(file.path(dir_conf, "functions.R"), warn=FALSE, encoding='UTF-8')
+
 
   ## iterate over goals with functions to swap
-  for (g in names(fxn_swap)){ # g = names(fxn_swap)[2]
+  for (g in names(fxn_swap)){ # g = names(fxn_swap)[1]
 
     message(sprintf("swapping %s function...", g))
     if (g == "LIV_ECO") message(sprintf("(separating LIV_ECO into LIV and ECO)"))
@@ -71,20 +90,10 @@ populate_conf <- function(repo_registry) {
     s = c(s[1:ln_beg], s_g, '\n', s[ln_end:length(s)])
   }
 
-  # s <- s %>%
-  #   str_replace("write.csv\\(tmp, 'temp/.*", '') %>%
-  #   str_replace('^.*sprintf\\(\'temp\\/.*', '')
-
-  ## substitute old layer names with new
-  # lyrs_dif = lyrs_sc %>% filter(!layer %in% layer_gl) # changed from layer != layer_gl JSL 08-24-2015
-  # for (i in 1:nrow(lyrs_dif)){ # i=1
-  #   s = str_replace_all(s, fixed(lyrs_dif$layer_gl[i]), lyrs_dif$layer[i])
-  # }
-
   writeLines(s, file.path(dir_conf, "functions.R"))
 
 
-  ## swap our custom fields in goals.csv ----
+  ## goals.csv: swap our custom function fields ----
 
   goal_swap   <- list(
     'LIV' = list(preindex_function="LIV(layers)"),

@@ -8,7 +8,7 @@
 setwd("~/github/<%=key%>/<%=scenario%>")
 
 ## run the configure_toolbox.r script to check configuration
-source("configure_toolbox.r")
+source("configure_toolbox.R")
 
 ## calculate scenario scores
 scores <- ohicore::CalculateAll(conf, layers)

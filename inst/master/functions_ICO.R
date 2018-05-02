@@ -2,7 +2,7 @@ ICO <- function(layers){
 
   scen_year <- layers$data$scenario_year
 
-  rk <- get_data_year(layer_nm="ico_spp_iucn_status", layers_obj = layers) %>%
+  rk <- AlignDataYears(layer_nm="ico_spp_iucn_status", layers_obj = layers) %>%
     select(region_id = rgn_id, sciname, iucn_cat=category, scenario_year, ico_spp_iucn_status_year) %>%
     mutate(iucn_cat = as.character(iucn_cat))
 
@@ -46,12 +46,7 @@ ICO <- function(layers){
   ####### trend
   trend_years <- (scen_year-9):(scen_year)
 
-  trend <- trend_calc(status_data = r.status, trend_years=trend_years)
-
-
-  ## reference points
-  write_ref_pts(goal = "ICO", method = "scaled IUCN risk categories",
-                ref_pt = NA)
+  trend <- CalculateTrend(status_data = r.status, trend_years=trend_years)
 
   # return scores
   scores <-  rbind(status, trend) %>%
