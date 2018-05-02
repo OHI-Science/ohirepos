@@ -10,11 +10,12 @@
   ## 3. source configure_repo.r to ensure proper configuration
   ## 4. develop goal models in functions.r, running individual goal models line by line
 
-## load required packages. If not installed, install from the comment
-library(ohicore)   # run install_ohicore.R
-library(tidyverse) # install.packages('tidyverse')
-library(stringr)   # install.packages('stringr')
-library(zoo)       # install.packages('zoo')
+## load required packages after checking if they are already installed
+packages_required  <- c('ohicore', 'tidyverse', 'stringr', 'zoo')
+
+packages_check     <- packages_required[!packages_required %in% (.packages())]
+if(length(packages_check)) install.packages(packages_check)
+packages_installed <- sapply(packages_required, FUN = function(x) library(x, character.only = TRUE))
 
 
 ## load scenario configuration

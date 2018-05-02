@@ -2,11 +2,11 @@ LE <- function(scores, layers){
 
   # calculate LE scores
   scores.LE = scores %>%
-    dplyr::filter(goal %in% c('LIV','ECO') & dimension %in% c('status','trend','score','future')) %>%
-    tidyr::spread(key = goal, value = score) %>%
-    dplyr::mutate(score = rowMeans(cbind(ECO, LIV), na.rm=TRUE)) %>%
-    dplyr::select(region_id, dimension, score) %>%
-    dplyr::mutate(goal  = 'LE')
+    filter(goal %in% c('LIV','ECO') & dimension %in% c('status','trend','score','future')) %>%
+    spread(key = goal, value = score) %>%
+    mutate(score = rowMeans(cbind(ECO, LIV), na.rm=TRUE)) %>%
+    select(region_id, dimension, score) %>%
+    mutate(goal  = 'LE')
 
   # rbind to all scores
   scores = scores %>%

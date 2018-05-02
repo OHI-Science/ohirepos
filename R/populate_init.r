@@ -34,6 +34,7 @@ populate_init <- function(repo_registry,
 
   ## get remote branches
   remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
+ ## try one day with purrr
 
   ## initialize repo
   if (length(remote_branches)==0){

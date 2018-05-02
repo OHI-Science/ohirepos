@@ -2,7 +2,7 @@
 
 #' Populate other items in OHI repos.
 #'
-#' @param repo_registry data frame with information about the repo 
+#' @param repo_registry data frame with information about the repo
 #'
 #' @return TBD
 #' @export
@@ -14,19 +14,19 @@ populate_etc <- function(repo_registry) {
   ## create variables, some used for brewing below
   dir_repo     <- repo_registry$dir_repo
   study_area   <- repo_registry$study_area
-  scenario     <- repo_registry$scenario_name 
+  scenario     <- repo_registry$scenario_name
   dir_scenario <- file.path(dir_repo, scenario)
-  
+
   ## brew R filenames, not extensions
-  brew_files = c("calculate_scores", "configure_toolbox") 
-  
-  for (f in brew_files){ # f = ""configure_toolbox""
-    
+  brew_files = c("calculate_scores", "configure_toolbox")
+
+  for (f in brew_files){ # f = "configure_toolbox"
+
     brew::brew(
-      file   = system.file(sprintf("inst/master/%s.brew.R", f), 
+      file   = system.file(sprintf("inst/master/%s.brew.R", f),
                            package="ohirepos"),
       output = sprintf("%s/%s.R", dir_scenario, f))
-    
+
   }
 
   ## copy install_ohicore.R
