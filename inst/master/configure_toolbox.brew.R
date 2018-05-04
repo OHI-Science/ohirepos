@@ -28,5 +28,5 @@ ohicore::CheckLayers('layers.csv', 'layers', flds_id=conf$config$layers_id_field
 layers = ohicore::Layers('layers.csv', 'layers')
 
 ## select corresponding data year to use for pressures and resilience
-scenario_years <- 2016
+scenario_years <- 2017
 layers$data$scenario_year <- scenario_years
