@@ -13,7 +13,7 @@
 #' ohicore::extract_mazu_by_rgn(
 #'    mazu_filename = "globalprep/fis/v2017/int/stock_catch_by_rgn.csv",
 #'    rgn_name = "Kenya",
-#'    save_local_dir = "~/github/ken/global_explore")
+#'    save_local_dir = "~/github/ken/global_explore/data")
 #'
 #'
 extract_mazu_by_rgn <- function(mazu_filename,
@@ -50,8 +50,7 @@ extract_mazu_by_rgn <- function(mazu_filename,
     dplyr::filter(rgn_id == rgn_extract$rgn_id)
 
   ## save as .csv in key/global_explore
-  filesave <- str_remove(basename(mazu_filename), ".csv")
-  filesave <- paste0(filesave, "_", str_to_lower(rgn_name), ".csv")
+  filesave <- basename(mazu_filename)
   filesave <- file.path(save_local_dir, filesave)
 
   write_csv(data_rgn, filesave)

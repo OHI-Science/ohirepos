@@ -17,15 +17,16 @@ library(DT)
 
 
 ## to build filepaths ----
-##local! - comment these out if preferred remote
-# rawkey_prefix <- "~/github/sam_master"
+## local! - if you have cloned these repositories locally
+# rawkey_prefix <- "~/github/ohi-global"
 # rawprep_prefix <- "~/github/ohiprep_v2017"
-## remote!! - comment these out if you have cloned locally
+
+## remote!! - if you prefer to pull from remote
 rawkey_prefix <- "https://raw.githubusercontent.com/OHI-Science/ohi-global/draft"
 rawprep_prefix <- "https://raw.githubusercontent.com/OHI-Science/ohiprep_v2017/master/"
 
 
-## read in data from web (minimize how often pull from web) ----
+## read in all data----
 
 ## get global rgn_id
 rgn_global <- read_csv(file.path(rawkey_prefix, 'eez/layers/rgn_global.csv')) %>%
@@ -39,10 +40,9 @@ scores_gf_csv <- read_csv(file.path(rawkey_prefix, "global2015/gapFilling/scores
 fis_meancatch_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/fis_meancatch.csv"))
 fis_b_bmsy_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/fis_b_bmsy.csv"))
 fis_b_bmsy_gf_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfilling/layers/fis_b_bmsy.csv"))
-stock_catch <- read_csv("stock_catch_by_rgn_kenya.csv")
+stock_catch <- read_csv("stock_catch_by_rgn.csv")
 mar_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/mar_harvest_tonnes.csv"))
 taxon_lookup_csv <- read_csv(file.path(rawprep_prefix, "globalprep/fis/v2017/data/taxon_resilience_lookup.csv"))
-
 
 ## NP
 np_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfilling/layers/np_harvest_tonnes.csv"))
@@ -51,7 +51,7 @@ np_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfillin
 ico_spp_cat_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_spp_cat.csv")) ## maybe don't need
 ico_spp_rgn_prepped_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_spp_rgn_prepped.csv")) ## maybe don't need
 risk_code_lookup <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/raw/risk_code_lookup.csv"))
-rgn_spp_gl_csv <- read_csv("rgn_spp_gl_kenya.csv")
+rgn_spp_gl_csv <- read_csv("rgn_spp_gl.csv")
 ico_spp_iucn_status_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/output/ico_spp_iucn_status.csv"))
 ico_global_list <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_global_list.csv"))
 
@@ -87,13 +87,13 @@ To explore the OHI Global data for <%=study_area%>, focusing on where data are e
 
 Let's look a bit deeper to see numerically the percent gapfilling by goal to help us prioritize which goals we want to explore more deeply. We can pull directly from the data from the [Frazier et al. 2015](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0160377) publication. 
 
-It's interesting to compare the percent gapfilling by goal to the scores by goal. Let's look at this both as a table and as a figure and discuss what you see. 
+It's interesting to compare the percent gapfilling by goal to the scores by goal. Let's look at this figure and discuss what we see. 
 
-### Table: % Gapfilled vs. Scores
+### Figure: % Gapfilled vs. Status Scores
 
-Here is this information as a table.
+There may be a few places where there are overlaps because goals have the exact same scores.
 
-```{r scores_gf table, echo=FALSE}
+```{r plot scores_gf, echo=FALSE, warning=FALSE}
 ## gapfilled scores
 scores_gf <- scores_gf_csv %>% 
   filter(region_id == rgn_global$rgn_id,
@@ -114,36 +114,6 @@ scores_plot <- scores %>%
   left_join(scores_gf, by = "goal") %>% 
   arrange(percent_gapfilled)
 
-## custom arrange: https://stackoverflow.com/questions/26548495/reorder-rows-using-custom-order
-targets_order <-  c("FP", "FIS", "MAR", "AO", "NP", "CS", "CP", "TR", "LE", "ECO", "LIV", "SP", "LSP", "ICO", "CW", "BD", "HAB", "SPP")
- 
-scores_plot <- scores_plot %>%
-  mutate(targets_id =  factor(goal, levels = targets_order)) %>%
-  arrange(targets_id) %>%
-  select(-targets_id)
-
-## display
-scores_plot %>% 
-  DT::datatable()
-
-## for text below: 
-gf100 <- scores_plot %>% 
-  filter(percent_gapfilled == 100)
-
-gf125 <- scores_plot %>% 
-  filter(percent_gapfilled <= 12.5)
-
-s50 <- scores_plot %>% 
-  filter(score >= 50)
-```
-
-<br>
-
-### Figure: % Gapfilled vs. Status Scores
-
-It can also be nice to see it as a figure. There may be a few places where there are overlaps because goals have the exact same scores.
-
-```{r plot scores_gf, echo=FALSE, warning=FALSE}
 ## expecting overlapping labels for FP and BD: hacky workaround
 scores_plot_noBDFP <- scores_plot %>%
   filter(!goal %in% c("FP", "BD"))
@@ -157,6 +127,31 @@ ggplot(data = scores_plot_noBDFP, aes(x = score, y = percent_gapfilled, label = 
   geom_text(data = scores_plot_BDFP, aes(label = goal), nudge_x = -2, nudge_y = -3) +
   xlab("status score") +
   ylab("percent gapfilled")
+
+## finally, for in-line text below: 
+gf100 <- scores_plot %>% 
+  filter(percent_gapfilled == 100)
+
+gf125 <- scores_plot %>% 
+  filter(percent_gapfilled <= 12.5)
+
+s50 <- scores_plot %>% 
+  filter(score >= 50)
+```
+
+```{r, echo=FALSE, eval=FALSE}
+## to see as a table:
+## custom arrange: https://stackoverflow.com/questions/26548495/reorder-rows-using-custom-order
+targets_order <-  c("FP", "FIS", "MAR", "AO", "NP", "CS", "CP", "TR", "LE", "ECO", "LIV", "SP", "LSP", "ICO", "CW", "BD", "HAB", "SPP")
+ 
+scores_plot <- scores_plot %>%
+  mutate(targets_id =  factor(goal, levels = targets_order)) %>%
+  arrange(targets_id) %>%
+  select(-targets_id)
+
+## display
+scores_plot %>% 
+  DT::datatable()
 ```
 
 
@@ -171,8 +166,8 @@ Let's brainstorm together: let's list overall observations and observations by g
 **Observations:**
 
 - `r nrow(gf100)` goals were 100% gapfilled (`r gf100$goal`)
-- Many goals (`r nrow(gf125)`) have low amounts of gapfilling — under 12.5% (on the y-axis)
-- Many goals (`r nrow(s50)`) have scores over 50 (on the x-axis)
+- `r nrow(gf125)` goals have low amounts of gapfilling — under 12.5% (on the y-axis)
+- `r nrow(s50)` goals have scores over 50 (on the x-axis)
 - Most high-scoring goals have low gapfilling
 
 <br>
@@ -182,20 +177,17 @@ Let's brainstorm together: let's list overall observations and observations by g
 
 **Observations**:
 
-- FP and FIS are plotted on top of each other, which means that the FP score is the same as FIS (we can also see this from the table above). This means that MAR contributes nothing to the FP score, and in fact the MAR score is 0. 
+- if FP and FIS are plotted on top of each other, it means that the FP score is the same as FIS. This means that MAR contributes nothing to the FP score, and in fact the MAR score is 0. 
 
 <br>
 
 ### Tourism and Recreation (TR)
  
-- TR has the lowest score that has no gapfilled data.
+<br>
 
 ### Species-based goals (ICO, SPP)
 
-- these scores are higher and are not gapfilled (0). 
-
 <br>
-
 
 ### Livelihoods and Economies (LE, LIV, ECO)
 
@@ -216,7 +208,7 @@ Let's look into the data behind some of these goals.
 We will use several resources for each goal, all linked from [ohi-science.org/ohi-global](http://ohi-science.org/ohi-global]): 
 
 - [ohi-science.org/ohi-global/goals](http://ohi-science.org/ohi-global/goals)
-- [ohi-science.org/ohi-global/layers_table.html](http://ohi-science.org/ohi-global/layers_table.html)
+- [ohi-science.org/ohi-global/layers_table](http://ohi-science.org/ohi-global/layers_table.html)
 - [Global supplemental information](https://rawgit.com/OHI-Science/ohi-global/draft/global_supplement/Supplement.html)
 
 <br>
@@ -243,7 +235,6 @@ We can look at these data in several ways. Let's start by looking on SAUP's webs
 1. Click "Tools & Data"
 1. Search "<%=study_area%>"
 
-
 We can also look at the mapped locations of fishing effort by <%=study_area%> (remember that OHI only includes catch caught withing <%=study_area%>'s EEZ. 
 
 1. Click "Mapped Data"
@@ -252,9 +243,10 @@ We can also look at the mapped locations of fishing effort by <%=study_area%> (r
 
 Let's look through the species listed and see if there are any included that don't represent <%=study_area%>'s fisheries within the EEZ. 
 
+
 #### Mean catch 
 
-The mean catch layer ([fis_meancatch](https://github.com/OHI-Science/sam/blob/master/eez/layers/fis_meancatch.csv)) is in some ways a historic list because it includes species that may not be caught any more (i.e. was fished in the past and stopped for some reason). It is calculated as the average (mean) of each species' catch through time, so if it was a big catch in the past but now is 0, it will still average (it keeps all species in the dataset).
+The mean catch layer ([fis_meancatch](https://github.com/OHI-Science/<%=key%>/blob/master/global_explore/data/fis_meancatch_lookup.csv)) is in some ways a historic list because it includes species that may not be caught any more (i.e. was fished in the past and stopped for some reason). It is calculated as the average (mean) of each species' catch through time, so if it was a big catch in the past but now is 0, it will still average (it keeps all species in the dataset).
 
 It will be more useful for us to look at the raw catch values, and see if any of them don't seem right. Below the scientific name is listed, with the common name (if known).
 
@@ -279,11 +271,11 @@ fis_meancatch_lookup %>%
   DT::datatable()
 
 ## save as csv: 
-fis_meancatch_lookup %>% write_csv("fis_meancatch_lookup_kenya.csv")
+fis_meancatch_lookup %>% write_csv("fis_meancatch_lookup.csv")
 
 ```
 
-There are `r fis_meancatch_lookup %>% nrow()` species in the [fis_meancatch](https://github.com/OHI-Science/sam/blob/master/eez/layers/fis_meancatch.csv) layer for <%=study_area%>.
+There are `r fis_meancatch_lookup %>% nrow()` species in the [fis_meancatch](https://github.com/OHI-Science/<%=key%>/blob/master/global_explore/data/fis_meancatch_lookup.csv) layer for <%=study_area%>.
 
 
 #### Raw catch data
@@ -292,11 +284,10 @@ To understand mean catch, dive into catch by species.
 
 Let's do two things. First, look through the list of species to see if any of them should be removed.
 
-
 ```{r stock_catch_by_rgn.csv, echo=FALSE}
 # View(stock_catch)
 
-## run this and then copy to presentation, I pasted it into TextWrangler first https://docs.google.com/presentation/d/1myCjWaUp6kXGMJbBOE3kOoZO_-miicKluN_2hlzcFVo/edit#slide=id.g39ed252120_0_195
+## run this to copy into presentation to format for better viewing: 
 # stock_catch %>% 
 #   distinct(taxon_scientific_name, taxon_common_name) %>%
 #   as.data.frame()
@@ -310,16 +301,15 @@ Do we want to look at the timeseries for any species? For example:
 
 ```{r stock_catch_by_rgn.csv2, echo=FALSE}
 stock_catch %>%
-  filter(taxon_scientific_name == "Acanthuridae") %>% ## we looked at Katsuwonus pelamis, Etelis, Acanthuridae
+  filter(taxon_scientific_name == "Acanthuridae") %>% 
   select(year, taxon_scientific_name, taxon_common_name, tons, stock_id) %>%
   arrange(taxon_common_name, desc(year)) %>%
   DT::datatable()
-
 ```
 
 #### B/Bmsy
 
-These are the species stocks that we have data for [fis_b_bmsy](https://github.com/OHI-Science/sam/blob/master/eez/layers/fis_b_bmsy.csv):
+These are the species stocks that we have data for [fis_b_bmsy](https://github.com/OHI-Science/<%=key%>/blob/master/global_explore/data/fis_b_bmsy_lookup.csv):
 
 ```{r fis_b_bmsy list, echo=FALSE}
 fis_b_bmsy <- fis_b_bmsy_csv %>%
@@ -340,10 +330,10 @@ fis_b_bmsy_lookup %>%
   DT::datatable()
 
 ## save as csv:
-fis_b_bmsy_lookup %>% write_csv("fis_b_bmsy_lookup_kenya.csv")
+fis_b_bmsy_lookup %>% write_csv("fis_b_bmsy_lookup.csv")
 ```
 
-There are only `r fis_b_bmsy_lookup %>% nrow()` species in the [fis_b_bmsy](https://github.com/OHI-Science/sam/blob/master/eez/layers/fis_b_bmsy.csv) layer for <%=study_area%>.
+There are only `r fis_b_bmsy_lookup %>% nrow()` species in the [fis_b_bmsy](https://github.com/OHI-Science/<%=key%>/blob/master/global_explore/data/fis_b_bmsy_lookup.csv) layer for <%=study_area%>.
 
 Let's look at these too. Are there any species that don't seem right?
 
@@ -359,13 +349,13 @@ Let's look at these too. Are there any species that don't seem right?
 
 **Questions:**
 
-- Why is the MAR score 0?
+- How do we interpret the MAR score?
 
 ### Global Data 
 
 #### Tonnes of Harvest
 
-Let's look at the list of species that are represented in the MAR model as tonnes of harvest: (the [mar_harvest_tonnes](https://github.com/OHI-Science/sam/blob/master/eez/layers/mar_harvest_tonnes.csv) layer). 
+Let's look at the list of species that are represented in the MAR model as tonnes of harvest: (the [mar_harvest_tonnes](https://github.com/OHI-Science/<%=key%>/blob/master/eez/layers/mar_harvest_tonnes.csv) layer). 
 
 
 ```{r mar_harvest_tonnes, echo=FALSE}
@@ -450,7 +440,6 @@ There is a lag in the WDPA database, as discussed [in this article](https://www.
 #### Discussion
 
 - are there other coastal or marine parks that are not accounted for? 
-- an example of adding data to LSP is available [here](https://rawgit.com/OHI-Science/sam/master/toolbox-demo/workshop-sub-data.html) (run from the master branch)
 
 <br>
 
@@ -496,7 +485,7 @@ hab_seaice_extent <- hab_seaice_extent_csv %>%
 hab_softbottom_extent <- hab_softbottom_extent_csv %>%
   filter(rgn_id == rgn_global$rgn_id)
 
-hab_extent_Kenya <- rbind(
+hab_extent_rgn <- rbind(
   hab_mangrove_extent,
   hab_seagrass_extent,
   hab_saltmarsh_extent,
@@ -504,7 +493,7 @@ hab_extent_Kenya <- rbind(
   hab_seaice_extent,
   hab_softbottom_extent) 
 
-hab_extent_Kenya %>%
+hab_extent_rgn %>%
   DT::datatable()
 ```
 
@@ -533,7 +522,7 @@ hab_seaice_health <- hab_seaice_health_csv %>%
 hab_softbottom_health <- hab_softbottom_health_csv %>%
   filter(rgn_id == rgn_global$rgn_id)
 
-hab_health_Kenya <- rbind(
+hab_health_rgn <- rbind(
   hab_mangrove_health,
   hab_seagrass_health,
   hab_saltmarsh_health,
@@ -541,11 +530,10 @@ hab_health_Kenya <- rbind(
   hab_seaice_health,
   hab_softbottom_health) 
 
-hab_health_Kenya %>%
+hab_health_rgn %>%
   DT::datatable()
 ```
 
-So there is not great data available through time for <%=study_area%>. 
 
 
 #### Discussion
@@ -555,9 +543,8 @@ So there is not great data available through time for <%=study_area%>.
 
 ## [Tourism & Recreation](http://ohi-science.org/ohi-global/goals.html#tourism__recreation)
 
-The TR score is low in <%=study_area%>.
 
-## Natural Products
+## [Natural Products](http://ohi-science.org/ohi-global/goals.html#natural_products)
 
 ### Global Data
 
@@ -567,16 +554,19 @@ Which Natural Products are included for <%=study_area%>?
 np_harvest_tonnes <- np_harvest_tonnes_csv %>%
   filter(rgn_id == rgn_global$rgn_id)
 
+np_harvest_tonnes <- np_harvest_tonnes %>%
+  distinct(commodity, product) 
+
 np_harvest_tonnes %>%
-  distinct(commodity, product) %>%
   DT::datatable()
 ```
 
 <br>
 
-So there are two products here.
+So there are `r nrow(np_harvest_tonnes)` NP products included.
 
 We can also look at how much of this was gapfilled:
+
 ```{r np_gf, echo=FALSE}
 ## shows gapfilling too
 np_harvest_tonnes %>%
