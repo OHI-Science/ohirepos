@@ -40,7 +40,7 @@ scores_gf_csv <- read_csv(file.path(rawkey_prefix, "global2015/gapFilling/scores
 fis_meancatch_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/fis_meancatch.csv"))
 fis_b_bmsy_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/fis_b_bmsy.csv"))
 fis_b_bmsy_gf_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfilling/layers/fis_b_bmsy.csv"))
-stock_catch <- read_csv("stock_catch_by_rgn.csv")
+stock_catch <- read_csv("data/stock_catch_by_rgn.csv")
 mar_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/mar_harvest_tonnes.csv"))
 taxon_lookup_csv <- read_csv(file.path(rawprep_prefix, "globalprep/fis/v2017/data/taxon_resilience_lookup.csv"))
 
@@ -51,7 +51,7 @@ np_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfillin
 ico_spp_cat_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_spp_cat.csv")) ## maybe don't need
 ico_spp_rgn_prepped_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_spp_rgn_prepped.csv")) ## maybe don't need
 risk_code_lookup <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/raw/risk_code_lookup.csv"))
-rgn_spp_gl_csv <- read_csv("rgn_spp_gl.csv")
+rgn_spp_gl_csv <- read_csv("data/rgn_spp_gl.csv")
 ico_spp_iucn_status_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/output/ico_spp_iucn_status.csv"))
 ico_global_list <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_global_list.csv"))
 
@@ -64,7 +64,7 @@ hab_coral_extent_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/hab_coral_
 hab_seaice_extent_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/hab_seaice_extent.csv"))
 hab_softbottom_extent_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/hab_softbottom_extent.csv"))
 
-## health
+## Habitat health
 hab_mangrove_health_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/hab_mangrove_health.csv"))
 hab_seagrass_health_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/hab_seagrass_health.csv"))
 hab_saltmarsh_health_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/hab_saltmarsh_health.csv"))
@@ -271,7 +271,7 @@ fis_meancatch_lookup %>%
   DT::datatable()
 
 ## save as csv: 
-fis_meancatch_lookup %>% write_csv("fis_meancatch_lookup.csv")
+fis_meancatch_lookup %>% write_csv("data/fis_meancatch_lookup.csv")
 
 ```
 
@@ -330,7 +330,7 @@ fis_b_bmsy_lookup %>%
   DT::datatable()
 
 ## save as csv:
-fis_b_bmsy_lookup %>% write_csv("fis_b_bmsy_lookup.csv")
+fis_b_bmsy_lookup %>% write_csv("data/fis_b_bmsy_lookup.csv")
 ```
 
 There are only `r fis_b_bmsy_lookup %>% nrow()` species in the [fis_b_bmsy](https://github.com/OHI-Science/<%=key%>/blob/master/global_explore/data/fis_b_bmsy_lookup.csv) layer for <%=study_area%>.
@@ -554,16 +554,14 @@ Which Natural Products are included for <%=study_area%>?
 np_harvest_tonnes <- np_harvest_tonnes_csv %>%
   filter(rgn_id == rgn_global$rgn_id)
 
-np_harvest_tonnes <- np_harvest_tonnes %>%
-  distinct(commodity, product) 
-
 np_harvest_tonnes %>%
+  distinct(commodity, product) %>%
   DT::datatable()
 ```
 
 <br>
 
-So there are `r nrow(np_harvest_tonnes)` NP products included.
+So there are `r nrow(np_harvest_tonnes %>% distinct(commodity, product))` NP products included.
 
 We can also look at how much of this was gapfilled:
 
