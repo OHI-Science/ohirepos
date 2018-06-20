@@ -4,7 +4,7 @@
 \alias{clone_repo}
 \title{Clone existing repo building from git2r's clone()}
 \usage{
-clone_repo(dir_repo, git_url)
+clone_repo(dir_repo, url_repo)
 }
 \arguments{
 \item{dir_repo}{local directory where you want to clone the repo (probably somewhere temporary)}

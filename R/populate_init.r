@@ -32,20 +32,21 @@ populate_init <- function(repo_registry,
   # Error in 'git2r_clone': Unable to authenticate with supplied credentials
   }
 
+  ## commenting out; not sure we need this anymore if we be sure it's created
   ## get remote branches
-  remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
+  # remote_branches <- sapply(git2r::branches(repo, 'remote'), function(x) stringr::str_split(x@name, '/')[[1]][2])
  ## try one day with purrr
 
   ## initialize repo
-  if (length(remote_branches)==0){
-    system('touch README.md')
-    system('git add -A; git commit -m "first commit"')
-    try(system('git remote rm origin')) # stackoverflow.com/questions/1221840/remote-origin-already-exists-on-git-push-to-new-repository
-    system(sprintf('git remote add origin https://github.com/OHI-Science/%s.git', key))
-    system('git push -u origin master')
-    system('git pull')
-    remote_branches = sapply(branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
-  }
+  # if (length(remote_branches)==0){
+  #   system('touch README.md')
+  #   system('git add -A; git commit -m "first commit"')
+  #   try(system('git remote rm origin')) # stackoverflow.com/questions/1221840/remote-origin-already-exists-on-git-push-to-new-repository
+  #   system(sprintf('git remote add origin https://github.com/OHI-Science/%s.git', key))
+  #   system('git push -u origin master')
+  #   system('git pull')
+  #   remote_branches = sapply(branches(repo, 'remote'), function(x) str_split(x@name, '/')[[1]][2])
+  # }
 
   ## recreate empty dir, except hidden .git (all.files=FALSE)
   for (f in list.files(dir_repo, all.files=FALSE)) {
@@ -71,6 +72,7 @@ populate_init <- function(repo_registry,
     cat(sprintf("git add, commit, and push %s repo", key))
     system(sprintf('cd %s; git add -A; git commit -a -m "%s repo populated with initial files"', dir_repo, key))
     system(sprintf('cd %s; git push origin master', dir_repo))
+
   }
 
   return(repo)
