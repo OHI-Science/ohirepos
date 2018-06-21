@@ -39,7 +39,7 @@ deploy_website <- function(repo_registry,
 
   if ('gh-pages' %in% names(remote_branches)){
 
-    ## if gh-pages branch exists, ask if user wants to overwrite <-  this is not working at the moment, 
+    ## if gh-pages branch exists, ask if user wants to overwrite <-  this is not working at the moment,
     stop("gh-pages branch already exists, delete branch first to overwrite")
 
   } else {
@@ -106,6 +106,9 @@ deploy_website <- function(repo_registry,
         branch = 'gh-pages')
 
     }
+
+    ## switch back to master branch locally
+    system(sprintf('cd %s; git checkout master', dir_repo))
 
   }
 }
