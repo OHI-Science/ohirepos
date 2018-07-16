@@ -12,27 +12,23 @@
 populate_etc <- function(repo_registry) {
 
   ## create variables, some used for brewing below
-  dir_repo     <- repo_registry$dir_repo
-  study_area   <- repo_registry$study_area
-  scenario     <- repo_registry$scenario_name
-  dir_scenario <- file.path(dir_repo, scenario)
+  dir_repo      <- repo_registry$dir_repo
+  study_area    <- repo_registry$study_area
+  scenario      <- repo_registry$scenario_name
+  scenario_year <- repo_registry$scenario_year
+  dir_scenario  <- file.path(dir_repo, scenario)
 
   ## brew R filenames, not extensions
-  brew_files = c("calculate_scores", "configure_toolbox")
+  brew_files = c("calculate_scores")
 
-  for (f in brew_files){ # f = "configure_toolbox"
+  for (f in brew_files){ # f = "calculate_scores"
 
     brew::brew(
-      file   = system.file(sprintf("inst/master/%s.brew.R", f),
+      file   = system.file(sprintf("inst/master/%s.brew.Rmd", f),
                            package="ohirepos"),
       output = sprintf("%s/%s.R", dir_scenario, f))
 
   }
-
-  ## copy install_ohicore.R
-  fn <- 'install_ohicore.R'
-  file.copy(system.file(file.path('inst/master', fn), package="ohirepos"),
-            file.path(dir_repo, fn), overwrite=TRUE)
 
   ## TODO decide whether keep this and how it works
   # ## copy temp/referencePoints.csv
