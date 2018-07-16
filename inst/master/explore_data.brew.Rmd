@@ -5,7 +5,7 @@ output:
     toc: true
     toc_float: true
 ---
-```{r setup, include=FALSE}
+```{r setup explore, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message=FALSE)
 rgn_name <- '<%=study_area%>'
 ```
