@@ -17,6 +17,8 @@ populate_etc <- function(repo_registry) {
   scenario      <- repo_registry$scenario_name
   scenario_year <- repo_registry$scenario_year
   dir_scenario  <- file.path(dir_repo, scenario)
+  dir_reports   <- file.path(dir_scenario, "reports")
+  dir_figures   <- file.path(dir_reports, "figures")
 
   ## brew R filenames, not extensions
   brew_files = c("calculate_scores")
@@ -28,6 +30,12 @@ populate_etc <- function(repo_registry) {
                            package="ohirepos"),
       output = sprintf("%s/%s.R", dir_scenario, f))
 
+  }
+
+  ## create reports folder and subfolder(s)
+  if (!dir.exists(dir_reports)) {
+    dir.create(dir_reports, showWarning=FALSE)
+    dir.create(dir_figures, showWarning=FALSE)
   }
 
   ## TODO decide whether keep this and how it works

@@ -22,13 +22,12 @@ populate_conf <- function(repo_registry) {
 
 
   ## create conf folder
-
   if (!dir.exists(dir_conf)) {
     dir.create(dir_conf, showWarning=FALSE)
   }
 
   ## list conf files to copy, except functions.r
-  conf_files = c('functions.r',
+  conf_files = c('functions.R',
                  'config.R', 'goals.csv',
                  'pressures_matrix.csv',  'pressure_categories.csv',
                  'resilience_matrix.csv', 'resilience_categories.csv',
