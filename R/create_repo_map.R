@@ -3,7 +3,6 @@
 #' Title
 #'
 #' @param repo_registry data frame with information about the repo
-#' @param gh_org GitHub organization, defaults to 'OHI-Science'
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @return repo
@@ -12,11 +11,11 @@
 #' @examples
 #'
 create_repo_map <- function(repo_registry,
-                            gh_org = 'OHI-Science',
                             push   = TRUE){
 
   ## create variables ----
   key             <- repo_registry$study_key
+  gh_org          <- repo_registry$gh_org
   dir_repo        <- repo_registry$dir_repo
   dir_scenario    <- file.path(repo_registry$dir_repo, repo_registry$scenario_name)
   dir_scenario_sp <- file.path(dir_scenario, 'spatial')
@@ -63,7 +62,7 @@ create_repo_map <- function(repo_registry,
   }
 
 
-  ## drop other column names, arrange
+  ## drop other column names
   shp@data <- shp@data %>%
     dplyr::select(rgn_id, rgn_name, area_km2) # don't arrange by rgn_id unless using sf
 

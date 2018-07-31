@@ -1,7 +1,6 @@
 #' Populate the repo with prep folder and subfolders and README files
 #'
 #' @param repo_registry data frame with information about the repo
-#' @param gh_org github organization to place the repo. Default: ohi-science
 #' @param push TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.
 #'
 #' @return
@@ -10,11 +9,11 @@
 #' @examples
 #'
 populate_prep <- function(repo_registry,
-                          gh_org = 'OHI-Science',
-                          push   = TRUE){
+                          push = TRUE){
 
   ## create variables
   key      <- repo_registry$study_key
+  gh_org   <- repo_registry$gh_org
   dir_repo <- repo_registry$dir_repo
 
   ## clone existing master branch

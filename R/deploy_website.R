@@ -13,13 +13,13 @@
 #' @import tidyverse yaml devtools brew stringr
 #' @export
 deploy_website <- function(repo_registry,
-                           gh_org = 'OHI-Science',
                            clone  = TRUE,
                            push   = TRUE){
 
   ## create variables
   key             <- repo_registry$study_key
   study_area      <- repo_registry$study_area
+  gh_org          <- repo_registry$gh_org
   dir_repo        <- repo_registry$dir_repo
   dir_scenario_gh <- sprintf(
     "https://raw.githubusercontent.com/%s/%s/master/%s",

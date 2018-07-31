@@ -4,12 +4,10 @@
 \alias{populate_layers}
 \title{Populate new OHI repos with layers from global assessments}
 \usage{
-populate_layers(repo_registry, gh_org = "OHI-Science", multi_nation = FALSE)
+populate_layers(repo_registry, multi_nation = FALSE)
 }
 \arguments{
 \item{repo_registry}{data frame with information about the repo}
-
-\item{gh_org}{GitHub organization, defaults to 'OHI-Science'}
 
 \item{multi_nation}{T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)}
 }

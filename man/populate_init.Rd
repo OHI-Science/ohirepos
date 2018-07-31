@@ -4,12 +4,10 @@
 \alias{populate_init}
 \title{Populate initial files including README and .Rproj}
 \usage{
-populate_init(repo_registry, gh_org = "OHI-Science", push = TRUE)
+populate_init(repo_registry, push = TRUE)
 }
 \arguments{
 \item{repo_registry}{data frame with information about the repo}
-
-\item{gh_org}{github organization to place the repo. Default: ohi-science}
 
 \item{push}{TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
 }

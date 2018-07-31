@@ -3,7 +3,6 @@
 #' Populate new OHI repos with layers from global assessments
 #'
 #' @param repo_registry data frame with information about the repo
-#' @param gh_org GitHub organization, defaults to 'OHI-Science'
 #' @param multi_nation T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)
 #'
 #' @return repo
@@ -13,12 +12,12 @@
 #'
 #'
 populate_layers <- function(repo_registry,
-                            gh_org = 'OHI-Science',
                             multi_nation = FALSE){
 
   ## create variables
   key           <- repo_registry$study_key
   study_area    <- repo_registry$study_area
+  gh_org        <- repo_registry$gh_org
   dir_repo      <- repo_registry$dir_repo
   dir_origin    <- repo_registry$dir_origin
   lyrs_origin   <- readr::read_csv(file.path(dir_origin, 'layers.csv'))
@@ -76,14 +75,14 @@ populate_layers <- function(repo_registry,
     'liveco_status',
     'liveco_trend',
     'cntry_rgn',
-    'cntry_georegions', 
-    
-    "t_average_visitors", 
+    'cntry_georegions',
+
+    "t_average_visitors",
     "t_visitor_gdp")
   lyrs_key <- filter(lyrs_key, !layer %in% lyrs_le_rm)
 
 
-  ## match OHI+ regions to global regions ---- 
+  ## match OHI+ regions to global regions ----
   rgns_key <- read_csv(file.path(dir_scenario, 'spatial/regions_list.csv')) %>%
     select(rgn_id, rgn_name) %>%
     mutate(rgn_id_origin   = repo_registry$rgn_id_global,
@@ -92,7 +91,7 @@ populate_layers <- function(repo_registry,
 
   ## setup for copying layers over
   dir.create(sprintf('%s/layers', dir_scenario), showWarnings=FALSE)
- 
+
   # ## copy layers one by one, saving differently if multi_nation
   if (!multi_nation) {
 

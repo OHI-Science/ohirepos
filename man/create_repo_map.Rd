@@ -4,12 +4,10 @@
 \alias{create_repo_map}
 \title{Title}
 \usage{
-create_repo_map(repo_registry, gh_org = "OHI-Science", push = TRUE)
+create_repo_map(repo_registry, push = TRUE)
 }
 \arguments{
 \item{repo_registry}{data frame with information about the repo}
-
-\item{gh_org}{GitHub organization, defaults to 'OHI-Science'}
 
 \item{push}{TRUE/FALSE: do you want to add, commit, and push? Defaults to TRUE.}
 }
