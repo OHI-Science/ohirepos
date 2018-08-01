@@ -68,6 +68,7 @@ create_repo_map <- function(repo_registry,
 
 
   ## write shapefile to git-annex ----
+  message("Saving shapefile to git-annex...does the `dir_shp_out` folder identified in `repo_registry.csv` exist?")
   rgdal::writeOGR(shp, dsn=dir_shp_out,
                   'rgn_offshore_gcs', driver='ESRI Shapefile', overwrite=TRUE)
 

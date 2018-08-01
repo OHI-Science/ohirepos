@@ -28,7 +28,7 @@ populate_etc <- function(repo_registry) {
     brew::brew(
       file   = system.file(sprintf("inst/master/%s.brew.Rmd", f),
                            package="ohirepos"),
-      output = sprintf("%s/%s.R", dir_scenario, f))
+      output = sprintf("%s/%s.Rmd", dir_scenario, f))
 
   }
 
