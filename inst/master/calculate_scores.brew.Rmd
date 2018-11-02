@@ -20,7 +20,7 @@ install.packages("here")
 install.packages("devtools")
 
 ## install the ohicore package from OHI team
-devtools::install_github('ohi-science/ohicore@dev')
+devtools::install_github('ohi-science/ohicore')
 ```
 
 ## Load R packages
