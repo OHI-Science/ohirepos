@@ -3,6 +3,7 @@
 #' Populate new OHI repos with layers from global assessments
 #'
 #' @param repo_registry data frame with information about the repo
+#' @param gh_org GitHub organization, defaults to 'OHI-Science'
 #' @param multi_nation T/F whether to pull information from multiple nations (i.e. Baltic, Arctic)
 #'
 #' @return repo
@@ -12,12 +13,12 @@
 #'
 #'
 populate_layers <- function(repo_registry,
+                            gh_org = 'OHI-Science',
                             multi_nation = FALSE){
 
   ## create variables
   key           <- repo_registry$study_key
   study_area    <- repo_registry$study_area
-  gh_org        <- repo_registry$gh_org
   dir_repo      <- repo_registry$dir_repo
   dir_origin    <- repo_registry$dir_origin
   lyrs_origin   <- readr::read_csv(file.path(dir_origin, 'layers.csv'))
