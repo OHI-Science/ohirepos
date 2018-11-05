@@ -18,6 +18,10 @@ extract_global_region <- function(repo_registry,
 
   ## filter the regions you want
   regions_extract <- regions[regions$rgn_name == rgn_name_global, ]
+  # regions_extract <- regions[regions$rgn_name %in% c("Italy", "France"), ]
+
+  ## turn into ESRI shapefile
+  regions_extract <- as(regions_extract, 'Spatial')
 
   ## plot to make sure this is what you want
   plot(regions_extract[, 1])
