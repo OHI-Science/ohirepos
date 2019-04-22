@@ -92,6 +92,7 @@ create_repo_map <- function(repo_registry,
              to   = file.path(dir_scenario_sp, "regions_list.csv"),
              overwrite=TRUE)
 
+   print(f_data)
 
   ## brew viz_config.r with map centroid and zoom level ----
 
