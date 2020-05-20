@@ -34,18 +34,18 @@ rgn_global <- read_csv(file.path(rawkey_prefix, 'eez/layers/rgn_global.csv')) %>
 
 ## scores, gapfilling
 scores_csv <- read_csv(file.path(rawkey_prefix, "eez/scores.csv")) 
-scores_gf_csv <- read_csv(file.path(rawkey_prefix, "global2015/gapFilling/scores.csv")) 
+scores_gf_csv <- read_csv(file.path(rawkey_prefix, "yearly_results/global2015/gapFilling/scores.csv")) 
 
 ## FP
 fis_meancatch_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/fis_meancatch.csv"))
 fis_b_bmsy_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/fis_b_bmsy.csv"))
-fis_b_bmsy_gf_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfilling/layers/fis_b_bmsy.csv"))
+fis_b_bmsy_gf_csv <- read_csv(file.path(rawkey_prefix, "yearly_results/global2017/gapfilling/layers/fis_b_bmsy.csv"))
 stock_catch <- read_csv("data/stock_catch_by_rgn.csv")
 mar_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "eez/layers/mar_harvest_tonnes.csv"))
 taxon_lookup_csv <- read_csv(file.path(rawprep_prefix, "globalprep/fis/v2017/data/taxon_resilience_lookup.csv"))
 
 ## NP
-np_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "global2017/gapfilling/layers/np_harvest_tonnes.csv"))
+np_harvest_tonnes_csv <- read_csv(file.path(rawkey_prefix, "yearly_results/global2017/gapfilling/layers/np_harvest_tonnes.csv"))
 
 ## Species goals
 ico_spp_cat_csv <- read_csv(file.path(rawprep_prefix, "globalprep/spp_ico/v2017/int/ico_spp_cat.csv")) ## maybe don't need
