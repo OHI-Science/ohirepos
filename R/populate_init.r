@@ -52,8 +52,8 @@ populate_init <- function(repo_registry,
     unlink(file.path(dir_repo, f), recursive=TRUE, force=TRUE)
   }
 
-  ## add Rstudio project files. cannabalized devtools::add_rstudio_project() which only works for full R packages.
-  file.copy(system.file('templates/template.Rproj', package='devtools'),
+  ## add Rstudio project files. cannabalized usethis::add_rstudio_project() which only works for full R packages.
+  file.copy(system.file('templates/template.Rproj', package='usethis'),
             sprintf('%s/%s.Rproj', dir_repo, key))
   writeLines(c(
     sprintf('%s/.Rproj.user', dir_repo),

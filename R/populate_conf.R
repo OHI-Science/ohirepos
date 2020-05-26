@@ -15,7 +15,7 @@ populate_conf <- function(repo_registry) {
   dir_repo        <- repo_registry$dir_repo
   dir_origin      <- repo_registry$dir_origin
   dir_conf        <- file.path(dir_repo, repo_registry$scenario_name, 'conf')
-  gh_org          <- 'OHI-Science'
+  gh_org          <- repo_registry$gh_org
   dir_scenario_gh <- sprintf(
     "https://raw.githubusercontent.com/%s/%s/master/%s",
     gh_org, key, repo_registry$scenario_name)
