@@ -110,7 +110,7 @@ create_repo_map <- function(repo_registry,
     ohirepos::commit_and_push(
       repo_registry,
       commit_message = sprintf("%s repo geojson map created", key),
-      branch = 'master')
+      branch = 'main')
   }
 
   return(repo)
