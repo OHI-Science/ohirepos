@@ -24,7 +24,7 @@ populate_prep <- function(repo_registry,
 
   ## create prep dir
   dir.create(file.path(dir_repo, 'prep'), showWarnings=FALSE)
-  file.copy(system.file('inst/master/README_prep.md', package='ohirepos'),
+  file.copy(system.file('master/README_prep.md', package='ohirepos'),
             file.path(dir_repo, 'prep/README.md'), overwrite=TRUE)
 
   ## create subfolders in prep folder
@@ -33,7 +33,7 @@ populate_prep <- function(repo_registry,
   sapply(file.path(dir_repo, 'prep', prep_subfolders), dir.create)
 
   ## populate prep folder's subfolders
-  file.copy(system.file('inst/master/README_prep_subfolders.md', package='ohirepos'),
+  file.copy(system.file('master/README_prep_subfolders.md', package='ohirepos'),
             file.path(dir_repo, 'prep', prep_subfolders, 'README.md'), overwrite=TRUE)
 
 

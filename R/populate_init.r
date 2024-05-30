@@ -62,7 +62,7 @@ populate_init <- function(repo_registry,
     sprintf('%s/.gitignore',  dir_repo)))
 
   ## README
-  brew::brew(file   = system.file('inst/master/README.brew.md', package='ohirepos'),
+  brew::brew(file   = system.file('master/README.brew.md', package='ohirepos'),
              output = file.path(dir_repo, 'README.md'))
 
   ## cd to dir_repo, git add, commit and push
