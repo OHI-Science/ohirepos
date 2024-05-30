@@ -41,9 +41,9 @@ create_repo_map <- function(repo_registry,
 
 
   ## process shapefiles; ensure projection and rename ----
-  shp_orig = st_read(dsn=dir_shp_in, layer=shp_name)
   crs = sp::CRS("+proj=longlat +datum=WGS84")
-  shp = sp::spTransform(shp_orig,crs)
+   shp_orig = sf::st_read(dsn=dir_shp_in, layer=shp_name) %>%
+     sf::st_transform(crs)
   ## consider from Jamie Oct 2:
   # crs = sp::CRS("+proj=longlat +datum=WGS84")
   # shp_orig = sf::st_read(dsn=path.expand(dir_shp_in), layer=shp_name) %>%
