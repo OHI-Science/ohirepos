@@ -22,11 +22,11 @@ deploy_website <- function(repo_registry,
   gh_org          <- repo_registry$gh_org
   dir_repo        <- repo_registry$dir_repo
   dir_scenario_gh <- sprintf(
-    "https://raw.githubusercontent.com/%s/%s/master/%s",
+    "https://raw.githubusercontent.com/%s/%s/main/%s",
     gh_org, key, repo_registry$scenario_name)
 
 
-  ## clone existing master branch
+  ## clone existing main branch
   if (clone) {
     unlink(dir_repo, recursive=TRUE, force=TRUE)
     repo <- ohirepos::clone_repo(dir_repo,
@@ -107,8 +107,8 @@ deploy_website <- function(repo_registry,
 
     }
 
-    ## switch back to master branch locally
-    system(sprintf('cd %s; git checkout master', dir_repo))
+    ## switch back to main branch locally
+    system(sprintf('cd %s; git checkout main', dir_repo))
 
   }
 }
