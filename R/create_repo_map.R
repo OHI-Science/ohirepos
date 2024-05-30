@@ -41,7 +41,7 @@ create_repo_map <- function(repo_registry,
 
 
   ## process shapefiles; ensure projection and rename ----
-  shp_orig = rgdal::readOGR(dsn=dir_shp_in, layer=shp_name)
+  shp_orig = st_read(dsn=dir_shp_in, layer=shp_name)
   crs = sp::CRS("+proj=longlat +datum=WGS84")
   shp = sp::spTransform(shp_orig,crs)
   ## consider from Jamie Oct 2:
@@ -69,9 +69,7 @@ create_repo_map <- function(repo_registry,
 
   ## write shapefile to git-annex ----
   message("Saving shapefile to git-annex...does the `dir_shp_out` folder identified in `repo_registry.csv` exist?")
-  rgdal::writeOGR(shp, dsn=dir_shp_out,
-                  'rgn_offshore_gcs', driver='ESRI Shapefile', overwrite=TRUE)
-
+  st_write(obj = shp, dsn = file.path(dir_shp_out, "rgn_offshore_gcs.shp"), driver = "ESRI Shapefile", delete_dsn = TRUE)
 
   ## write geojson to git-annex and copy it to repo/spatial ----
   f_geojson <- file.path(dir_shp_out, 'regions_gcs.geojson')

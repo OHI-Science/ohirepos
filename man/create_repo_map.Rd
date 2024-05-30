@@ -17,6 +17,3 @@ repo
 \description{
 Title
 }
-\examples{
-
-}

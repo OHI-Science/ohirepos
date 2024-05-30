@@ -4,8 +4,11 @@
 \alias{shp_to_geojson}
 \title{Create GeoJSON from Shapefile}
 \usage{
-shp_to_geojson(shp, js, geojson = sprintf("\%s.geojson",
-  tools::file_path_sans_ext(js)))
+shp_to_geojson(
+  shp,
+  js,
+  geojson = sprintf("\%s.geojson", tools::file_path_sans_ext(js))
+)
 }
 \arguments{
 \item{shp}{path to shapefile with .shp extension, needs rgn_id and rgn_name fields}

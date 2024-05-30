@@ -4,8 +4,14 @@
 \alias{copy_layer}
 \title{Copy OHI Layer}
 \usage{
-copy_layer(lyr, rgns_key, dir_origin, dir_scenario, lyrs_key,
-  write_to_csv = TRUE)
+copy_layer(
+  lyr,
+  rgns_key,
+  dir_origin,
+  dir_scenario,
+  lyrs_key,
+  write_to_csv = TRUE
+)
 }
 \arguments{
 \item{lyr}{OHI data layer to be copied}

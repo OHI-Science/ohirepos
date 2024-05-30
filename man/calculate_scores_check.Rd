@@ -4,8 +4,11 @@
 \alias{calculate_scores_check}
 \title{Calculate scores for OHI repository}
 \usage{
-calculate_scores_check(repo_registry, ohicore_version = "ohicore",
-  push = FALSE)
+calculate_scores_check(
+  repo_registry,
+  ohicore_version = "ohicore",
+  push = FALSE
+)
 }
 \arguments{
 \item{repo_registry}{data frame with information about the repo}

@@ -22,6 +22,3 @@ updating gh-pages branch of Github repository.
 \description{
 Deploy website to gh-pages branch in Github repository
 }
-\examples{
-
-}

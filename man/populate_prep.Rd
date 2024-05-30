@@ -14,6 +14,3 @@ populate_prep(repo_registry, push = TRUE)
 \description{
 Populate the repo with prep folder and subfolders and README files
 }
-\examples{
-
-}

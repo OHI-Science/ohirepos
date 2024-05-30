@@ -2,27 +2,41 @@
 % Please edit documentation in R/deploy_app.R, R/deploy_app_generic.R
 \name{deploy_app}
 \alias{deploy_app}
-\alias{deploy_app}
 \title{Deploy Shiny application}
 \usage{
-deploy_app(gh_organization = "OHI-Science", gh_repo, gh_shiny_dir = NULL,
+deploy_app(
+  gh_organization = "OHI-Science",
+  gh_repo,
+  gh_shiny_dir = NULL,
   gh_branch_app = "master",
   app_base_url = "http://ohi-science.nceas.ucsb.edu",
-  app_name_remote = NULL, app_server, install_pkgs = FALSE,
-  dir_server = "/srv/shiny-server", dir_local = tempdir())
+  app_name_remote = NULL,
+  app_server,
+  install_pkgs = FALSE,
+  dir_server = "/srv/shiny-server",
+  dir_local = tempdir()
+)
 
-deploy_app(gh_organization = "OHI-Science", gh_repo, gh_shiny_dir = NULL,
+deploy_app(
+  gh_organization = "OHI-Science",
+  gh_repo,
+  gh_shiny_dir = NULL,
   gh_branch_app = "master",
   app_base_url = "http://ohi-science.nceas.ucsb.edu",
-  app_name_remote = NULL, app_server, install_pkgs = FALSE,
-  dir_server = "/srv/shiny-server", dir_local = tempdir())
+  app_name_remote = NULL,
+  app_server,
+  install_pkgs = FALSE,
+  dir_server = "/srv/shiny-server",
+  dir_local = tempdir()
+)
 }
 \arguments{
 \item{gh_organization}{Github organization. Defaults to "OHI-Science".}
 
 \item{gh_repo}{Github repository}
 
-\item{gh_branch_app}{Github branch to contain the app. Defaults to "app" and does not have to already exist in the repo.}
+\item{gh_branch_app}{Github branch that contains the app. Defaults to "master" and
+does not have to already exist in the repo.}
 
 \item{app_server}{the secure copy (scp) server location given by username@server:/dir/}
 
@@ -39,38 +53,19 @@ and branch subfolders within, defaults to tmpdir()}
 
 \item{gh_branch_data}{Github branch containing data. Defaults to "draft" and must already exist in the repo.}
 
-\item{app_url}{URL of the application}
-
 \item{projection}{defaults to Mercator, or could be specified as Mollweide, which may be more appropriate for global results}
 
 \item{map_shrink_pct}{percentage of shrinkage to apply to study area for default map view}
 
-\item{run_app}{run the Shiny app locally}
-
-\item{open_url}{open the web browser to the app_url}
-
 \item{dir_out}{top-level directory to use for populating git repo folder and branch subfolders within, defaults to tmpdir()}
-
-\item{del_out}{whether to delete output directory when done, defaults to TRUE}
-
-\item{gh_data_commit}{commit of gh_branch_data for freezing the app, ie do not automatically update}
-
-\item{gh_repo}{Github repository}
-
-\item{gh_branch_app}{Github branch that contains the app. Defaults to "master" and
-does not have to already exist in the repo.}
 
 \item{app_url}{URL of the application}
 
-\item{app_server}{the secure copy (scp) server location given by username@server:/dir/}
-
 \item{run_app}{run the Shiny app locally}
 
 \item{open_url}{open the web browser to the app_url}
 
 \item{del_out}{whether to delete output directory when done, defaults to TRUE}
-
-\item{dir_server}{directory on the app_server}
 
 \item{gh_data_commit}{commit of gh_branch_data for freezing the app,
 ie do not automatically update}
@@ -105,7 +100,7 @@ copy \code{'~/github/ohi-global'}
 to \code{dir_local = '~/Desktop/ohirepos_tmp/ohi-global/draft'}.
 }
 Please also visit
-\link\link{=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md}{app/README.md}
+\link[=https://github.com/OHI-Science/ohirepos/blob/master/inst/app/README.md]{app/README.md}
 for more details.
 }
 \description{

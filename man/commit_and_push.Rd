@@ -16,6 +16,3 @@ commit_and_push(repo_registry, commit_message, branch = "master")
 \description{
 commit_and_push
 }
-\examples{
-
-}

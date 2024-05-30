@@ -1,3 +1,4 @@
+Encoding: UTF-8
 Package: ohirepos
 Type: Package
 Title: Create OHI tailored repositories
@@ -18,19 +19,20 @@ BugReports: https://github.com/OHI-Science/ohirepos/issues
 Depends:
     R (>= 3.1.0)
 Imports:
+    devtools,
+    dplyr,
+    readr,
     brew,
     geojsonio,
     git2r,
     RCurl,
     raster,
-    rgdal,
-    rgeos,
     sf,
     sp,
     stringr,
     tidyverse (>= 1.0.0),
     tools,
     yaml
-RoxygenNote: 6.0.1
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)
 Suggests: testthat
