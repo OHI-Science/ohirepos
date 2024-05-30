@@ -69,7 +69,7 @@ create_repo_map <- function(repo_registry,
 
   ## write shapefile to git-annex ----
   message("Saving shapefile to git-annex...does the `dir_shp_out` folder identified in `repo_registry.csv` exist?")
-  st_write(obj = shp, dsn = file.path(dir_shp_out, "rgn_offshore_gcs.shp"), driver = "ESRI Shapefile", delete_dsn = TRUE)
+  sf::st_write(obj = shp, dsn = file.path(dir_shp_out, "rgn_offshore_gcs.shp"), driver = "ESRI Shapefile", delete_dsn = TRUE)
 
   ## write geojson to git-annex and copy it to repo/spatial ----
   f_geojson <- file.path(dir_shp_out, 'regions_gcs.geojson')
